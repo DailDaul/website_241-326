@@ -8,7 +8,6 @@ body {
     font-family: 'Oswald', sans-serif;
     font-size: 16px;
     color: #333;
-    line-height: 1.6;
 }
 
 h1 {
@@ -75,11 +74,6 @@ th, td {
     text-align: left;
 }
 
-th {
-    background-color: white;
-    font-weight: 600;
-}
-
 nav a {
     text-decoration: none;
     font-family: 'Oswald', sans-serif;
@@ -101,12 +95,6 @@ footer a {
 
 footer a:hover {
     color: #e74c3c;
-}
-
-footer p {
-    color: white;
-    font-size: 1.1rem;
-    margin: 0;
 }
 
 ul {
