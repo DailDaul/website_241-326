@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Construct - Доставка бизнес-ланчей</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Oswald', sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background-color: white;
+        }
+
+        header {
+            background-color: white;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #222;
+            text-align: left;
+        }
+
+        nav {
+            text-align: left;
+        }
+
+        nav a {
+            text-decoration: none;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.2rem;
+            color: #444;
+            margin-right: 20px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #e74c3c;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            background-color: white;
+        }
+
+        section {
+            margin-bottom: 40px;
+            background-color: white;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #222;
+            text-align: left;
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        li {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: white;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: white;
+            font-weight: 600;
+        }
+
+        tr {
+            background-color: white;
+        }
+
+        footer {
+            background-color: black;
+            color: white;
+            padding: 30px 20px;
+            text-align: left;
+        }
+
+        footer p {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Food Construct</h1>
+        <nav>
+            <a href="#about">О нас</a>
+            <a href="#">Собрать ланч</a>
+            <a href="#">Заказы</a>
+            <a href="#contacts">Контакты</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="about">
+            <h2>О нас</h2>
+            <img src="https://via.placeholder.com/1200x300" alt="Food Construct - Доставка бизнес-ланчей">
+            <p>Food Construct - доставка бизнес-ланчей в Москве. Мы привезем вам горячую вкусную еду в любую точку города к назначенному времени.</p>
+            
+            <h2>Преимущества Food Construct</h2>
+            <ul>
+                <li>Привозим обед к назначенному времени без опозданий</li>
+                <li>Надежно упаковываем блюда в удобные контейнеры бесплатно</li>
+                <li>Доставляем ланчи весь день с 7:00 до 23:00</li>
+            </ul>
+            
+            <h2>Топ-5 популярных блюд</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Название</th>
+                        <th>Кол-во заказов в неделю</th>
+                        <th>Цена</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Лазанья</td>
+                        <td>185</td>
+                        <td>385Р</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Том Ям с креветками</td>
+                        <td>161</td>
+                        <td>365Р</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Норвежский суп</td>
+                        <td>144</td>
+                        <td>270Р</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Жареная картошка с грибами</td>
+                        <td>132</td>
+                        <td>150Р</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Котлеты из курицы с картофельным пюре</td>
+                        <td>128</td>
+                        <td>225Р</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer id="contacts">
+        <p>Позвонить нам <a href="tel:+70000000000">+7-000-000-00-00</a></p>
+    </footer>
+</body>
+</html>
