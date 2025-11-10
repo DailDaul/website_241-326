@@ -1,3 +1,4 @@
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -63,6 +64,7 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
+    background-color: white;
 }
 
 table, th, td {
@@ -72,11 +74,11 @@ table, th, td {
 
 th, td {
     text-align: left;
+    background-color: white;
+    color: #333;
 }
 
 th {
-    background-color: black;
-    color: white;
     font-weight: 600;
 }
 
@@ -113,4 +115,3 @@ li {
     margin-bottom: 10px;
     color: #333;
 }
-
