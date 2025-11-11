@@ -112,7 +112,6 @@ footer {
 
 footer p {
     font-size: 1.1rem;
-    color: white;
 }
 
 footer a {
@@ -120,7 +119,6 @@ footer a {
     text-decoration: none;
     font-family: 'Oswald', sans-serif;
     font-size: 1.1rem;
-    transition: color 0.3s;
 }
 
 footer a:hover {
