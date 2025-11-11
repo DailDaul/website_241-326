@@ -30,7 +30,7 @@ p {
 }
 
 header {
-    padding: 20px;
+    padding: 30px 20px;
 }
 
 nav {
@@ -117,3 +117,4 @@ li {
     margin-bottom: 10px;
     color: #333;
 }
+
