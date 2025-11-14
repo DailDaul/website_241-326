@@ -1,128 +1,120 @@
-/* сброс стандартных отступов и полей для всех элементов */
+/* Универсальный селектор с box-sizing: border-box */
 * {
     box-sizing: border-box;
-    margin: 0; /* убираем внешние отступы */
-    padding: 0; /* убираем внутренние отступы */
+    margin: 0;
+    padding: 0;
 }
 
-/* стили для всего тела документа */
-body {
-    font-family: 'Oswald', sans-serif;
-    color: #000; /* чёрный цвет текста */
-    line-height: 1.6; /* межстрочный интервал */
-}
-
-/* стили для шапки сайта */
+/* Стили для блоков (header, footer, main, nav) */
 header {
     margin: 0;
-    padding: 20px 40px; /* внутренние отступы */
-    border-bottom: 2px solid #ff6b00; /* Оранжевая линия снизу */
+    padding: 20px 40px;
+    border-bottom: 2px solid #ff6b00;
 }
 
-/* стили для главного заголовка h1 */
-h1 {
-    font-size: 36px;
-    margin-bottom: 20px;
+footer {
+    margin: 0;
+    padding: 30px 40px;
+    background-color: black; /* Обязательное свойство для футера */
+    color: white; /* Обязательное свойство для футера */
 }
 
-/* стили для навигационных ссылок */
-nav a {
-    text-decoration: none; /* убираем подчеркивание ссылок */
-    font-family: 'Oswald', sans-serif; /* шрифт для ссылок */
-    font-size: 18px; /* размер шрифта 18px */
-    color: #000; /* черный цвет ссылок */
-    margin-right: 25px; /* отступ справа между ссылками */
-    transition: color 0.3s; /* плавное изменение цвета за 0.3 секунды */
-}
-
-/* стили для навигационных ссылок при наведении курсора */
-nav a:hover {
-    color: #ff6b00; /* оранжевый цвет при наведении */
-}
-
-/* стили для основного контента */
 main {
+    margin: 0;
     padding: 40px;
 }
 
-/* стили для секций */
-section {
-    margin-bottom: 50px;
-    padding-bottom: 30px; 
+nav {
+    margin: 0;
+    padding: 0;
 }
 
-/* стили для заголовков h2 */
+/* Стили для текста с Google-шрифтом */
+body {
+    font-family: 'Oswald', sans-serif; /* Подключенный Google-шрифт */
+    color: #000; /* Черный цвет для всего текста */
+}
+
+h1 {
+    font-size: 36px;
+    color: #000;
+}
+
 h2 {
-    font-size: 28px; 
-    margin-bottom: 20px;
+    font-size: 28px;
+    color: #000;
 }
 
-/* стили для параграфов (обычного текста) */
 p {
     font-size: 18px;
-    margin-bottom: 15px;
+    color: #000;
 }
 
-/* контейнер для изображения */
-.image-container {
-    width: 100%; /* ширина 100% от родительского контейнера */
+/* Стили для изображений */
+img {
+    width: 100%;
     max-width: 800px;
-    margin: 20px 0; /* внешние отступы 20px сверху и снизу */
-    overflow: hidden; /* скрывает части изображения, выходящие за границы контейнера */
+    height: auto;
+    margin: 20px 0;
 }
 
-/* стили для изображения внутри контейнера */
-.image-container img {
-    width: 100%; /* ширина 100% от контейнера */
-    height: auto; /* автоматическая высота для сохранения пропорций */
-    display: block; /* ьлочное отображение (убирает лишние отступы) */
-    object-fit: cover; /* сохраняет пропорции, обрезая изображение если нужно */
+/* Стили для таблиц */
+table {
+    width: 100%;
+    max-width: 800px;
+    border-collapse: collapse; /* Обязательное свойство для таблиц */
+    margin: 20px 0;
 }
 
-/* стили для маркированного списка */
+th, td {
+    padding: 12px 15px; /* Обязательное свойство для таблиц */
+    border: 1px solid #ddd; /* Обязательное свойство для таблиц */
+    text-align: left; /* Обязательное свойство для таблиц */
+    font-size: 18px;
+}
+
+th {
+    background-color: #f5f5f5;
+}
+
+/* Стили для ссылок */
+a {
+    text-decoration: none; /* Обязательное свойство для ссылок */
+    font-family: 'Oswald', sans-serif; /* Обязательное свойство для ссылок */
+    font-size: 18px; /* Обязательное свойство для ссылок */
+    color: #000; /* Обязательное свойство для ссылок */
+    margin-right: 25px;
+}
+
+/* Цвет ссылок изменяется при наведении */
+a:hover {
+    color: #ff6b00; /* Обязательное свойство для ссылок */
+}
+
+/* Стили для футера и его содержимого */
+footer p, footer a {
+    font-size: 18px;
+    color: white; /* Белый цвет для текста в футере */
+}
+
+footer a:hover {
+    color: #ff6b00;
+}
+
+/* Дополнительные стили для списка */
 ul {
     padding-left: 30px;
     margin: 20px 0;
 }
 
-/* стили для элементов списка */
 li {
     font-size: 18px;
     margin-bottom: 10px;
+    color: #000;
 }
 
-/* стили для таблицы */
-table {
-    width: 100%; /*ширина 100% от родительского контейнера */
-    max-width: 800px; /* максимальная ширина 800px */
-    border-collapse: collapse; /* объединяет границы ячеек */
-    margin: 20px 0; /* внешние отступы 20px сверху и снизу */
-}
-
-/* стили для ячеек таблицы (заголовочных и обычных) */
-th, td {
-    padding: 12px 15px; /* внутренние отступы: 12px сверху/снизу, 15px слева/справа */
-    border: 1px solid #ddd; /* серая граница толщиной 1px */
-    text-align: left; /* выравнивание текста по левому краю */
-    font-size: 18px;
-}
-
-/* стили для контактов */
-footer {
-    background-color: #000;
-    color: #fff;
-    padding: 30px 40px;
-}
-
-/* стили для текста и ссылок контактов */
-footer p, footer a {
-    font-size: 18px; 
-    color: #fff;
-    text-decoration: none;
-}
-
-/* стили для ссылок при наведении */
-footer a:hover {
-    color: #ff6b00; /* Оранжевый цвет при наведении */
-    transition: color 0.3s; /* плавное изменение цвета за 0.3 секунды */
+/* Стили для секций */
+section {
+    margin-bottom: 50px;
+    padding-bottom: 30px;
 }
