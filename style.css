@@ -1,110 +1,126 @@
+/* сброс стандартных отступов и полей для всех элементов */
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+    margin: 0; /* убираем внешние отступы */
+    padding: 0; /* убираем внутренние отступы */
 }
 
+/* стили для всего тела документа */
 body {
     font-family: 'Oswald', sans-serif;
-    color: #000;
-    line-height: 1.6;
-    padding: 0 20px;
+    color: #000; /* чёрный цвет текста */
+    line-height: 1.6; /* межстрочный интервал */
 }
 
+/* стили для шапки сайта */
 header {
-    padding: 20px 0;
-    border-bottom: 2px solid #ff6b00;
+    padding: 20px 40px; /* внутренние отступы */
+    border-bottom: 2px solid #ff6b00; /* Оранжевая линия снизу */
 }
 
+/* стили для главного заголовка h1 */
 h1 {
     font-size: 36px;
     margin-bottom: 20px;
 }
 
+/* стили для навигационных ссылок */
 nav a {
-    text-decoration: none;
-    font-family: 'Oswald', sans-serif;
-    font-size: 18px;
-    color: #000;
-    margin-right: 25px;
-    transition: color 0.3s;
+    text-decoration: none; /* убираем подчеркивание ссылок */
+    font-family: 'Oswald', sans-serif; /* шрифт для ссылок */
+    font-size: 18px; /* размер шрифта 18px */
+    color: #000; /* черный цвет ссылок */
+    margin-right: 25px; /* отступ справа между ссылками */
+    transition: color 0.3s; /* плавное изменение цвета за 0.3 секунды */
 }
 
+/* стили для навигационных ссылок при наведении курсора */
 nav a:hover {
-    color: #ff6b00;
+    color: #ff6b00; /* оранжевый цвет при наведении */
 }
 
+/* стили для основного контента */
 main {
-    padding: 40px 0;
+    padding: 40px;
 }
 
+/* стили для секций */
 section {
     margin-bottom: 50px;
-    padding-bottom: 30px;
-    border-bottom: 1px solid #ddd;
+    padding-bottom: 30px; 
 }
 
+/* стили для заголовков h2 */
 h2 {
-    font-size: 28px;
+    font-size: 28px; 
     margin-bottom: 20px;
 }
 
+/* стили для параграфов (обычного текста) */
 p {
     font-size: 18px;
     margin-bottom: 15px;
 }
 
-img {
-    width: 100%;
-    max-width: 600px;
-    height: auto;
-    margin: 20px 0;
+/* контейнер для изображения */
+.image-container {
+    width: 100%; /* ширина 100% от родительского контейнера */
+    max-width: 800px;
+    margin: 20px 0; /* внешние отступы 20px сверху и снизу */
+    overflow: hidden; /* скрывает части изображения, выходящие за границы контейнера */
 }
 
+/* стили для изображения внутри контейнера */
+.image-container img {
+    width: 100%; /* ширина 100% от контейнера */
+    height: auto; /* автоматическая высота для сохранения пропорций */
+    display: block; /* ьлочное отображение (убирает лишние отступы) */
+    object-fit: cover; /* сохраняет пропорции, обрезая изображение если нужно */
+}
+
+/* стили для маркированного списка */
 ul {
     padding-left: 30px;
     margin: 20px 0;
 }
 
+/* стили для элементов списка */
 li {
     font-size: 18px;
     margin-bottom: 10px;
 }
 
+/* стили для таблицы */
 table {
-    width: 100%;
-    max-width: 800px;
-    border-collapse: collapse;
-    margin: 20px 0;
+    width: 100%; /*ширина 100% от родительского контейнера */
+    max-width: 800px; /* максимальная ширина 800px */
+    border-collapse: collapse; /* объединяет границы ячеек */
+    margin: 20px 0; /* внешние отступы 20px сверху и снизу */
 }
 
+/* стили для ячеек таблицы (заголовочных и обычных) */
 th, td {
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    text-align: left;
+    padding: 12px 15px; /* внутренние отступы: 12px сверху/снизу, 15px слева/справа */
+    border: 1px solid #ddd; /* серая граница толщиной 1px */
+    text-align: left; /* выравнивание текста по левому краю */
     font-size: 18px;
 }
 
-th {
-    background-color: #f5f5f5;
-    font-weight: 500;
-}
-
+/* стили для контактов */
 footer {
     background-color: #000;
     color: #fff;
-    padding: 30px 0;
-    margin: 0 -20px;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 30px 40px;
 }
 
+/* стили для текста и ссылок контактов */
 footer p, footer a {
-    font-size: 18px;
+    font-size: 18px; 
     color: #fff;
     text-decoration: none;
 }
 
+/* стили для ссылок при наведении */
 footer a:hover {
-    color: #ff6b00;
+    color: #ff6b00; /* Оранжевый цвет при наведении */
 }
