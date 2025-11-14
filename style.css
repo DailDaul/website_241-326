@@ -14,6 +14,7 @@ body {
 
 /* стили для шапки сайта */
 header {
+    margin: 0;
     padding: 20px 40px; /* внутренние отступы */
     border-bottom: 2px solid #ff6b00; /* Оранжевая линия снизу */
 }
