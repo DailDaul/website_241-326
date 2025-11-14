@@ -1,82 +1,113 @@
-/* Стили для страницы "Собрать ланч" */
-
-/* Grid сетка для блока с блюдами */
 .dishes-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 колонки по 1fr */
-    gap: 10px; /* Отступ между элементами сетки */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
 }
 
-/* Блок каждого блюда */
 .dish-item {
     display: flex;
-    flex-direction: column; /* Вертикальное направление элементов */
-    padding: 30px 40px; /* Внутренний отступ: 30px сверху/снизу, 40px слева/справа */
-    border-radius: 35px; /* Радиус закругления */
-    background-color: white; /* Цвет фона */
-    filter: drop-shadow(17px 19px 24px rgba(0, 0, 0, 0.13)); /* Тень */
-    cursor: pointer; /* Вид курсора */
-    transition: border 0.3s; /* Плавный переход для границы */
-    border: 2px solid transparent; /* Прозрачная граница для плавного перехода */
+    flex-direction: column;
+    padding: 30px 40px;
+    border-radius: 35px;
+    background-color: white;
+    filter: drop-shadow(17px 19px 24px rgba(0, 0, 0, 0.13));
+    cursor: pointer;
+    transition: border 0.3s;
+    border: 2px solid transparent;
 }
 
-/* Поведение при наведении на блок с блюдом */
 .dish-item:hover {
-    border: 2px solid tomato; /* Сплошная граница толщиной 2px, цвет tomato */
+    border: 2px solid tomato;
 }
 
-/* Изменение цвета фона кнопки при наведении на блок */
 .dish-item:hover .add-button {
-    background-color: #ff6b00; /* Оранжевый цвет фона */
-    color: white; /* Белый цвет текста */
+    background-color: #ff6b00;
+    color: white;
 }
 
-/* Стили для изображения блюда */
 .dish-image {
     width: 100%;
     height: 200px;
     object-fit: cover;
-    border-radius: 20px;
+    border-radius: 35px;
     margin-bottom: 15px;
 }
 
-/* Стили для названия блюда */
 .dish-name {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 500;
     margin-bottom: 10px;
-    min-height: 48px; /* Минимальная высота для выравнивания */
+    min-height: 48px;
 }
 
-/* Стили для веса/объема блюда */
 .dish-weight {
     font-size: 16px;
     color: #666;
     margin-bottom: 15px;
 }
 
-/* Стили для цены блюда */
 .dish-price {
-    font-size: 22px;
+    font-size: 26px;
     font-weight: 500;
     margin-bottom: 15px;
 }
 
-/* Стили для кнопки "Добавить" */
 .add-button {
-    background-color: #f0f0f0;
+    background-color: #f1eee9; 
     border: none;
-    padding: 12px 24px;
-    border-radius: 25px;
+    padding: 10px 30px; 
+    border-radius: 10px;
     font-family: 'Oswald', sans-serif;
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
-    margin-top: auto; /* Прижимает кнопку к низу для выравнивания */
+    margin-top: auto;
 }
 
-/* Поведение кнопки при наведении */
 .add-button:hover {
     background-color: #ff6b00;
     color: white;
+}
+
+/* ≤800px */
+@media (max-width: 800px) {
+    .dishes-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    nav {
+        justify-content: space-between; /* Равное расстояние между элементами */
+    }
+    
+    h1 {
+        text-align: center;
+    }
+    
+    h2 {
+        text-align: center;
+    }
+}
+
+/* ≤600px */
+@media (max-width: 600px) {
+    .dishes-grid {
+        grid-template-columns: 1fr; /* 1 колонка */
+    }
+    
+    nav {
+        flex-direction: column; /* Вертикальное направление */
+        align-items: center; /* Выравнивание по центру поперечной оси */
+    }
+    
+    nav a {
+        font-size: 22px; /* Увеличить шрифт на 4px */
+    }
+    
+    h1 {
+        text-align: center;
+    }
+    
+    h2 {
+        text-align: center;
+    }
 }
