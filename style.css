@@ -5,39 +5,50 @@
     padding: 0;
 }
 
+/* Стили для body с минимальной высотой */
+body {
+    font-family: 'Oswald', sans-serif;
+    color: #000;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
 /* Стили для блоков (header, footer, main, nav) */
 header {
+    margin: 0;
     padding: 20px 40px;
     border-bottom: 2px solid #ff6b00;
 }
 
 footer {
+    margin: 0;
     padding: 30px 40px;
-    background-color: black; /* Обязательное свойство для футера */
-    color: white; /* Обязательное свойство для футера */
+    background-color: black;
+    color: white;
+    margin-top: auto; /* Футер прижимается к низу */
 }
 
 main {
     margin: 0;
     padding: 40px;
+    flex: 1; /* Занимает все доступное пространство */
 }
 
+/* Навигация как флексбокс */
 nav {
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-wrap: wrap; /* Разрешаем перенос на новые строки */
+    gap: 15px; /* Отступ для флексов */
 }
 
 /* Стили для текста с Google-шрифтом */
-body {
-    font-family: 'Oswald', sans-serif; /* Подключенный Google-шрифт */
-    color: #000; /* Черный цвет для всего текста */
-    line-height: 1.6;
-}
-
 h1 {
     font-size: 36px;
     color: #000;
-    margin-bottom: 20px;
 }
 
 h2 {
@@ -62,14 +73,14 @@ img {
 table {
     width: 100%;
     max-width: 800px;
-    border-collapse: collapse; /* Обязательное свойство для таблиц */
+    border-collapse: collapse;
     margin: 20px 0;
 }
 
 th, td {
-    padding: 12px 15px; /* Обязательное свойство для таблиц */
-    border: 1px solid #ddd; /* Обязательное свойство для таблиц */
-    text-align: left; /* Обязательное свойство для таблиц */
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
     font-size: 18px;
 }
 
@@ -79,22 +90,27 @@ th {
 
 /* Стили для ссылок */
 a {
-    text-decoration: none; /* Обязательное свойство для ссылок */
-    font-family: 'Oswald', sans-serif; /* Обязательное свойство для ссылок */
-    font-size: 18px; /* Обязательное свойство для ссылок */
-    color: #000; /* Обязательное свойство для ссылок */
-    margin-right: 25px;
+    text-decoration: none;
+    font-family: 'Oswald', sans-serif;
+    font-size: 18px;
+    color: #000;
+    transition: color 0.3s;
+}
+
+/* Активная ссылка */
+a#active {
+    color: tomato;
 }
 
 /* Цвет ссылок изменяется при наведении */
 a:hover {
-    color: #ff6b00; /* Обязательное свойство для ссылок */
+    color: #ff6b00;
 }
 
 /* Стили для футера и его содержимого */
 footer p, footer a {
     font-size: 18px;
-    color: white; /* Белый цвет для текста в футере */
+    color: white;
 }
 
 footer a:hover {
@@ -117,4 +133,66 @@ li {
 section {
     margin-bottom: 50px;
     padding-bottom: 30px;
+}
+
+/* Контейнер для изображения на главной странице */
+.image-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 20px 0;
+    overflow: hidden;
+}
+
+/* Стили для изображения внутри контейнера на главной странице */
+.image-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
+/* Адаптивность для главной страницы */
+
+/* ≤800px */
+@media (max-width: 800px) {
+    .image-container img {
+        max-width: 500px;
+    }
+    
+    nav {
+        justify-content: space-between; /* Равное расстояние между элементами */
+    }
+    
+    h1 {
+        text-align: center;
+    }
+}
+
+/* ≤600px */
+@media (max-width: 600px) {
+    nav {
+        flex-direction: column; /* Вертикальное направление */
+        align-items: center; /* Выравнивание по центру */
+    }
+    
+    nav a {
+        font-size: 22px; /* Увеличить шрифт на 4px */
+    }
+    
+    .image-container img {
+        width: 100%;
+        max-width: none;
+    }
+}
+
+/* ≤400px */
+@media (max-width: 400px) {
+    th, td {
+        font-size: 16px; /* Уменьшить шрифт на 2px */
+        padding: 8px 10px;
+    }
+    
+    th, td {
+        font-size: 14px; /* Уменьшить шрифт еще на 2px */
+    }
 }
