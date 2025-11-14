@@ -25,6 +25,7 @@ footer {
     background-color: black;
     color: white;
     margin-top: auto;
+    transition: color 0.3s;
 }
 
 main {
@@ -39,6 +40,7 @@ nav {
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
+    transition: color 0.3s;
 }
 
 h1 {
@@ -86,7 +88,6 @@ a {
     font-family: 'Oswald', sans-serif;
     font-size: 18px;
     color: #000;
-    transition: color 0.3s;
 }
 
 a#active {
@@ -95,6 +96,7 @@ a#active {
 
 a:hover {
     color: #ff6b00;
+    transition: color 0.3s;
 }
 
 footer p, footer a {
@@ -104,6 +106,7 @@ footer p, footer a {
 
 footer a:hover {
     color: #ff6b00;
+    transition: color 0.3s;
 }
 
 ul {
