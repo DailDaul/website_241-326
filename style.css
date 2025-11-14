@@ -1,11 +1,9 @@
-/* Универсальный селектор с box-sizing: border-box */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-/* Стили для body с минимальной высотой */
 body {
     font-family: 'Oswald', sans-serif;
     color: #000;
@@ -15,7 +13,6 @@ body {
     flex-direction: column;
 }
 
-/* Стили для блоков (header, footer, main, nav) */
 header {
     margin: 0;
     padding: 20px 40px;
@@ -27,25 +24,23 @@ footer {
     padding: 30px 40px;
     background-color: black;
     color: white;
-    margin-top: auto; /* Футер прижимается к низу */
+    margin-top: auto;
 }
 
 main {
     margin: 0;
     padding: 40px;
-    flex: 1; /* Занимает все доступное пространство */
+    flex: 1;
 }
 
-/* Навигация как флексбокс */
 nav {
     margin: 0;
     padding: 0;
     display: flex;
-    flex-wrap: wrap; /* Разрешаем перенос на новые строки */
-    gap: 15px; /* Отступ для флексов */
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
-/* Стили для текста с Google-шрифтом */
 h1 {
     font-size: 36px;
     color: #000;
@@ -61,7 +56,6 @@ p {
     color: #000;
 }
 
-/* Стили для изображений */
 img {
     width: 100%;
     max-width: 800px;
@@ -69,7 +63,6 @@ img {
     margin: 20px 0;
 }
 
-/* Стили для таблиц */
 table {
     width: 100%;
     max-width: 800px;
@@ -88,7 +81,6 @@ th {
     background-color: #f5f5f5;
 }
 
-/* Стили для ссылок */
 a {
     text-decoration: none;
     font-family: 'Oswald', sans-serif;
@@ -97,17 +89,14 @@ a {
     transition: color 0.3s;
 }
 
-/* Активная ссылка */
 a#active {
     color: tomato;
 }
 
-/* Цвет ссылок изменяется при наведении */
 a:hover {
     color: #ff6b00;
 }
 
-/* Стили для футера и его содержимого */
 footer p, footer a {
     font-size: 18px;
     color: white;
@@ -117,7 +106,6 @@ footer a:hover {
     color: #ff6b00;
 }
 
-/* Дополнительные стили для списка */
 ul {
     padding-left: 30px;
     margin: 20px 0;
@@ -129,13 +117,11 @@ li {
     color: #000;
 }
 
-/* Стили для секций */
 section {
     margin-bottom: 50px;
     padding-bottom: 30px;
 }
 
-/* Контейнер для изображения на главной странице */
 .image-container {
     width: 100%;
     max-width: 800px;
@@ -143,15 +129,12 @@ section {
     overflow: hidden;
 }
 
-/* Стили для изображения внутри контейнера на главной странице */
 .image-container img {
     width: 100%;
     height: auto;
     display: block;
     object-fit: cover;
 }
-
-/* Адаптивность для главной страницы */
 
 /* ≤800px */
 @media (max-width: 800px) {
