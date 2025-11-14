@@ -7,13 +7,11 @@
 
 /* Стили для блоков (header, footer, main, nav) */
 header {
-    margin: 0;
     padding: 20px 40px;
     border-bottom: 2px solid #ff6b00;
 }
 
 footer {
-    margin: 0;
     padding: 30px 40px;
     background-color: black; /* Обязательное свойство для футера */
     color: white; /* Обязательное свойство для футера */
@@ -33,11 +31,13 @@ nav {
 body {
     font-family: 'Oswald', sans-serif; /* Подключенный Google-шрифт */
     color: #000; /* Черный цвет для всего текста */
+    line-height: 1.6;
 }
 
 h1 {
     font-size: 36px;
     color: #000;
+    margin-bottom: 20px;
 }
 
 h2 {
