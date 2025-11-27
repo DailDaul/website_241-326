@@ -179,3 +179,16 @@ section {
         font-size: 14px; /* Уменьшить шрифт еще на 2px */
     }
 }
+
+/* Адаптивность для orders.html */
+@media (max-width: 800px) {
+    .form-columns {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .form-buttons {
+        flex-direction: column;
+    }
+}
