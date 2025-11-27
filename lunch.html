@@ -22,133 +22,56 @@
     </header>
 
     <main>
-
+        <!-- Блок с супами -->
         <section id="soups">
             <h2>Супы</h2>
-            <div class="dishes-grid">
-                <div class="dish-item">
-                    <img src="images/gazpacho.jpg" alt="Гаспачо" class="dish-image">
-                    <p class="dish-name">Гаспачо</p>
-                    <p class="dish-weight">350 мл</p>
-                    <p class="dish-price">365Р</p>
-                    <button class="add-button">Добавить</button>
-                </div>
-
-                <div class="dish-item">
-                    <img src="images/norwegian.jpg" alt="Норвежский суп" class="dish-image">
-                    <p class="dish-name">Норвежский суп</p>
-                    <p class="dish-weight">400 мл</p>
-                    <p class="dish-price">270Р</p>
-                    <button class="add-button">Добавить</button>
-                </div>
-
-                <div class="dish-item">
-                    <img src="images/mushroom.jpg" alt="Грибной суп" class="dish-image">
-                    <p class="dish-name">Грибной суп</p>
-                    <p class="dish-weight">380 мл</p>
-                    <p class="dish-price">220Р</p>
-                    <button class="add-button">Добавить</button>
-                </div>
-            </div>
+            <div class="dishes-grid"></div>
         </section>
 
+        <!-- Блок с главными блюдами -->
         <section id="main-dishes">
             <h2>Главные блюда</h2>
-            <div class="dishes-grid">
-                <div class="dish-item">
-                    <img src="images/lasagna.jpg" alt="Лазанья" class="dish-image">
-                    <p class="dish-name">Лазанья</p>
-                    <p class="dish-weight">450 г</p>
-                    <p class="dish-price">385Р</p>
-                    <button class="add-button">Добавить</button>
-                </div>
-
-                <div class="dish-item">
-                    <img src="images/potato.jpg" alt="Картошка с грибами" class="dish-image">
-                    <p class="dish-name">Жареная картошка с грибами</p>
-                    <p class="dish-weight">350 г</p>
-                    <p class="dish-price">150Р</p>
-                    <button class="add-button">Добавить</button>
-                </div>
-
-                <div class="dish-item">
-                    <img src="images/chicken.jpg" alt="Котлеты" class="dish-image">
-                    <p class="dish-name">Котлеты из курицы с картофельным пюре и овощным салатом</p>
-                    <p class="dish-weight">420 г</p>
-                    <p class="dish-price">225Р</p>
-                    <button class="add-button">Добавить</button>
-                </div>
-            </div>
+            <div class="dishes-grid"></div>
         </section>
 
+        <!-- Блок с напитками -->
         <section id="drinks">
             <h2>Напитки</h2>
-            <div class="dishes-grid">
-                <div class="dish-item">
-                    <img src="images/apple.jpg" alt="Яблочный сок" class="dish-image">
-                    <p class="dish-name">Яблочный сок</p>
-                    <p class="dish-weight">300 мл</p>
-                    <p class="dish-price">120Р</p>
-                    <button class="add-button">Добавить</button>
-                </div>
-                
-                <div class="dish-item">
-                    <img src="images/orange.jpg" alt="Апельсиновый сок" class="dish-image">
-                    <p class="dish-name">Апельсиновый сок</p>
-                    <p class="dish-weight">330 мл</p>
-                    <p class="dish-price">120Р</p>
-                    <button class="add-button">Добавить</button>
-                </div>
-
-                <div class="dish-item">
-                    <img src="images/carrot.jpg" alt="Морковный сок" class="dish-image">
-                    <p class="dish-name">Морковный сок</p>
-                    <p class="dish-weight">300 мл</p>
-                    <p class="dish-price">110Р</p>
-                    <button class="add-button">Добавить</button>
-                </div>
-            </div>
+            <div class="dishes-grid"></div>
         </section>
-                <!-- Блок оформления заказа -->
+
+        <!-- Блок оформления заказа -->
         <section class="order-section">
             <h2>Сделать заказ</h2>
+            <div class="current-order">
+                <h3>Ваш заказ</h3>
+                <div id="empty-message" class="empty-message">Ничего не выбрано</div>
+                
+                <div class="order-category">
+                    <h4 id="soup-title" style="display: none;">Суп</h4>
+                    <div id="selected-soup" class="selected-dishes"></div>
+                </div>
+                
+                <div class="order-category">
+                    <h4 id="main-title" style="display: none;">Главное блюдо</h4>
+                    <div id="selected-main" class="selected-dishes"></div>
+                </div>
+                
+                <div class="order-category">
+                    <h4 id="drink-title" style="display: none;">Напиток</h4>
+                    <div id="selected-drink" class="selected-dishes"></div>
+                </div>
+                
+                <div id="order-total" class="order-total" style="display: none;">
+                    <h4>Стоимость заказа</h4>
+                    <div class="total-price">
+                        <span id="total-price">0</span>Р
+                    </div>
+                </div>
+            </div>
+
             <form class="order-form" method="POST" action="https://httpbin.org/post">
                 <div class="form-columns">
-                    <!-- Блок с заказом клиента -->
-                    <div class="order-block">
-                        <h3>Ваш заказ</h3>
-                        
-                        <div class="form-group">
-                            <label for="soup">Суп</label>
-                            <select id="soup" name="soup" required>
-                                <option value="">– Выберите суп –</option>
-                                <option value="tom-yam">Том Ям с креветками - 365Р</option>
-                                <option value="norwegian-soup">Норвежский суп - 270Р</option>
-                                <option value="chicken-soup">Куриный суп с лапшой - 220Р</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="main-dish">Главное блюдо</label>
-                            <select id="main-dish" name="main_dish" required>
-                                <option value="">– Выберите главное блюдо –</option>
-                                <option value="lasagna">Лазанья - 385Р</option>
-                                <option value="fried-potatoes">Жареная картошка с грибами - 150Р</option>
-                                <option value="chicken-cutlets">Котлеты из курицы с картофельным пюре - 225Р</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="drink">Напиток</label>
-                            <select id="drink" name="drink" required>
-                                <option value="">– Выберите напиток –</option>
-                                <option value="orange-juice">Апельсиновый сок - 120Р</option>
-                                <option value="apple-juice">Яблочный сок - 90Р</option>
-                                <option value="carrot-juice">Морковный сок - 110Р</option>
-                            </select>
-                        </div>
-                    </div>
-                    
                     <!-- Блок с данными клиента -->
                     <div class="client-block">
                         <h3>Ваши данные</h3>
@@ -185,5 +108,9 @@
     <footer id="contacts">
         <p>Позвонить нам: <a href="tel:+70000000000">+7-000-000-00-00</a></p>
     </footer>
+
+    <script src="dishes.js"></script>
+    <script src="displayDishes.js"></script>
+    <script src="orderManager.js"></script>
 </body>
 </html>
