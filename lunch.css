@@ -204,24 +204,84 @@
     background-color: #e55a00;
 }
 
-/* Адаптивность для блока заказа */
-@media (max-width: 800px) {
-    .form-columns {
-        grid-template-columns: 1fr;
-        gap: 30px;
-    }
-    
-    .order-block, .client-block {
-        padding: 20px;
-    }
+/* Стили для текущего заказа */
+.current-order {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    filter: drop-shadow(0px 4px 15px rgba(0, 0, 0, 0.1));
+    margin-bottom: 30px;
 }
 
-@media (max-width: 600px) {
-    .order-section h2 {
-        font-size: 28px;
-    }
-    
-    .order-block h3, .client-block h3 {
-        font-size: 20px;
-    }
+.current-order h3 {
+    font-size: 24px;
+    margin-bottom: 25px;
+    color: #333;
+    border-bottom: 2px solid #ff6b00;
+    padding-bottom: 10px;
+}
+
+.empty-message {
+    text-align: center;
+    color: #666;
+    font-size: 18px;
+    padding: 20px;
+}
+
+.order-category {
+    margin-bottom: 20px;
+}
+
+.order-category h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.selected-dishes {
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.selected-dish {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.selected-dish .dish-name {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.selected-dish .dish-price {
+    font-size: 16px;
+    color: #ff6b00;
+    font-weight: 500;
+}
+
+.not-selected {
+    color: #666;
+    font-style: italic;
+}
+
+.order-total {
+    border-top: 2px solid #ff6b00;
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+.order-total h4 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.total-price {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 500;
+    color: #ff6b00;
 }
