@@ -23,6 +23,7 @@ const dishes = [
         count: "380 мл",
         image: "https://via.placeholder.com/300x200"
     },
+
     {
         keyword: "lasagna",
         name: "Лазанья",
@@ -47,6 +48,7 @@ const dishes = [
         count: "420 г",
         image: "https://via.placeholder.com/300x200"
     },
+
     {
         keyword: "orange-juice",
         name: "Апельсиновый сок",
@@ -69,22 +71,6 @@ const dishes = [
         price: 110,
         category: "drink",
         count: "300 мл",
-        image: "https://via.placeholder.com/300x200"
-    },
-    {
-        keyword: "latte",
-        name: "Кофе латте",
-        price: 180,
-        category: "drink",
-        count: "300 мл",
-        image: "https://via.placeholder.com/300x200"
-    },
-    {
-        keyword: "green-tea",
-        name: "Зеленый чай",
-        price: 90,
-        category: "drink",
-        count: "400 мл",
         image: "https://via.placeholder.com/300x200"
     }
 ];
