@@ -1,11 +1,11 @@
 const dishes = [
     {
-        keyword: "tom-yam",
-        name: "Том Ям с креветками",
+        keyword: "gazpacho",
+        name: "Гаспачо",
         price: 365,
         category: "soup",
         count: "350 мл",
-        image: "https://via.placeholder.com/300x200"
+        image: "images/gazpacho.jpg"
     },
     {
         keyword: "norwegian-soup",
@@ -13,15 +13,15 @@ const dishes = [
         price: 270,
         category: "soup",
         count: "400 мл",
-        image: "https://via.placeholder.com/300x200"
+        image: "images/norwegian.jpg"
     },
     {
-        keyword: "chicken-soup",
-        name: "Куриный суп с лапшой",
+        keyword: "mushroom-soup",
+        name: "Грибной суп",
         price: 220,
         category: "soup",
         count: "380 мл",
-        image: "https://via.placeholder.com/300x200"
+        image: "images/mushroom.jpg"
     },
 
     {
@@ -30,7 +30,7 @@ const dishes = [
         price: 385,
         category: "main",
         count: "450 г",
-        image: "https://via.placeholder.com/300x200"
+        image: "images/lasagna.jpg"
     },
     {
         keyword: "fried-potatoes",
@@ -38,7 +38,7 @@ const dishes = [
         price: 150,
         category: "main",
         count: "350 г",
-        image: "https://via.placeholder.com/300x200"
+        image: "images/potato.jpg"
     },
     {
         keyword: "chicken-cutlets",
@@ -46,7 +46,7 @@ const dishes = [
         price: 225,
         category: "main",
         count: "420 г",
-        image: "https://via.placeholder.com/300x200"
+        image: "images/chicken.jpg"
     },
 
     {
@@ -55,7 +55,7 @@ const dishes = [
         price: 120,
         category: "drink",
         count: "300 мл",
-        image: "https://via.placeholder.com/300x200"
+        image: "images/orange.jpg"
     },
     {
         keyword: "apple-juice",
@@ -63,7 +63,7 @@ const dishes = [
         price: 90,
         category: "drink",
         count: "300 мл",
-        image: "https://via.placeholder.com/300x200"
+        image: "images/apple.jpg"
     },
     {
         keyword: "carrot-juice",
@@ -71,6 +71,6 @@ const dishes = [
         price: 110,
         category: "drink",
         count: "300 мл",
-        image: "https://via.placeholder.com/300x200"
+        image: "images/carrot.jpg"
     }
 ];
