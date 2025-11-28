@@ -152,7 +152,7 @@ const dishes = [
         category: "drink",
         kind: "hot",
         count: "300 мл",
-        image: "images/cpffee.jpg"
+        image: "images/coffee.jpg"
     },
 
     {
