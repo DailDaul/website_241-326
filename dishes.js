@@ -77,7 +77,7 @@ const dishes = [
     },
     {
         keyword: "grilled-salmon",
-        name: "Лосось на гриле",
+        name: "Лосось на гриле со спаржей",
         price: 420,
         category: "main",
         kind: "fish",
@@ -95,7 +95,7 @@ const dishes = [
     },
     {
         keyword: "fried-trout",
-        name: "Жареная форель",
+        name: "Жареная форель с рисом",
         price: 380,
         category: "main",
         kind: "fish",
