@@ -187,7 +187,7 @@ const dishes = [
         name: "Коул слоу",
         price: 350,
         category: "starter",
-        kind: "fish",
+        kind: "veg",
         count: "200 г",
         image: "images/coleslaw-salad.jpg"
     },
@@ -242,7 +242,7 @@ const dishes = [
         name: "Шоколадный торт",
         price: 190,
         category: "dessert",
-        kind: "small",
+        kind: "medium",
         count: "200 г",
         image: "images/chocolate-cake.jpg"
     },
@@ -260,7 +260,7 @@ const dishes = [
         name: "Блины с вареньем",
         price: 210,
         category: "dessert",
-        kind: "medium",
+        kind: "large",
         count: "200 г",
         image: "images/pancakes.jpg"
     },
