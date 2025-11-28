@@ -3,7 +3,9 @@ class OrderManager {
         this.selectedDishes = {
             soup: null,
             main: null,
-            drink: null
+            starter: null,
+            drink: null,
+            dessert: null
         };
         this.init();
     }
@@ -39,13 +41,17 @@ class OrderManager {
         const orderBlocks = {
             soup: document.getElementById('selected-soup'),
             main: document.getElementById('selected-main'),
-            drink: document.getElementById('selected-drink')
+            starter: document.getElementById('selected-starter'),
+            drink: document.getElementById('selected-drink'),
+            dessert: document.getElementById('selected-dessert')
         };
         
         const categoryTitles = {
             soup: document.getElementById('soup-title'),
             main: document.getElementById('main-title'),
-            drink: document.getElementById('drink-title')
+            starter: document.getElementById('starter-title'),
+            drink: document.getElementById('drink-title'),
+            dessert: document.getElementById('dessert-title')
         };
         
         const totalPriceElement = document.getElementById('total-price');
@@ -100,17 +106,21 @@ class OrderManager {
         const texts = {
             soup: 'Суп не выбран',
             main: 'Главное блюдо не выбрано',
-            drink: 'Напиток не выбран'
+            starter: 'Салат или стартер не выбран',
+            drink: 'Напиток не выбран',
+            dessert: 'Десерт не выбран'
         };
         return texts[category] || 'Блюдо не выбрано';
     }
     
-    //метод для получения данных заказа для формы
+    // метод для получения данных заказа для формы
     getOrderData() {
         return {
             soup: this.selectedDishes.soup,
             main: this.selectedDishes.main,
+            starter: this.selectedDishes.starter,
             drink: this.selectedDishes.drink,
+            dessert: this.selectedDishes.dessert,
             total: Object.values(this.selectedDishes).reduce((sum, dish) => sum + (dish ? dish.price : 0), 0)
         };
     }
