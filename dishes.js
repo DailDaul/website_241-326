@@ -256,8 +256,8 @@ const dishes = [
         image: "images/.jpg"
     },
     {
-        keyword: "ice-cream-platter",
-        name: "Ассорти мороженого",
+        keyword: "carrot-cake",
+        name: "Морковный торт",
         price: 320,
         category: "dessert",
         kind: "large",
