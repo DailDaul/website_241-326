@@ -174,8 +174,8 @@ const dishes = [
         image: "images/.jpg"
     },
     {
-        keyword: "shrimp-cocktail",
-        name: "Коктейль из креветок",
+        keyword: "coleslaw-salad",
+        name: "Коул слоу",
         price: 350,
         category: "starter",
         kind: "fish",
