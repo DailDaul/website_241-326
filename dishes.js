@@ -23,6 +23,33 @@ const dishes = [
         count: "380 мл",
         image: "images/mushroom.jpg"
     },
+    {
+        keyword: "salmon-soup",
+        name: "Суп с лососем",
+        price: 350,
+        category: "soup",
+        kind: "fish",
+        count: "400 мл",
+        image: "images/.jpg"
+    },
+    {
+        keyword: "chicken-soup",
+        name: "Куриный суп",
+        price: 280,
+        category: "soup",
+        kind: "meat",
+        count: "380 мл",
+        image: "images/.jpg"
+    },
+    {
+        keyword: "beef-soup",
+        name: "Говяжий суп",
+        price: 300,
+        category: "soup",
+        kind: "meat",
+        count: "400 мл",
+        image: "images/.jpg"
+    },
 
     {
         keyword: "lasagna",
@@ -48,7 +75,34 @@ const dishes = [
         count: "420 г",
         image: "images/chicken.jpg"
     },
-
+    {
+        keyword: "grilled-salmon",
+        name: "Лосось на гриле",
+        price: 420,
+        category: "main",
+        kind: "fish",
+        count: "300 г",
+        image: "images/.jpg"
+    },
+    {
+        keyword: "vegetable-stew",
+        name: "Овощное рагу",
+        price: 180,
+        category: "main",
+        kind: "veg",
+        count: "400 г",
+        image: "images/.jpg"
+    },
+    {
+        keyword: "fried-trout",
+        name: "Жареная форель",
+        price: 380,
+        category: "main",
+        kind: "fish",
+        count: "350 г",
+        image: "images/.jpg"
+    },
+    
     {
         keyword: "orange-juice",
         name: "Апельсиновый сок",
@@ -72,5 +126,142 @@ const dishes = [
         category: "drink",
         count: "300 мл",
         image: "images/carrot.jpg"
+    },
+    {
+        keyword: "green-tea",
+        name: "Зеленый чай",
+        price: 80,
+        category: "drink",
+        kind: "hot",
+        count: "400 мл",
+        image: "images/.jpg"
+    },
+    {
+        keyword: "black-tea",
+        name: "Черный чай",
+        price: 80,
+        category: "drink",
+        kind: "hot",
+        count: "400 мл",
+        image: "images/.jpg"
+    },
+    {
+        keyword: "coffee",
+        name: "Кофе",
+        price: 150,
+        category: "drink",
+        kind: "hot",
+        count: "300 мл",
+        image: "images/.jpg"
+    },
+
+    {
+        keyword: "caesar-salad",
+        name: "Салат Цезарь",
+        price: 280,
+        category: "starter",
+        kind: "meat",
+        count: "250 г",
+        image: "images/.jpg"
+    },
+    {
+        keyword: "greek-salad",
+        name: "Греческий салат",
+        price: 220,
+        category: "starter",
+        kind: "veg",
+        count: "300 г",
+        image: "images/.jpg"
+    },
+    {
+        keyword: "shrimp-cocktail",
+        name: "Коктейль из креветок",
+        price: 350,
+        category: "starter",
+        kind: "fish",
+        count: "200 г",
+        image: "images/.jpg"
+    },
+    {
+        keyword: "caprese-salad",
+        name: "Салат Капрезе",
+        price: 240,
+        category: "starter",
+        kind: "veg",
+        count: "250 г",
+        image: "images/.jpg"
+    },
+    {
+        keyword: "vegetable-salad",
+        name: "Овощной салат",
+        price: 180,
+        category: "starter",
+        kind: "veg",
+        count: "300 г",
+        image: "images/.jpg"
+    },
+    {
+        keyword: "fruit-salad",
+        name: "Фруктовый салат",
+        price: 200,
+        category: "starter",
+        kind: "veg",
+        count: "350 г",
+        image: "images/.jpg"
+    },
+
+    {
+        keyword: "tiramisu",
+        name: "Тирамису",
+        price: 220,
+        category: "dessert",
+        kind: "small",
+        count: "150 г",
+        image: "images/.jpg"
+    },
+    {
+        keyword: "cheesecake",
+        name: "Чизкейк",
+        price: 250,
+        category: "dessert",
+        kind: "small",
+        count: "180 г",
+        image: "images/.jpg"
+    },
+    {
+        keyword: "chocolate-cake",
+        name: "Шоколадный торт",
+        price: 190,
+        category: "dessert",
+        kind: "small",
+        count: "200 г",
+        image: "images/.jpg"
+    },
+    {
+        keyword: "apple-pie",
+        name: "Яблочный пирог",
+        price: 280,
+        category: "dessert",
+        kind: "medium",
+        count: "300 г",
+        image: "images/.jpg"
+    },
+    {
+        keyword: "pancakes",
+        name: "Блины с вареньем",
+        price: 210,
+        category: "dessert",
+        kind: "medium",
+        count: "350 г",
+        image: "images/.jpg"
+    },
+    {
+        keyword: "ice-cream-platter",
+        name: "Ассорти мороженого",
+        price: 320,
+        category: "dessert",
+        kind: "large",
+        count: "500 г",
+        image: "images/.jpg"
     }
 ];
