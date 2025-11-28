@@ -25,6 +25,7 @@ function createFilters(category, filters) {
         const filterButton = document.createElement('button');
         filterButton.className = 'filter-btn';
         filterButton.setAttribute('data-kind', filter.value);
+        filterButton.setAttribute('data-category', category);
         filterButton.textContent = filter.label;
         filtersContainer.appendChild(filterButton);
     });
@@ -32,8 +33,17 @@ function createFilters(category, filters) {
     return filtersContainer;
 }
 
+//текущие активные фильтры для каждой категории
+let activeFilters = {
+    soup: null,
+    main: null,
+    drink: null,
+    starter: null,
+    dessert: null
+};
+
 //функция для отображения блюд по категориям с фильтрацией
-function displayDishes(filterKind = null, categoryType = null) {
+function displayDishes() {
     //сортируем блюда по алфавиту
     const sortedDishes = [...dishes].sort((a, b) => a.name.localeCompare(b.name));
     
@@ -51,17 +61,20 @@ function displayDishes(filterKind = null, categoryType = null) {
         container.innerHTML = '';
     });
     
-    //добавляем блюда в соответствующие категории
+    //добавляем блюда в соответствующие категории с учетом фильтров
     sortedDishes.forEach(dish => {
         const container = categories[dish.category];
         if (container) {
-            //если применен фильтр, показываем только соответствующие блюда
-            if (filterKind && categoryType === dish.category) {
-                if (dish.kind === filterKind) {
+            const activeFilter = activeFilters[dish.category];
+            
+            //если есть активный фильтр для этой категории, проверяем соответствие
+            if (activeFilter) {
+                if (dish.kind === activeFilter) {
                     const dishCard = createDishCard(dish);
                     container.appendChild(dishCard);
                 }
             } else {
+                //если фильтра нет, показываем все блюда
                 const dishCard = createDishCard(dish);
                 container.appendChild(dishCard);
             }
@@ -100,7 +113,8 @@ function initFilters() {
     
     //добавляем фильтры для каждой категории
     Object.keys(filterConfig).forEach(category => {
-        const section = document.getElementById(category === 'starter' ? 'starters' : category + 's');
+        const sectionId = category === 'starter' ? 'starters' : category + 's';
+        const section = document.getElementById(sectionId);
         if (section) {
             const filtersContainer = createFilters(category, filterConfig[category]);
             const dishesGrid = section.querySelector('.dishes-grid');
@@ -113,21 +127,28 @@ function initFilters() {
         if (e.target.classList.contains('filter-btn')) {
             const filterBtn = e.target;
             const filterKind = filterBtn.getAttribute('data-kind');
-            const category = filterBtn.closest('section').id.replace('s', '');
+            const category = filterBtn.getAttribute('data-category');
+            const section = filterBtn.closest('section');
             
             //убираем активный класс у всех фильтров в этой категории
-            const allFilters = filterBtn.parentElement.querySelectorAll('.filter-btn');
+            const allFilters = section.querySelectorAll('.filter-btn');
             allFilters.forEach(btn => btn.classList.remove('active'));
             
-            //если фильтр уже был активен, снимаем фильтрацию
-            if (filterBtn.classList.contains('active')) {
+            //проверяем, был ли этот фильтр уже активен
+            const wasActive = activeFilters[category] === filterKind;
+            
+            if (wasActive) {
+                //если фильтр уже был активен, снимаем фильтрацию
+                activeFilters[category] = null;
                 filterBtn.classList.remove('active');
-                displayDishes(null, null);
             } else {
-                //активируем фильтр и применяем фильтрацию
+                //активируем фильтр
+                activeFilters[category] = filterKind;
                 filterBtn.classList.add('active');
-                displayDishes(filterKind, category);
             }
+            
+            //обновляем отображение блюд
+            displayDishes();
         }
     });
 }
