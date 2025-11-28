@@ -4,6 +4,7 @@ const dishes = [
         name: "Гаспачо",
         price: 365,
         category: "soup",
+        kind: "veg",
         count: "350 мл",
         image: "images/gazpacho.jpg"
     },
@@ -12,6 +13,7 @@ const dishes = [
         name: "Норвежский суп",
         price: 270,
         category: "soup",
+        kind: "fish",
         count: "400 мл",
         image: "images/norwegian.jpg"
     },
@@ -20,6 +22,7 @@ const dishes = [
         name: "Грибной суп",
         price: 220,
         category: "soup",
+        kind: "veg",
         count: "380 мл",
         image: "images/mushroom.jpg"
     },
@@ -56,6 +59,7 @@ const dishes = [
         name: "Лазанья",
         price: 385,
         category: "main",
+        kind: "meat",
         count: "450 г",
         image: "images/lasagna.jpg"
     },
@@ -64,6 +68,7 @@ const dishes = [
         name: "Жареная картошка с грибами",
         price: 150,
         category: "main",
+        kind: "veg",
         count: "350 г",
         image: "images/potato.jpg"
     },
@@ -72,6 +77,7 @@ const dishes = [
         name: "Котлеты из курицы с картофельным пюре",
         price: 225,
         category: "main",
+        kind: "meat",
         count: "420 г",
         image: "images/chicken.jpg"
     },
@@ -108,6 +114,7 @@ const dishes = [
         name: "Апельсиновый сок",
         price: 120,
         category: "drink",
+        kind: "cold",
         count: "300 мл",
         image: "images/orange.jpg"
     },
@@ -116,6 +123,7 @@ const dishes = [
         name: "Яблочный сок",
         price: 90,
         category: "drink",
+        kind: "cold",
         count: "300 мл",
         image: "images/apple.jpg"
     },
@@ -124,6 +132,7 @@ const dishes = [
         name: "Морковный сок",
         price: 110,
         category: "drink",
+        kind: "cold",
         count: "300 мл",
         image: "images/carrot.jpg"
     },
@@ -252,7 +261,7 @@ const dishes = [
         price: 210,
         category: "dessert",
         kind: "medium",
-        count: "350 г",
+        count: "200 г",
         image: "images/pancakes.jpg"
     },
     {
@@ -261,7 +270,7 @@ const dishes = [
         price: 320,
         category: "dessert",
         kind: "large",
-        count: "500 г",
+        count: "300 г",
         image: "images/carrot-cake.jpg"
     }
 ];
