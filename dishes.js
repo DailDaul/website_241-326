@@ -30,7 +30,7 @@ const dishes = [
         category: "soup",
         kind: "fish",
         count: "400 мл",
-        image: "images/.jpg"
+        image: "images/salmon-soup.jpg"
     },
     {
         keyword: "chicken-soup",
@@ -39,7 +39,7 @@ const dishes = [
         category: "soup",
         kind: "meat",
         count: "380 мл",
-        image: "images/.jpg"
+        image: "images/chicken-soup.jpg"
     },
     {
         keyword: "beef-soup",
@@ -48,7 +48,7 @@ const dishes = [
         category: "soup",
         kind: "meat",
         count: "400 мл",
-        image: "images/.jpg"
+        image: "images/beef-soup.jpg"
     },
 
     {
@@ -82,7 +82,7 @@ const dishes = [
         category: "main",
         kind: "fish",
         count: "300 г",
-        image: "images/.jpg"
+        image: "images/salmon.jpg"
     },
     {
         keyword: "vegetable-stew",
@@ -91,7 +91,7 @@ const dishes = [
         category: "main",
         kind: "veg",
         count: "400 г",
-        image: "images/.jpg"
+        image: "images/vegetable-stew.jpg"
     },
     {
         keyword: "fried-trout",
@@ -100,7 +100,7 @@ const dishes = [
         category: "main",
         kind: "fish",
         count: "350 г",
-        image: "images/.jpg"
+        image: "images/trout.jpg"
     },
     
     {
@@ -134,7 +134,7 @@ const dishes = [
         category: "drink",
         kind: "hot",
         count: "400 мл",
-        image: "images/.jpg"
+        image: "images/green-tea.jpg"
     },
     {
         keyword: "black-tea",
@@ -143,7 +143,7 @@ const dishes = [
         category: "drink",
         kind: "hot",
         count: "400 мл",
-        image: "images/.jpg"
+        image: "images/black-tea.jpg"
     },
     {
         keyword: "coffee",
@@ -152,7 +152,7 @@ const dishes = [
         category: "drink",
         kind: "hot",
         count: "300 мл",
-        image: "images/.jpg"
+        image: "images/cpffee.jpg"
     },
 
     {
@@ -162,7 +162,7 @@ const dishes = [
         category: "starter",
         kind: "meat",
         count: "250 г",
-        image: "images/.jpg"
+        image: "images/caesar-salad.jpg"
     },
     {
         keyword: "greek-salad",
@@ -171,7 +171,7 @@ const dishes = [
         category: "starter",
         kind: "veg",
         count: "300 г",
-        image: "images/.jpg"
+        image: "images/greek-salad.jpg"
     },
     {
         keyword: "coleslaw-salad",
@@ -180,7 +180,7 @@ const dishes = [
         category: "starter",
         kind: "fish",
         count: "200 г",
-        image: "images/.jpg"
+        image: "images/coleslaw-salad.jpg"
     },
     {
         keyword: "caprese-salad",
@@ -189,7 +189,7 @@ const dishes = [
         category: "starter",
         kind: "veg",
         count: "250 г",
-        image: "images/.jpg"
+        image: "images/caprese-salad.jpg"
     },
     {
         keyword: "vegetable-salad",
@@ -198,7 +198,7 @@ const dishes = [
         category: "starter",
         kind: "veg",
         count: "300 г",
-        image: "images/.jpg"
+        image: "images/vegetable-salad.jpg"
     },
     {
         keyword: "fruit-salad",
@@ -207,7 +207,7 @@ const dishes = [
         category: "starter",
         kind: "veg",
         count: "350 г",
-        image: "images/.jpg"
+        image: "images/fruit-salad.jpg"
     },
 
     {
@@ -217,7 +217,7 @@ const dishes = [
         category: "dessert",
         kind: "small",
         count: "150 г",
-        image: "images/.jpg"
+        image: "images/tiramisu.jpg"
     },
     {
         keyword: "cheesecake",
@@ -226,7 +226,7 @@ const dishes = [
         category: "dessert",
         kind: "small",
         count: "180 г",
-        image: "images/.jpg"
+        image: "images/cheesecake.jpg"
     },
     {
         keyword: "chocolate-cake",
@@ -235,7 +235,7 @@ const dishes = [
         category: "dessert",
         kind: "small",
         count: "200 г",
-        image: "images/.jpg"
+        image: "images/chocolate-cake.jpg"
     },
     {
         keyword: "apple-pie",
@@ -244,7 +244,7 @@ const dishes = [
         category: "dessert",
         kind: "medium",
         count: "300 г",
-        image: "images/.jpg"
+        image: "images/apple-pie.jpg"
     },
     {
         keyword: "pancakes",
@@ -253,7 +253,7 @@ const dishes = [
         category: "dessert",
         kind: "medium",
         count: "350 г",
-        image: "images/.jpg"
+        image: "images/pancakes.jpg"
     },
     {
         keyword: "carrot-cake",
@@ -262,6 +262,6 @@ const dishes = [
         category: "dessert",
         kind: "large",
         count: "500 г",
-        image: "images/.jpg"
+        image: "images/carrot-cake.jpg"
     }
 ];
