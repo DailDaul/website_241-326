@@ -249,28 +249,18 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('OrderManager exists:', typeof orderManager !== 'undefined');
     
     // Даем время на загрузку всех скриптов
-    setTimeout(() => {
-        console.log('Initializing validation...');
+    function initializeWithRetry(attempt = 0) {
+    if (typeof orderManager !== 'undefined' && orderManager) {
+        console.log('OrderManager ready, setting up validation...');
         setupOrderValidation();
-        console.log('Order validation initialized');
-        
-        // Тест: проверяем что обработчик добавлен
-        const form = document.querySelector('.order-form');
-        if (form) {
-            console.log('Form event listeners:', form.getEventListeners ? form.getEventListeners('submit') : 'Cannot check');
-        }
-    }, 1500);
-});
+    } else if (attempt < 10) { // 10 попыток
+        console.log(`Waiting for OrderManager... attempt ${attempt + 1}`);
+        setTimeout(() => initializeWithRetry(attempt + 1), 300);
+    } else {
+        console.error('Failed to initialize validation: OrderManager not loaded');
+    }
+}
 
-// Добавим простой тест для проверки
-window.testValidation = function() {
-    console.log('=== MANUAL VALIDATION TEST ===');
-    const testOrder = {
-        soup: { name: 'Тестовый суп', price: 100 },
-        main: { name: 'Тестовое блюдо', price: 200 },
-        drink: { name: 'Тестовый напиток', price: 50 }
-    };
-    const result = validateOrder(testOrder);
-    console.log('Test validation result:', result);
-    showNotification('Тестовое уведомление: ' + (result.isValid ? 'Валидно' : result.message));
-};
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => initializeWithRetry(), 500);
+});
