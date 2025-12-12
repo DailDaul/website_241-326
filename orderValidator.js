@@ -120,13 +120,42 @@ function setupOrderValidation() {
         return;
     }
     
-    console.log('Setting up order validation...');
+    console.log('🚫 Блокируем стандартную отправку формы');
     
-    orderForm.addEventListener('submit', (e) => {
-        console.log('=== FORM SUBMIT EVENT ===');
-        
-        // ВСЕГДА предотвращаем отправку по умолчанию
+    // 1. Удаляем все старые обработчики
+    const formClone = orderForm.cloneNode(true);
+    orderForm.parentNode.replaceChild(formClone, orderForm);
+    
+    // 2. Вешаем наш главный обработчик
+    formClone.addEventListener('submit', function(e) {
+        console.log('🛑 СТОП: Форма пытается отправиться');
         e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        
+        // Вызываем нашу логику валидации
+        processOrderForm();
+        
+        return false;
+    }, true);
+    
+    // 3. Также вешаем на кнопку
+    const submitBtn = formClone.querySelector('.submit-btn');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            processOrderForm();
+            return false;
+        }, true);
+        
+        // Меняем type на button чтобы браузер не пытался отправить
+        submitBtn.type = 'button';
+    }
+    
+    // Функция обработки заказа
+    function processOrderForm() {
+        console.log('=== ОБРАБОТКА ЗАКАЗА ===');
         
         if (!orderManager) {
             console.error('Order manager not initialized');
@@ -183,12 +212,8 @@ function setupOrderValidation() {
             
             // Показываем уведомление об успехе
             showNotification(successMessage, true);
-            
-            // В демо-версии НЕ отправляем форму на сервер
-            // Если нужно тестировать отправку, раскомментируйте:
-            // setTimeout(() => orderForm.submit(), 2000);
         }
-    });
+    }
 }
 
 //инициализация с повторными попытками
