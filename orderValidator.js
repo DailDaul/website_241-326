@@ -152,9 +152,13 @@ function setupOrderValidation() {
 //инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
     //ждем инициализации orderManager
-    setTimeout(() => {
-        if (orderManager) {
+    const checkOrderManager = () => {
+        if (typeof orderManager !== 'undefined' && orderManager) {
             setupOrderValidation();
+        } else {
+            setTimeout(checkOrderManager, 100);
         }
-    }, 500);
+    };
+    
+    checkOrderManager();
 });
