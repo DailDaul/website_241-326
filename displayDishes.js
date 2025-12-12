@@ -22,6 +22,11 @@ function createDishCard(dish) {
         <button class="add-button">${isSelected ? 'Добавлено' : 'Добавить'}</button>
     `;
     
+    // Добавляем класс selected если блюдо выбрано
+    if (isSelected) {
+        dishItem.classList.add('selected');
+    }
+    
     return dishItem;
 }
 
@@ -99,6 +104,13 @@ function displayDishes() {
             }
         }
     });
+    
+    // ВЫЗЫВАЕМ ПОДСВЕТКУ ПОСЛЕ ОТОБРАЖЕНИЯ ВСЕХ КАРТОЧЕК
+    if (typeof orderManager !== 'undefined' && orderManager && orderManager.updateDishCardsHighlight) {
+        setTimeout(() => {
+            orderManager.updateDishCardsHighlight();
+        }, 50);
+    }
 }
 
 //функция для инициализации фильтров
@@ -223,11 +235,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Dishes loaded:', dishes.length);
         initFilters();
         displayDishes();
-        
-        // Если orderManager уже инициализирован, обновляем подсветку
-        if (orderManager && typeof orderManager.updateDishCardsHighlight === 'function') {
-            orderManager.updateDishCardsHighlight();
-        }
     } else {
         console.error('Dishes not loaded!');
         // Пробуем снова через небольшую задержку
