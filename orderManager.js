@@ -50,6 +50,9 @@ class OrderManager {
         //обновляем отображение заказа
         this.updateOrderDisplay();
         
+        // ОБНОВЛЯЕМ ПОДСВЕТКУ КАРТОЧЕК
+        this.updateDishCardsHighlight();
+        
         //обновляем отображение всех блюд для подсветки
         if (typeof displayDishes === 'function') {
             displayDishes();
@@ -193,4 +196,11 @@ let orderManager;
 
 document.addEventListener('DOMContentLoaded', () => {
     orderManager = new OrderManager();
+    
+    // Вызываем подсветку при загрузке (на случай, если есть сохраненные выборы)
+    setTimeout(() => {
+        if (orderManager.updateDishCardsHighlight) {
+            orderManager.updateDishCardsHighlight();
+        }
+    }, 500);
 });
