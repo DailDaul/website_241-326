@@ -172,6 +172,9 @@ function setupOrderValidation() {
     if (!orderForm) return;
     
     orderForm.addEventListener('submit', (e) => {
+        // ВАЖНО: предотвращаем отправку сразу для проверки
+        e.preventDefault();
+        
         if (!orderManager) {
             console.error('Order manager not initialized');
             return;
@@ -184,26 +187,27 @@ function setupOrderValidation() {
         const validation = validateOrder(orderData);
         
         if (!validation.isValid) {
-            //предотвращаем отправку формы
-            e.preventDefault();
-            
             //показываем уведомление
             showNotification(validation.message);
+            console.log('Validation failed:', validation.message);
+        } else {
+            //если заказ валиден, отправляем форму
+            console.log('Validation passed, submitting form...');
+            // Временно для теста показываем успешное уведомление
+            showNotification('Заказ успешно отправлен!');
+            // Раскомментировать для реальной отправки:
+            // orderForm.submit();
         }
-        //если заказ валиден, форма отправится нормально
     });
 }
 
 //инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
-    //ждем инициализации orderManager
-    const checkOrderManager = () => {
-        if (typeof orderManager !== 'undefined' && orderManager) {
-            setupOrderValidation();
-        } else {
-            setTimeout(checkOrderManager, 100);
-        }
-    };
+    console.log('DOM loaded, initializing validation...');
     
-    checkOrderManager();
+    //не ждем orderManager, сразу настраиваем
+    setTimeout(() => {
+        setupOrderValidation();
+        console.log('Order validation initialized');
+    }, 500);
 });
