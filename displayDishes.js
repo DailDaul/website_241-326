@@ -4,43 +4,24 @@ function createDishCard(dish) {
     dishItem.className = 'dish-item';
     dishItem.setAttribute('data-dish', dish.keyword);
     dishItem.setAttribute('data-kind', dish.kind);
+    dishItem.setAttribute('data-category', dish.category);
+    
+    // Проверяем, выбрано ли это блюдо
+    const isSelected = orderManager && orderManager.selectedDishes[dish.category]?.keyword === dish.keyword;
+    if (isSelected) {
+        dishItem.classList.add('selected');
+    }
     
     dishItem.innerHTML = `
         <img src="${dish.image}" alt="${dish.name}" class="dish-image">
         <p class="dish-name">${dish.name}</p>
         <p class="dish-weight">${dish.count}</p>
         <p class="dish-price">${dish.price}Р</p>
-        <button class="add-button">Добавить</button>
+        <button class="add-button">${isSelected ? 'Добавлено' : 'Добавить'}</button>
     `;
     
     return dishItem;
 }
-
-//функция для создания фильтров
-function createFilters(category, filters) {
-    const filtersContainer = document.createElement('div');
-    filtersContainer.className = 'filters';
-    
-    filters.forEach(filter => {
-        const filterButton = document.createElement('button');
-        filterButton.className = 'filter-btn';
-        filterButton.setAttribute('data-kind', filter.value);
-        filterButton.setAttribute('data-category', category);
-        filterButton.textContent = filter.label;
-        filtersContainer.appendChild(filterButton);
-    });
-    
-    return filtersContainer;
-}
-
-//текущие активные фильтры для каждой категории
-let activeFilters = {
-    soup: null,
-    main: null,
-    drink: null,
-    starter: null,
-    dessert: null
-};
 
 //функция для отображения блюд по категориям с фильтрацией
 function displayDishes() {
