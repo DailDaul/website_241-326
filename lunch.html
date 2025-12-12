@@ -10,6 +10,36 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="lunch.css">
 </head>
+
+    <script>
+    // Простой тест - добавляем красную тестовую кнопку
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            const testBtn = document.createElement('button');
+            testBtn.textContent = 'ТЕСТ: Кликни меня';
+            testBtn.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: red;
+                color: white;
+                padding: 15px;
+                border: none;
+                border-radius: 5px;
+                font-size: 16px;
+                cursor: pointer;
+                z-index: 9999;
+            `;
+            testBtn.onclick = function() {
+                alert('Тест работает! Значит JS загружается.');
+                console.log('Тестовая кнопка нажата');
+            };
+            document.body.appendChild(testBtn);
+            console.log('Тестовая кнопка добавлена');
+        }, 2000);
+    });
+</script>
+    
 <body>
     <header>
         <h1>Food Construct</h1>
