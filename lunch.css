@@ -16,6 +16,7 @@
     transition: all 0.3s;
     border: 2px solid transparent;
     height: 100%;
+    filter: drop-shadow(17px 19px 24px rgba(0, 0, 0, 0.13));
     min-height: 500px; /* Увеличена минимальная высота */
 }
 
