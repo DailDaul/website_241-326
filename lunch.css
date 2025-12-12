@@ -94,7 +94,6 @@
 /* Стили для выбранного блюда */
 .dish-item.selected {
     border: 3px solid #ff6b00;
-    background-color: #fff8f5;
     position: relative;
     transform: translateY(-5px);
     z-index: 1;
