@@ -98,7 +98,7 @@
     position: relative;
     transform: translateY(-5px);
     z-index: 1;
-    filter: drop-shadow(17px 19px 24px rgba(0, 0, 0, 0.13));
+    filter: drop-shadow(17px 19px 24px rgba(0, 0, 0, 0.2));
 }
 
 /* Улучшаем тень при наведении на обычные карточки */
