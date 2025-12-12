@@ -117,9 +117,11 @@ function initFilters() {
         
         if (section) {
             const filtersContainer = createFilters(category, filterConfig[category]);
-            const dishesGrid = section.querySelector('.dishes-grid');
-            if (dishesGrid) {
-                section.insertBefore(filtersContainer, dishesGrid);
+            const heading = section.querySelector('h2');
+            
+            //Вставляем фильтры ПОСЛЕ заголовка и ПЕРЕД контейнером с блюдами
+            if (heading && heading.nextElementSibling) {
+                section.insertBefore(filtersContainer, heading.nextElementSibling);
                 console.log(`Filters added to ${sectionId}`);
             }
         } else {
