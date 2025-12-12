@@ -132,3 +132,13 @@ let orderManager;
 document.addEventListener('DOMContentLoaded', () => {
     orderManager = new OrderManager();
 });
+
+getOrderData() {
+    return {
+        soup: this.selectedDishes.soup,
+        main: this.selectedDishes.main,
+        starter: this.selectedDishes.starter,
+        drink: this.selectedDishes.drink,
+        dessert: this.selectedDishes.dessert
+    };
+}
