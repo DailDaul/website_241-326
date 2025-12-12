@@ -98,20 +98,17 @@
     position: relative;
     transform: translateY(-5px);
     z-index: 1;
-    filter: drop-shadow(17px 19px 24px rgba(0, 0, 0, 0.2));
 }
 
 /* Улучшаем тень при наведении на обычные карточки */
 .dish-item:hover {
     border: 2px solid tomato;
     transform: translateY(-5px);
-    filter: drop-shadow(17px 19px 30px rgba(0, 0, 0, 0.2));
 }
 
 .dish-item.selected:hover {
     transform: translateY(-7px);
     border: 3px solid #ff8c42;
-    filter: drop-shadow(17px 19px 30px rgba(0, 0, 0, 0.2));
 }
 
 .dish-item.selected .dish-name {
