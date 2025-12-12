@@ -496,16 +496,14 @@
     object-fit: contain; /* Используем contain чтобы изображения не обрезались */
     transition: transform 0.3s ease;
     cursor: pointer;
-    /* Убираем оранжевую границу */
+    /* Убираем ВСЕ границы и фоны */
     border: none;
     padding: 0;
+    background-color: transparent; /* Прозрачный фон */
+    box-shadow: none; /* Убираем серую рамку */
     /* Уменьшаем размеры чтобы изображения полностью влезали */
-    width: 60px;
-    height: 60px;
-    /* Добавляем белый фон для прозрачных PNG */
-    background-color: #f8f8f8;
-    /* Добавляем легкую серую рамку для обозначения границы круга */
-    box-shadow: 0 0 0 1px #e0e0e0;
+    width: 50px;
+    height: 50px;
 }
 
 .combo-image:hover {
