@@ -118,6 +118,8 @@ function validateOrder(selectedDishes) {
 
 //функция для показа уведомления
 function showNotification(message) {
+    console.log('Showing notification:', message);
+    
     //удаляем предыдущие уведомления
     const oldNotification = document.querySelector('.notification-overlay');
     if (oldNotification) {
@@ -139,22 +141,13 @@ function showNotification(message) {
     `;
     
     document.body.appendChild(overlay);
+    console.log('Notification added to DOM');
     
     //обработчик для кнопки
     const okButton = overlay.querySelector('.notification-btn');
     okButton.addEventListener('click', () => {
+        console.log('Notification closed');
         overlay.remove();
-    });
-    
-    //обработчик для наведения на кнопку
-    okButton.addEventListener('mouseenter', () => {
-        okButton.style.backgroundColor = '#e55a00';
-        okButton.style.color = 'white';
-    });
-    
-    okButton.addEventListener('mouseleave', () => {
-        okButton.style.backgroundColor = '#ff6b00';
-        okButton.style.color = 'white';
     });
     
     //закрытие по клику вне уведомления
@@ -169,45 +162,57 @@ function showNotification(message) {
 function setupOrderValidation() {
     const orderForm = document.querySelector('.order-form');
     
-    if (!orderForm) return;
+    if (!orderForm) {
+        console.error('Order form not found!');
+        return;
+    }
+    
+    console.log('Setting up order validation...');
     
     orderForm.addEventListener('submit', (e) => {
-        // ВАЖНО: предотвращаем отправку сразу для проверки
+        console.log('Form submit triggered');
+        
+        // Предотвращаем отправку для проверки
         e.preventDefault();
         
         if (!orderManager) {
             console.error('Order manager not initialized');
+            showNotification('Ошибка: менеджер заказов не инициализирован');
             return;
         }
         
         //получаем текущий заказ
         const orderData = orderManager.getOrderData();
+        console.log('Order data:', orderData);
         
         //проверяем валидность
         const validation = validateOrder(orderData);
+        console.log('Validation result:', validation);
         
         if (!validation.isValid) {
             //показываем уведомление
             showNotification(validation.message);
-            console.log('Validation failed:', validation.message);
         } else {
-            //если заказ валиден, отправляем форму
-            console.log('Validation passed, submitting form...');
-            // Временно для теста показываем успешное уведомление
-            showNotification('Заказ успешно отправлен!');
-            // Раскомментировать для реальной отправки:
-            // orderForm.submit();
+            //если заказ валиден, показываем успешное сообщение и отправляем
+            console.log('Order is valid, submitting...');
+            showNotification('Заказ успешно отправлен! Отправляем форму...');
+            
+            // Отправляем форму через 2 секунды
+            setTimeout(() => {
+                console.log('Submitting form to:', orderForm.getAttribute('action'));
+                orderForm.submit();
+            }, 2000);
         }
     });
 }
 
 //инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded, initializing validation...');
+    console.log('DOMContentLoaded in orderValidator.js');
     
-    //не ждем orderManager, сразу настраиваем
+    // Инициализируем валидацию с задержкой
     setTimeout(() => {
         setupOrderValidation();
         console.log('Order validation initialized');
-    }, 500);
+    }, 1000);
 });
