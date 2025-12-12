@@ -7,9 +7,9 @@ function createDishCard(dish) {
     dishItem.setAttribute('data-category', dish.category);
     
     // Проверяем, выбрано ли это блюдо
-    const isSelected = orderManager && orderManager.selectedDishes[dish.category]?.keyword === dish.keyword;
-    if (isSelected) {
-        dishItem.classList.add('selected');
+    let isSelected = false;
+    if (orderManager && orderManager.selectedDishes) {
+        isSelected = orderManager.selectedDishes[dish.category]?.keyword === dish.keyword;
     }
     
     dishItem.innerHTML = `
@@ -23,9 +23,41 @@ function createDishCard(dish) {
     return dishItem;
 }
 
+//функция для создания фильтров
+function createFilters(category, filters) {
+    const filtersContainer = document.createElement('div');
+    filtersContainer.className = 'filters';
+    
+    filters.forEach(filter => {
+        const filterButton = document.createElement('button');
+        filterButton.className = 'filter-btn';
+        filterButton.setAttribute('data-kind', filter.value);
+        filterButton.setAttribute('data-category', category);
+        filterButton.textContent = filter.label;
+        filtersContainer.appendChild(filterButton);
+    });
+    
+    return filtersContainer;
+}
+
+//текущие активные фильтры для каждой категории
+let activeFilters = {
+    soup: null,
+    main: null,
+    drink: null,
+    starter: null,
+    dessert: null
+};
+
 //функция для отображения блюд по категориям с фильтрацией
 function displayDishes() {
     console.log('Displaying dishes with filters:', activeFilters);
+    
+    // Проверяем, что dishes существует
+    if (!dishes || !Array.isArray(dishes)) {
+        console.error('Dishes array is not defined or empty');
+        return;
+    }
     
     //сортируем блюда по алфавиту
     const sortedDishes = [...dishes].sort((a, b) => a.name.localeCompare(b.name));
@@ -183,6 +215,36 @@ function initFilters() {
 //запускаем отображение при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM loaded, initializing...');
-    displayDishes();
-    initFilters();
+    
+    // Проверяем, что dishes загружен
+    if (typeof dishes !== 'undefined') {
+        console.log('Dishes loaded:', dishes.length);
+        initFilters();
+        displayDishes();
+        
+        // Если orderManager уже инициализирован, обновляем подсветку
+        if (orderManager && typeof orderManager.updateDishCardsHighlight === 'function') {
+            orderManager.updateDishCardsHighlight();
+        }
+    } else {
+        console.error('Dishes not loaded!');
+        // Пробуем снова через небольшую задержку
+        setTimeout(() => {
+            if (typeof dishes !== 'undefined') {
+                initFilters();
+                displayDishes();
+            } else {
+                console.error('Failed to load dishes after retry');
+            }
+        }, 500);
+    }
 });
+
+// Экспортируем функции для использования в других файлах
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        displayDishes,
+        initFilters,
+        activeFilters
+    };
+}
