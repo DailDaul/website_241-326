@@ -179,7 +179,7 @@
             <h2>Сделать заказ</h2>
             
             <!-- ИЗМЕНЕНИЕ: div на form с правильными атрибутами -->
-            <form class="order-form" method="POST" action="https://httpbin.org/post">
+            <div class="order-form">
                 <div class="form-columns">
                     <!-- Левая колонка: Ваш заказ -->
                     <div class="order-block">
@@ -254,7 +254,7 @@
                         <input type="hidden" id="order-total-price" name="total_price">
                         
                         <div class="form-buttons">
-                            <button type="submit" class="submit-btn">Отправить заказ</button>
+                            <button type="button" class="submit-btn">Отправить заказ</button>
                         </div>
                     </div>
                 </div>
