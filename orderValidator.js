@@ -117,7 +117,7 @@ function validateOrder(selectedDishes) {
 }
 
 //функция для показа уведомления
-function showNotification(message) {
+function showNotification(message, isSuccess = false) {
     console.log('Showing notification:', message);
     
     //удаляем предыдущие уведомления
@@ -130,10 +130,12 @@ function showNotification(message) {
     const overlay = document.createElement('div');
     overlay.className = 'notification-overlay';
     
+    const title = isSuccess ? 'Заказ отправлен!' : 'Неполный заказ';
+    
     overlay.innerHTML = `
         <div class="notification">
             <div class="notification-content">
-                <h3>Неполный заказ</h3>
+                <h3>${title}</h3>
                 <p>${message}</p>
                 <button class="notification-btn">Окей</button>
             </div>
@@ -148,6 +150,17 @@ function showNotification(message) {
     okButton.addEventListener('click', () => {
         console.log('Notification closed');
         overlay.remove();
+        
+        // Если это успешное уведомление, отправляем форму после закрытия
+        if (isSuccess) {
+            setTimeout(() => {
+                const orderForm = document.querySelector('.order-form');
+                if (orderForm) {
+                    console.log('Submitting form...');
+                    orderForm.submit();
+                }
+            }, 300);
+        }
     });
     
     //закрытие по клику вне уведомления
@@ -167,10 +180,10 @@ function setupOrderValidation() {
         return;
     }
     
-    console.log('Setting up order validation...');
+    console.log('Setting up order validation on form:', orderForm);
     
     orderForm.addEventListener('submit', (e) => {
-        console.log('Form submit triggered');
+        console.log('=== FORM SUBMIT EVENT TRIGGERED ===');
         
         // Предотвращаем отправку для проверки
         e.preventDefault();
@@ -183,36 +196,81 @@ function setupOrderValidation() {
         
         //получаем текущий заказ
         const orderData = orderManager.getOrderData();
-        console.log('Order data:', orderData);
+        console.log('Current order data:', orderData);
         
         //проверяем валидность
         const validation = validateOrder(orderData);
         console.log('Validation result:', validation);
         
         if (!validation.isValid) {
-            //показываем уведомление
-            showNotification(validation.message);
+            //показываем уведомление об ошибке
+            showNotification(validation.message, false);
         } else {
-            //если заказ валиден, показываем успешное сообщение и отправляем
-            console.log('Order is valid, submitting...');
-            showNotification('Заказ успешно отправлен! Отправляем форму...');
+            //если заказ валиден, показываем успешное сообщение
+            console.log('Order is valid!');
             
-            // Отправляем форму через 2 секунды
-            setTimeout(() => {
-                console.log('Submitting form to:', orderForm.getAttribute('action'));
-                orderForm.submit();
-            }, 2000);
+            // Собираем данные для отправки
+            const formData = {
+                name: document.getElementById('name')?.value || '',
+                email: document.getElementById('email')?.value || '',
+                phone: document.getElementById('phone')?.value || '',
+                address: document.getElementById('address')?.value || '',
+                soup: orderData.soup?.name || '',
+                main: orderData.main?.name || '',
+                starter: orderData.starter?.name || '',
+                drink: orderData.drink?.name || '',
+                dessert: orderData.dessert?.name || '',
+                total: calculateTotal(orderData)
+            };
+            
+            console.log('Form data to submit:', formData);
+            
+            // Показываем уведомление об успехе
+            showNotification('Ваш заказ успешно оформлен! Отправляем данные...', true);
         }
     });
 }
 
+// Вспомогательная функция для расчета общей суммы
+function calculateTotal(orderData) {
+    let total = 0;
+    Object.values(orderData).forEach(dish => {
+        if (dish && dish.price) {
+            total += dish.price;
+        }
+    });
+    return total;
+}
+
 //инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOMContentLoaded in orderValidator.js');
+    console.log('=== DOMContentLoaded in orderValidator.js ===');
+    console.log('Form element:', document.querySelector('.order-form'));
+    console.log('OrderManager exists:', typeof orderManager !== 'undefined');
     
-    // Инициализируем валидацию с задержкой
+    // Даем время на загрузку всех скриптов
     setTimeout(() => {
+        console.log('Initializing validation...');
         setupOrderValidation();
         console.log('Order validation initialized');
-    }, 1000);
+        
+        // Тест: проверяем что обработчик добавлен
+        const form = document.querySelector('.order-form');
+        if (form) {
+            console.log('Form event listeners:', form.getEventListeners ? form.getEventListeners('submit') : 'Cannot check');
+        }
+    }, 1500);
 });
+
+// Добавим простой тест для проверки
+window.testValidation = function() {
+    console.log('=== MANUAL VALIDATION TEST ===');
+    const testOrder = {
+        soup: { name: 'Тестовый суп', price: 100 },
+        main: { name: 'Тестовое блюдо', price: 200 },
+        drink: { name: 'Тестовый напиток', price: 50 }
+    };
+    const result = validateOrder(testOrder);
+    console.log('Test validation result:', result);
+    showNotification('Тестовое уведомление: ' + (result.isValid ? 'Валидно' : result.message));
+};
