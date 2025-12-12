@@ -315,54 +315,82 @@
     color: white;
 }
 
-/* Стили для комбо-ланчей */
+/* Стили для комбо-ланчей (компактный вариант) */
 .combo-section {
-    margin-top: 60px;
-    padding-top: 40px;
-    border-top: 2px solid #ff6b00;
+    margin-bottom: 40px;
 }
 
 .combo-section h2 {
-    font-size: 32px;
-    margin-bottom: 30px;
+    font-size: 28px;
+    margin-bottom: 25px;
     text-align: center;
 }
 
 .combo-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-    max-width: 1200px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    max-width: 100%;
     margin: 0 auto;
 }
 
 .combo-item {
+    flex: 1;
+    min-width: 180px;
+    max-width: 220px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
-    padding: 25px;
+    padding: 20px 15px;
     background: white;
-    border-radius: 15px;
-    filter: drop-shadow(0px 4px 15px rgba(0, 0, 0, 0.1));
-    transition: transform 0.3s;
+    border-radius: 12px;
+    filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.1));
+    transition: all 0.3s;
 }
 
 .combo-item:hover {
     transform: translateY(-5px);
+    filter: drop-shadow(0px 6px 15px rgba(0, 0, 0, 0.15));
+}
+
+.combo-header {
+    text-align: center;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.combo-header h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.combo-price {
+    font-size: 16px;
+    color: #ff6b00;
+    font-weight: 500;
+    margin: 0;
+}
+
+.combo-dishes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 15px;
 }
 
 .combo-dish {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    width: 100%;
+    gap: 8px;
 }
 
 .combo-image {
-    width: 120px;
-    height: 120px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     object-fit: cover;
     transition: transform 0.3s ease;
@@ -370,113 +398,87 @@
 }
 
 .combo-image:hover {
-    transform: translateY(-10px) scale(1.1);
+    transform: translateY(-5px) scale(1.1);
 }
 
 .combo-dish p {
-    font-size: 16px;
+    font-size: 12px;
     font-weight: 500;
     text-align: center;
     margin: 0;
+    line-height: 1.2;
 }
 
 .combo-info {
-    font-size: 14px;
+    font-size: 11px;
     color: #666;
     margin-top: 10px;
     font-style: italic;
     text-align: center;
 }
 
-/* Стили для уведомлений */
-.notification-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.notification {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    max-width: 400px;
-    width: 90%;
-    text-align: center;
-    animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
-    from { 
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-    to { 
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-.notification h3 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #333;
-}
-
-.notification p {
-    font-size: 16px;
-    margin-bottom: 25px;
-    color: #666;
-    line-height: 1.5;
-}
-
-.notification-btn {
-    padding: 12px 30px;
-    background: #ff6b00;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-family: 'Oswald', sans-serif;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.notification-btn:hover {
-    background: #e55a00;
-    transform: translateY(-2px);
-}
-
 /* Адаптивность для комбо-блока */
-@media (max-width: 900px) {
-    .combo-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 600px) {
-    .combo-container {
-        grid-template-columns: 1fr;
-    }
-    
+@media (max-width: 1100px) {
     .combo-item {
-        padding: 20px;
+        min-width: 160px;
+        max-width: 180px;
     }
     
     .combo-image {
-        width: 100px;
-        height: 100px;
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 900px) {
+    .combo-container {
+        gap: 15px;
+    }
+    
+    .combo-item {
+        min-width: 140px;
+        max-width: 160px;
+        padding: 15px 10px;
+    }
+    
+    .combo-header h3 {
+        font-size: 16px;
+    }
+    
+    .combo-price {
+        font-size: 14px;
+    }
+    
+    .combo-image {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .combo-dish p {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 700px) {
+    .combo-container {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    
+    .combo-item {
+        min-width: 45%;
+        max-width: 48%;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .combo-item {
+        min-width: 100%;
+        max-width: 100%;
+    }
+    
+    .combo-container {
+        gap: 15px;
     }
 }
