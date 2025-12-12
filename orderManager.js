@@ -33,28 +33,28 @@ class OrderManager {
     }
     
     selectDish(dishKeyword) {
-        const dish = dishes.find(d => d.keyword === dishKeyword);
-        if (!dish) return;
-        
-        //проверяем, было ли это блюдо уже выбрано
-        const wasSelected = this.selectedDishes[dish.category]?.keyword === dishKeyword;
-        
-        //если блюдо уже выбрано, снимаем выбор
-        if (wasSelected) {
-            this.selectedDishes[dish.category] = null;
-        } else {
-            //иначе выбираем новое блюдо
-            this.selectedDishes[dish.category] = dish;
-        }
-        
-        //обновляем отображение заказа
-        this.updateOrderDisplay();
-        
-        //обновляем отображение всех блюд для подсветки
-        if (typeof displayDishes === 'function') {
-            displayDishes();
-        }
+    const dish = dishes.find(d => d.keyword === dishKeyword);
+    if (!dish) return;
+    
+    //проверяем, было ли это блюдо уже выбрано
+    const wasSelected = this.selectedDishes[dish.category]?.keyword === dishKeyword;
+    
+    //если блюдо уже выбрано, снимаем выбор
+    if (wasSelected) {
+        this.selectedDishes[dish.category] = null;
+    } else {
+        //иначе выбираем новое блюдо
+        this.selectedDishes[dish.category] = dish;
     }
+    
+    //обновляем отображение заказа
+    this.updateOrderDisplay();
+    
+    //обновляем подсветку на всех карточках
+    if (typeof displayDishes === 'function') {
+        displayDishes(); // Перерисовываем все карточки
+    }
+}
     
     updateOrderDisplay() {
         const orderBlocks = {
@@ -194,3 +194,12 @@ let orderManager;
 document.addEventListener('DOMContentLoaded', () => {
     orderManager = new OrderManager();
 });
+
+init() {
+    this.setupEventListeners();
+    this.updateOrderDisplay();
+    // Обновляем отображение блюд при инициализации
+    if (typeof displayDishes === 'function') {
+        setTimeout(() => displayDishes(), 100);
+    }
+}
