@@ -13,7 +13,9 @@ function createDishCard(dish) {
     }
     
     dishItem.innerHTML = `
-        <img src="${dish.image}" alt="${dish.name}" class="dish-image">
+        <div class="dish-image-container">
+            <img src="${dish.image}" alt="${dish.name}" class="dish-image">
+        </div>
         <p class="dish-name">${dish.name}</p>
         <p class="dish-weight">${dish.count}</p>
         <p class="dish-price">${dish.price}Р</p>
