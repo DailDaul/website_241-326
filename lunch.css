@@ -12,7 +12,6 @@
     padding: 30px 40px; /* 30px сверху и снизу, 40px справа и слева */
     border-radius: 35px; /* Радиус закругления */
     background-color: white; /* Цвет фона */
-    filter: drop-shadow(17px 19px 24px rgba(0, 0, 0, 0.13)); /* Тень */
     cursor: pointer; /* Вид курсора */
     transition: all 0.3s;
     border: 2px solid transparent;
