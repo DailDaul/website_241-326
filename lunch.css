@@ -2,6 +2,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
+    margin-top: 20px;
 }
 
 .dish-item {
@@ -12,7 +13,7 @@
     background-color: white;
     filter: drop-shadow(17px 19px 24px rgba(0, 0, 0, 0.13));
     cursor: pointer;
-    transition: border 0.3s;
+    transition: all 0.3s;
     border: 2px solid transparent;
 }
 
@@ -20,7 +21,17 @@
     border: 2px solid tomato;
 }
 
+.dish-item.selected {
+    border: 2px solid #ff6b00;
+    background-color: #fff8f5;
+}
+
 .dish-item:hover .add-button {
+    background-color: #ff6b00;
+    color: white;
+}
+
+.dish-item.selected .add-button {
     background-color: #ff6b00;
     color: white;
 }
@@ -69,51 +80,7 @@
     color: white;
 }
 
-/* ≤800px */
-@media (max-width: 800px) {
-    .dishes-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    nav {
-        justify-content: space-between; /* Равное расстояние между элементами */
-    }
-    
-    h1 {
-        text-align: center;
-    }
-    
-    h2 {
-        text-align: center;
-    }
-}
-
-/* ≤600px */
-@media (max-width: 600px) {
-    .dishes-grid {
-        grid-template-columns: 1fr; /* 1 колонка */
-    }
-    
-    nav {
-        flex-direction: column; /* Вертикальное направление */
-        align-items: center; /* Выравнивание по центру поперечной оси */
-    }
-    
-    nav a {
-        font-size: 22px; /* Увеличить шрифт на 4px */
-    }
-    
-    h1 {
-        text-align: center;
-    }
-    
-    h2 {
-        text-align: center;
-    }
-}
-
-/* Стили для блока заказа на странице ланча */
-
+/* Стили для блока заказа */
 .order-section {
     margin-top: 60px;
     padding-top: 40px;
@@ -131,20 +98,14 @@
     margin: 0 auto;
 }
 
-.form-columns {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-}
-
-.order-block, .client-block {
+.client-block {
     background: white;
     padding: 30px;
     border-radius: 15px;
     filter: drop-shadow(0px 4px 15px rgba(0, 0, 0, 0.1));
 }
 
-.order-block h3, .client-block h3 {
+.client-block h3 {
     font-size: 24px;
     margin-bottom: 25px;
     color: #333;
@@ -166,8 +127,7 @@
 
 .form-group input[type="text"],
 .form-group input[type="email"],
-.form-group input[type="tel"],
-.form-group select {
+.form-group input[type="tel"] {
     width: 100%;
     padding: 12px 15px;
     border: 2px solid #ddd;
@@ -177,8 +137,7 @@
     transition: border-color 0.3s;
 }
 
-.form-group input:focus,
-.form-group select:focus {
+.form-group input:focus {
     outline: none;
     border-color: #ff6b00;
 }
@@ -315,9 +274,9 @@
     color: white;
 }
 
-/* Стили для комбо-ланчей (компактный вариант) */
+/* Стили для комбо-ланчей */
 .combo-section {
-    margin-bottom: 40px;
+    margin-bottom: 50px;
 }
 
 .combo-section h2 {
@@ -327,18 +286,14 @@
 }
 
 .combo-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
     gap: 20px;
     max-width: 100%;
     margin: 0 auto;
 }
 
 .combo-item {
-    flex: 1;
-    min-width: 180px;
-    max-width: 220px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -394,11 +349,10 @@
     border-radius: 50%;
     object-fit: cover;
     transition: transform 0.3s ease;
-    cursor: pointer;
 }
 
 .combo-image:hover {
-    transform: translateY(-5px) scale(1.1);
+    transform: scale(1.1);
 }
 
 .combo-dish p {
@@ -417,7 +371,27 @@
     text-align: center;
 }
 
-/* Адаптивность для комбо-блока */
+/* Медиа-запросы */
+@media (max-width: 800px) {
+    .dishes-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .combo-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .dishes-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .combo-container {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 1100px) {
     .combo-item {
         min-width: 160px;
@@ -461,24 +435,14 @@
 
 @media (max-width: 700px) {
     .combo-container {
-        flex-wrap: wrap;
+        grid-template-columns: repeat(2, 1fr);
         gap: 12px;
-    }
-    
-    .combo-item {
-        min-width: 45%;
-        max-width: 48%;
-        padding: 15px;
     }
 }
 
 @media (max-width: 480px) {
-    .combo-item {
-        min-width: 100%;
-        max-width: 100%;
-    }
-    
     .combo-container {
+        grid-template-columns: 1fr;
         gap: 15px;
     }
 }
