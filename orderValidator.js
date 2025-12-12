@@ -1,13 +1,11 @@
 //определяем допустимые комбинации ланчей
 const validCombos = [
-    { soup: true, main: true, starter: true, drink: true },      // Комбо 1
-    { soup: true, main: true, starter: false, drink: true },     // Комбо 2
-    { soup: true, main: false, starter: true, drink: true },     // Комбо 3
-    { soup: false, main: true, starter: true, drink: true },     // Комбо 4
-    { soup: false, main: true, starter: false, drink: true }     // Комбо 5
+    { soup: true, main: true, starter: true, drink: true },
+    { soup: true, main: true, starter: false, drink: true },
+    { soup: true, main: false, starter: true, drink: true },
+    { soup: false, main: true, starter: true, drink: true },
+    { soup: false, main: true, starter: false, drink: true }
 ];
-
-//десерт всегда опциональный, его наличие не проверяем
 
 //функция для проверки валидности заказа
 function validateOrder(selectedDishes) {
@@ -28,92 +26,44 @@ function validateOrder(selectedDishes) {
             }
         }
         if (match) {
-            return { isValid: true, message: null, type: null };
+            return { isValid: true, message: null };
         }
     }
     
     // Определяем тип уведомления
     let message = '';
-    let type = '';
     
     // 1. Ничего не выбрано
     if (!currentCombo.soup && !currentCombo.main && !currentCombo.starter && !currentCombo.drink) {
         message = 'Ничего не выбрано. Выберите блюда для заказа';
-        type = 'empty';
     }
     // 2. Выбраны все необходимые блюда, кроме напитка
-    else if ((currentCombo.soup && currentCombo.main && currentCombo.starter && !currentCombo.drink) || // Комбо 1 без напитка
-             (currentCombo.soup && currentCombo.main && !currentCombo.starter && !currentCombo.drink) || // Комбо 2 без напитка
-             (currentCombo.soup && !currentCombo.main && currentCombo.starter && !currentCombo.drink) || // Комбо 3 без напитка
-             (!currentCombo.soup && currentCombo.main && currentCombo.starter && !currentCombo.drink) || // Комбо 4 без напитка
-             (!currentCombo.soup && currentCombo.main && !currentCombo.starter && !currentCombo.drink)) { // Комбо 5 без напитка
+    else if ((currentCombo.soup && currentCombo.main && currentCombo.starter && !currentCombo.drink) ||
+             (currentCombo.soup && currentCombo.main && !currentCombo.starter && !currentCombo.drink) ||
+             (currentCombo.soup && !currentCombo.main && currentCombo.starter && !currentCombo.drink) ||
+             (!currentCombo.soup && currentCombo.main && currentCombo.starter && !currentCombo.drink) ||
+             (!currentCombo.soup && currentCombo.main && !currentCombo.starter && !currentCombo.drink)) {
         message = 'Выберите напиток';
-        type = 'missing_drink';
     }
     // 3. Выбран суп, но не выбраны главное блюдо и салат/стартер
     else if (currentCombo.soup && !currentCombo.main && !currentCombo.starter) {
         message = 'Выберите главное блюдо/салат/стартер';
-        type = 'missing_main_or_starter';
     }
     // 4. Выбран салат/стартер, но не выбраны суп и главное блюдо
     else if (!currentCombo.soup && !currentCombo.main && currentCombo.starter) {
         message = 'Выберите суп или главное блюдо';
-        type = 'missing_soup_or_main';
     }
     // 5. Выбран только напиток или десерт
     else if ((!currentCombo.soup && !currentCombo.main && !currentCombo.starter) && 
              (currentCombo.drink || selectedDishes.dessert)) {
         message = 'Выберите главное блюдо';
-        type = 'missing_main';
     }
-    // Другие комбинации - находим недостающие блюда
+    // Другие комбинации
     else {
-        //проверяем каждый возможный комбо и находим самый близкий
-        let bestMatch = null;
-        let minMissing = Infinity;
-        
-        for (const combo of validCombos) {
-            let missingCount = 0;
-            for (const key in combo) {
-                if (combo[key] && !currentCombo[key]) {
-                    missingCount++;
-                }
-            }
-            
-            if (missingCount < minMissing) {
-                minMissing = missingCount;
-                bestMatch = combo;
-            }
-        }
-        
-        //формируем список недостающих блюд
-        const missing = [];
-        const dishNames = {
-            soup: 'суп',
-            main: 'главное блюдо',
-            starter: 'салат или стартер',
-            drink: 'напиток'
-        };
-        
-        if (bestMatch) {
-            for (const key in bestMatch) {
-                if (bestMatch[key] && !currentCombo[key]) {
-                    missing.push(dishNames[key]);
-                }
-            }
-        }
-        
-        if (missing.length === 1) {
-            message = `Вы не добавили ${missing[0]}. Выберите один из доступных вариантов комбо-ланча.`;
-        } else if (missing.length === 2) {
-            message = `Вы не добавили ${missing[0]} и ${missing[1]}. Выберите один из доступных вариантов комбо-ланча.`;
-        } else {
-            message = 'Вы не добавили несколько блюд. Выберите один из доступных вариантов комбо-ланча.';
-        }
-        type = 'custom';
+        message = 'Выберите один из доступных вариантов комбо-ланча.';
     }
     
-    return { isValid: false, message, type };
+    return { isValid: false, message };
 }
 
 //функция для показа уведомления
@@ -130,7 +80,7 @@ function showNotification(message, isSuccess = false) {
     const overlay = document.createElement('div');
     overlay.className = 'notification-overlay';
     
-    const title = isSuccess ? 'Заказ отправлен!' : 'Неполный заказ';
+    const title = isSuccess ? 'Заказ отправлен!' : 'Внимание';
     
     overlay.innerHTML = `
         <div class="notification">
@@ -143,24 +93,12 @@ function showNotification(message, isSuccess = false) {
     `;
     
     document.body.appendChild(overlay);
-    console.log('Notification added to DOM');
     
     //обработчик для кнопки
     const okButton = overlay.querySelector('.notification-btn');
     okButton.addEventListener('click', () => {
         console.log('Notification closed');
         overlay.remove();
-        
-        // Если это успешное уведомление, отправляем форму после закрытия
-        if (isSuccess) {
-            setTimeout(() => {
-                const orderForm = document.querySelector('.order-form');
-                if (orderForm) {
-                    console.log('Submitting form...');
-                    orderForm.submit();
-                }
-            }, 300);
-        }
     });
     
     //закрытие по клику вне уведомления
@@ -169,6 +107,8 @@ function showNotification(message, isSuccess = false) {
             overlay.remove();
         }
     });
+    
+    return overlay;
 }
 
 //функция для проверки заказа при отправке формы
@@ -180,17 +120,28 @@ function setupOrderValidation() {
         return;
     }
     
-    console.log('Setting up order validation on form:', orderForm);
+    console.log('Setting up order validation...');
     
     orderForm.addEventListener('submit', (e) => {
-        console.log('=== FORM SUBMIT EVENT TRIGGERED ===');
+        console.log('=== FORM SUBMIT EVENT ===');
         
-        // Предотвращаем отправку для проверки
+        // ВСЕГДА предотвращаем отправку по умолчанию
         e.preventDefault();
         
         if (!orderManager) {
             console.error('Order manager not initialized');
-            showNotification('Ошибка: менеджер заказов не инициализирован');
+            showNotification('Ошибка инициализации заказа');
+            return;
+        }
+        
+        // Проверяем заполнение полей формы
+        const name = document.getElementById('name')?.value.trim();
+        const email = document.getElementById('email')?.value.trim();
+        const phone = document.getElementById('phone')?.value.trim();
+        const address = document.getElementById('address')?.value.trim();
+        
+        if (!name || !email || !phone || !address) {
+            showNotification('Заполните все поля формы: имя, email, телефон и адрес');
             return;
         }
         
@@ -209,58 +160,68 @@ function setupOrderValidation() {
             //если заказ валиден, показываем успешное сообщение
             console.log('Order is valid!');
             
-            // Собираем данные для отправки
-            const formData = {
-                name: document.getElementById('name')?.value || '',
-                email: document.getElementById('email')?.value || '',
-                phone: document.getElementById('phone')?.value || '',
-                address: document.getElementById('address')?.value || '',
-                soup: orderData.soup?.name || '',
-                main: orderData.main?.name || '',
-                starter: orderData.starter?.name || '',
-                drink: orderData.drink?.name || '',
-                dessert: orderData.dessert?.name || '',
-                total: calculateTotal(orderData)
-            };
+            // Собираем данные для отображения
+            const selectedItems = [];
+            if (orderData.soup) selectedItems.push(orderData.soup.name);
+            if (orderData.main) selectedItems.push(orderData.main.name);
+            if (orderData.starter) selectedItems.push(orderData.starter.name);
+            if (orderData.drink) selectedItems.push(orderData.drink.name);
+            if (orderData.dessert) selectedItems.push(orderData.dessert.name);
             
-            console.log('Form data to submit:', formData);
+            const totalPrice = selectedItems.reduce((sum, item) => {
+                const dish = Object.values(orderData).find(d => d && d.name === item);
+                return sum + (dish ? dish.price : 0);
+            }, 0);
+            
+            const successMessage = `
+                Ваш заказ успешно оформлен!<br><br>
+                <strong>Вы заказали:</strong><br>
+                ${selectedItems.map(item => `• ${item}`).join('<br>')}<br><br>
+                <strong>Общая стоимость:</strong> ${totalPrice}Р<br><br>
+                <small>В демо-версии форма не отправляется на сервер.</small>
+            `;
             
             // Показываем уведомление об успехе
-            showNotification('Ваш заказ успешно оформлен! Отправляем данные...', true);
+            showNotification(successMessage, true);
+            
+            // В демо-версии НЕ отправляем форму на сервер
+            // Если нужно тестировать отправку, раскомментируйте:
+            // setTimeout(() => orderForm.submit(), 2000);
         }
     });
 }
 
-// Вспомогательная функция для расчета общей суммы
-function calculateTotal(orderData) {
-    let total = 0;
-    Object.values(orderData).forEach(dish => {
-        if (dish && dish.price) {
-            total += dish.price;
-        }
-    });
-    return total;
-}
-
-//инициализация при загрузке страницы
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('=== DOMContentLoaded in orderValidator.js ===');
-    console.log('Form element:', document.querySelector('.order-form'));
-    console.log('OrderManager exists:', typeof orderManager !== 'undefined');
+//инициализация с повторными попытками
+function initializeValidation() {
+    const maxAttempts = 10;
+    let attempts = 0;
     
-    // Даем время на загрузку всех скриптов
-    function initializeWithRetry(attempt = 0) {
-    if (typeof orderManager !== 'undefined' && orderManager) {
-        console.log('OrderManager ready, setting up validation...');
-        setupOrderValidation();
-    } else if (attempt < 10) { // 10 попыток
-        console.log(`Waiting for OrderManager... attempt ${attempt + 1}`);
-        setTimeout(() => initializeWithRetry(attempt + 1), 300);
-    } else {
-        console.error('Failed to initialize validation: OrderManager not loaded');
-    }
+    const tryInitialize = () => {
+        if (typeof orderManager !== 'undefined' && orderManager) {
+            console.log('OrderManager found, setting up validation...');
+            setupOrderValidation();
+        } else if (attempts < maxAttempts) {
+            attempts++;
+            console.log(`Waiting for OrderManager... attempt ${attempts}`);
+            setTimeout(tryInitialize, 300);
+        } else {
+            console.error('Failed to initialize: OrderManager not loaded');
+            // Все равно настраиваем валидацию, но с fallback
+            setTimeout(setupOrderValidation, 500);
+        }
+    };
+    
+    tryInitialize();
 }
 
+// Запускаем инициализацию
 document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => initializeWithRetry(), 500);
+    console.log('DOM loaded, starting validation initialization...');
+    setTimeout(initializeValidation, 500);
 });
+
+// Экспортируем функции для тестирования
+if (typeof window !== 'undefined') {
+    window.validateOrder = validateOrder;
+    window.showNotification = showNotification;
+}
