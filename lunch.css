@@ -482,24 +482,30 @@
     margin-bottom: 15px;
 }
 
+.combo-image {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover; /* ЗАМЕНИТЬ contain на cover для заполнения круга */
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    border: 2px solid #ff6b00; /* Добавить оранжевую рамку */
+    padding: 2px; /* Добавить отступ внутри рамки */
+    background-color: white; /* Белый фон для прозрачных изображений */
+}
+
+.combo-image:hover {
+    transform: translateY(-5px) scale(1.1);
+    border-color: #ff8c42; /* Светлее при наведении */
+}
+
+/* Чтобы изображения комбо выглядели более привлекательно */
 .combo-dish {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 8px;
-}
-
-.combo-image {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-    cursor: pointer;
-}
-
-.combo-image:hover {
-    transform: translateY(-5px) scale(1.1);
+    min-width: 80px; /* Гарантируем место для иконки */
 }
 
 .combo-dish p {
@@ -508,6 +514,9 @@
     text-align: center;
     margin: 0;
     line-height: 1.2;
+    min-height: 28px; /* Гарантируем место для текста */
+    display: flex;
+    align-items: center;
 }
 
 .combo-info {
