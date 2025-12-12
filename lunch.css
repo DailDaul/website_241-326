@@ -96,23 +96,23 @@
     border: 3px solid #ff6b00;
     background-color: #fff8f5;
     position: relative;
+    transform: translateY(-5px); /* Поднятое состояние */
+    filter: drop-shadow(17px 19px 30px rgba(255, 107, 0, 0.15)); /* Тень с оранжевым оттенком */
+    z-index: 1;
 }
 
-.dish-item.selected::before {
-    content: "✓";
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background-color: #ff6b00;
-    color: white;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: bold;
+/* Улучшаем тень при наведении на обычные карточки */
+.dish-item:hover {
+    border: 2px solid tomato;
+    transform: translateY(-5px);
+    filter: drop-shadow(17px 19px 30px rgba(0, 0, 0, 0.2));
+}
+
+/* Дополнительный эффект для выбранной карточки при наведении */
+.dish-item.selected:hover {
+    transform: translateY(-7px); /* Еще выше при наведении */
+    filter: drop-shadow(17px 19px 35px rgba(255, 107, 0, 0.2));
+    border: 3px solid #ff8c42;
 }
 
 .dish-item.selected .dish-name {
