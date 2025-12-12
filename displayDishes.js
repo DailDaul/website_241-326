@@ -8,7 +8,7 @@ function createDishCard(dish) {
     
     // Проверяем, выбрано ли это блюдо
     let isSelected = false;
-    if (orderManager && orderManager.selectedDishes) {
+    if (typeof orderManager !== 'undefined' && orderManager && orderManager.selectedDishes) {
         isSelected = orderManager.selectedDishes[dish.category]?.keyword === dish.keyword;
     }
     
