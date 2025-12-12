@@ -51,7 +51,7 @@ const dishes = [
         category: "soup",
         kind: "meat",
         count: "400 мл",
-        image: "images/beef-soup.jpg"
+        image: "images/beef-soup.jpeg"
     },
 
     {
