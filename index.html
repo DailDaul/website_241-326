@@ -9,6 +9,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
+
+    <script>
+    // Самый простой тест
+    document.addEventListener('DOMContentLoaded', function() {
+        const btn = document.querySelector('.submit-btn');
+        if (btn) {
+            console.log('Button found, adding click handler...');
+            btn.addEventListener('click', function() {
+                alert('Кнопка работает!');
+            });
+        } else {
+            console.error('Button .submit-btn NOT FOUND!');
+        }
+    });
+</script>
+    
 <body>
     
     <header>
