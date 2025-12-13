@@ -250,21 +250,28 @@
                     <input type="text" id="address" name="address" required>
                 </div>
                 
-                <!-- Время доставки - ЧИСТЫЙ HTML -->
+                <!-- Время доставки -->
                 <div class="form-group">
-                    <label>Время доставки *</label>
-                    <div class="delivery-time-options">
-                        <div class="radio-option">
-                            <input type="radio" id="delivery-asap" name="delivery_time" value="asap" checked
-                                   onchange="document.getElementById('scheduled-time').required = false;">
-                            <label for="delivery-asap">Как можно скорее</label>
-                        </div>
-                        <div class="radio-option">
-                            <input type="radio" id="delivery-scheduled" name="delivery_time" value="scheduled"
-                                   onchange="document.getElementById('scheduled-time').required = true;">
-                            <label for="delivery-scheduled">К указанному времени</label>
-                        </div>
-                    </div>
+                     <label>Время доставки *</label>
+                     <div class="delivery-time-container">
+                           <div class="radio-option">
+                              <input type="radio" id="delivery-asap" name="delivery_time" value="asap" checked>
+                              <label for="delivery-asap">Как можно скорее</label>
+                           </div>
+                           <div class="radio-option">
+                              <input type="radio" id="delivery-scheduled" name="delivery_time" value="scheduled">
+                              <label for="delivery-scheduled">К указанному времени</label>
+                           </div>
+        
+        <!-- Поле времени ВНУТРИ контейнера -->
+        <div class="scheduled-time-group">
+            <label for="scheduled-time">Укажите время доставки (с 7:00 до 23:00):</label>
+            <input type="time" id="scheduled-time" name="scheduled_time" 
+                   min="07:00" max="23:00"
+                   title="Выберите время с 7:00 до 23:00">
+        </div>
+    </div>
+</div>
                     
                     <!-- Поле времени - скрыто/показано через CSS -->
                     <div class="form-group scheduled-time-group">
