@@ -178,7 +178,7 @@
 <section class="order-section">
     <h2>Сделать заказ</h2>
     
-    <form class="order-form" method="POST" action="https://httpbin.org/post">
+    <form class="order-form" method="POST" action="https://httpbin.org/post" id="order-form">
         <div class="form-columns">
             <!-- Левая колонка: Ваш заказ -->
             <div class="order-block">
@@ -231,8 +231,10 @@
                 
                 <div class="form-group">
                     <label for="email">Email *</label>
-                    <input type="email" id="email" name="email" required>
-                    <div class="error-message" id="email-error"></div>
+                    <input type="email" id="email" name="email" required 
+                           pattern="[^@\s]+@[^@\s]+\.[^@\s]+" 
+                           title="Введите корректный email адрес">
+                    <div class="error-message" id="email-error" style="display: none;"></div>
                 </div>
                 
                 <div class="form-group">
@@ -259,7 +261,7 @@
                         </div>
                     </div>
                     <div class="form-group" id="scheduled-time-group" style="display: none; margin-top: 15px;">
-                        <label for="scheduled-time">Укажите время:</label>
+                        <label for="scheduled-time">Укажите время доставки (с 7:00 до 23:00):</label>
                         <input type="time" id="scheduled-time" name="scheduled_time" min="07:00" max="23:00">
                     </div>
                 </div>
