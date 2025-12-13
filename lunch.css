@@ -745,10 +745,7 @@
 }
 
 /* Стили для выбора времени доставки */
-.delivery-time-options {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+.delivery-time-container {
     margin-top: 5px;
 }
 
@@ -756,10 +753,11 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 8px 12px;
+    padding: 10px 12px;
     border-radius: 8px;
     transition: background-color 0.3s;
     cursor: pointer;
+    margin-bottom: 8px;
 }
 
 .radio-option:hover {
@@ -767,8 +765,8 @@
 }
 
 .radio-option input[type="radio"] {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     cursor: pointer;
     accent-color: #ff6b00;
 }
@@ -776,29 +774,25 @@
 .radio-option label {
     font-size: 16px;
     cursor: pointer;
-    font-weight: normal;
+    font-weight: 500;
     color: #333;
     flex: 1;
 }
 
-/* Поле времени - скрываем по умолчанию, показываем через соседний селектор */
+/* Поле времени - скрываем по умолчанию */
 .scheduled-time-group {
     display: none;
     background-color: #f9f9f9;
     padding: 15px;
     border-radius: 8px;
     border: 1px solid #eee;
-    margin-top: 15px;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: opacity 0.3s, transform 0.3s;
+    margin-top: 10px;
+    animation: fadeIn 0.3s ease;
 }
 
-/* Показываем поле времени когда выбран radio "к указанному времени" */
-#delivery-scheduled:checked ~ .delivery-time-options ~ .scheduled-time-group {
+/* Показываем поле времени с помощью общего sibling селектора */
+#delivery-scheduled:checked ~ .scheduled-time-group {
     display: block;
-    opacity: 1;
-    transform: translateY(0);
 }
 
 .scheduled-time-group label {
@@ -826,7 +820,22 @@
     box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
 }
 
-/* Стили для кнопок формы */
+/* Убираем красную подсветку невалидных полей */
+input:invalid {
+    border-color: #ddd !important; /* Серая рамка вместо красной */
+}
+
+input:invalid:focus {
+    border-color: #ff6b00 !important; /* Оранжевая при фокусе */
+    box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1) !important;
+}
+
+/* Для полей с ошибками оставляем только подсказку браузера */
+input:invalid {
+    background-color: white;
+}
+
+/* Кнопки формы */
 .form-buttons {
     display: flex;
     gap: 15px;
@@ -835,7 +844,6 @@
     border-top: 1px solid #eee;
 }
 
-/* Кнопка сброса (input[type="reset"]) */
 .reset-btn {
     flex: 1;
     padding: 16px 30px;
@@ -876,38 +884,16 @@
     background-color: #e55a00;
 }
 
-/* Валидация HTML5 */
-input:invalid {
-    border-color: #ff3860;
-}
-
-input:invalid:focus {
-    border-color: #ff3860;
-    box-shadow: 0 0 0 3px rgba(255, 56, 96, 0.1);
-}
-
-/* Подсказки валидации */
-input:invalid + .hint {
-    display: block;
-    color: #ff3860;
-    font-size: 14px;
-    margin-top: 5px;
-}
-
-/* Для email показываем пример */
-#email {
-    background-repeat: no-repeat;
-    background-position: right 16px center;
-    background-size: 16px;
-    padding-right: 40px;
-}
-
-/* Для телефона тоже иконка */
-#phone {
-    background-repeat: no-repeat;
-    background-position: right 16px center;
-    background-size: 16px;
-    padding-right: 40px;
+/* Анимация для плавного появления */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Адаптивность */
@@ -922,25 +908,26 @@ input:invalid + .hint {
         flex: none;
     }
     
-    /* На мобильных скрываем сложный CSS селектор и используем простой показ */
-    #delivery-scheduled:checked ~ .delivery-time-options {
-        margin-bottom: 20px;
-    }
-    
+    /* На мобильных делаем поле времени всегда видимым, но скрытым */
     .scheduled-time-group {
+        position: relative;
         display: block;
-        opacity: 0;
         height: 0;
         padding: 0;
         margin: 0;
         overflow: hidden;
+        opacity: 0;
         transition: all 0.3s;
+        border: none;
+        background: none;
     }
     
-    #delivery-scheduled:checked ~ .delivery-time-options ~ .scheduled-time-group {
-        opacity: 1;
+    #delivery-scheduled:checked ~ .scheduled-time-group {
         height: auto;
         padding: 15px;
-        margin-top: 15px;
+        margin-top: 10px;
+        opacity: 1;
+        border: 1px solid #eee;
+        background-color: #f9f9f9;
     }
 }
