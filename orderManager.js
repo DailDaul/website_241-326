@@ -1,3 +1,4 @@
+// orderManager.js
 class OrderManager {
     constructor() {
         this.selectedDishes = {
@@ -7,7 +8,29 @@ class OrderManager {
             drink: null,
             dessert: null
         };
-        this.init();
+        
+        // Ждем загрузки блюд перед инициализацией
+        if (typeof dishes !== 'undefined' && dishes.length > 0) {
+            this.init();
+        } else {
+            // Если блюда еще не загружены, ждем
+            this.waitForDishes();
+        }
+    }
+    
+    waitForDishes() {
+        const checkDishes = setInterval(() => {
+            if (typeof dishes !== 'undefined' && dishes.length > 0) {
+                clearInterval(checkDishes);
+                this.init();
+            }
+        }, 100);
+        
+        // На всякий случай таймаут
+        setTimeout(() => {
+            clearInterval(checkDishes);
+            console.log('Таймаут ожидания блюд');
+        }, 5000);
     }
     
     init() {
@@ -20,7 +43,7 @@ class OrderManager {
     }
     
     setupEventListeners() {
-        //обработчик клика на кнопку "Добавить"
+        // обработчик клика на кнопку "Добавить"
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('add-button')) {
                 const dishItem = e.target.closest('.dish-item');
@@ -33,27 +56,31 @@ class OrderManager {
     }
     
     selectDish(dishKeyword) {
+        // Ищем блюдо в глобальном массиве dishes
         const dish = dishes.find(d => d.keyword === dishKeyword);
-        if (!dish) return;
+        if (!dish) {
+            console.error('Блюдо не найдено:', dishKeyword);
+            return;
+        }
         
-        //проверяем, было ли это блюдо уже выбрано
+        // проверяем, было ли это блюдо уже выбрано
         const wasSelected = this.selectedDishes[dish.category]?.keyword === dishKeyword;
         
-        //если блюдо уже выбрано, снимаем выбор
+        // если блюдо уже выбрано, снимаем выбор
         if (wasSelected) {
             this.selectedDishes[dish.category] = null;
         } else {
-            //иначе выбираем новое блюдо
+            // иначе выбираем новое блюдо
             this.selectedDishes[dish.category] = dish;
         }
         
-        //обновляем отображение заказа
+        // обновляем отображение заказа
         this.updateOrderDisplay();
         
         // ОБНОВЛЯЕМ ПОДСВЕТКУ КАРТОЧЕК
         this.updateDishCardsHighlight();
         
-        //обновляем отображение всех блюд для подсветки
+        // обновляем отображение всех блюд для подсветки
         if (typeof displayDishes === 'function') {
             displayDishes();
         }
@@ -83,7 +110,7 @@ class OrderManager {
         let hasSelectedDishes = false;
         let totalPrice = 0;
         
-        //обновляем отображение для каждой категории
+        // обновляем отображение для каждой категории
         Object.keys(this.selectedDishes).forEach(category => {
             const dish = this.selectedDishes[category];
             const orderBlock = orderBlocks[category];
@@ -113,7 +140,7 @@ class OrderManager {
             }
         });
         
-        //управляем отображением сообщения "Ничего не выбрано"
+        // управляем отображением сообщения "Ничего не выбрано"
         if (emptyMessage) {
             if (!hasSelectedDishes) {
                 emptyMessage.style.display = 'block';
@@ -191,16 +218,9 @@ class OrderManager {
     }
 }
 
-//инициализация менеджера заказов
+// инициализация менеджера заказов
 let orderManager;
 
 document.addEventListener('DOMContentLoaded', () => {
     orderManager = new OrderManager();
-    
-    // Вызываем подсветку при загрузке (на случай, если есть сохраненные выборы)
-    setTimeout(() => {
-        if (orderManager.updateDishCardsHighlight) {
-            orderManager.updateDishCardsHighlight();
-        }
-    }, 500);
 });
