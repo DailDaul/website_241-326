@@ -250,26 +250,30 @@
                     <input type="text" id="address" name="address" required>
                 </div>
                 
-                <!-- Время доставки -->
+                <!-- Время доставки - ПРОСТАЯ СТРУКТУРА -->
                 <div class="form-group">
-                     <label>Время доставки *</label>
-                     <div class="delivery-time-container">
-                           <div class="radio-option">
-                              <input type="radio" id="delivery-asap" name="delivery_time" value="asap" checked>
-                              <label for="delivery-asap">Как можно скорее</label>
-                           </div>
-                           <div class="radio-option">
-                              <input type="radio" id="delivery-scheduled" name="delivery_time" value="scheduled">
-                              <label for="delivery-scheduled">К указанному времени</label>
-                           </div>
-                     </div>
-        
-                    <!-- Поле времени -->
-                    <div class="scheduled-time-group">
-                        <label for="scheduled-time">Укажите время доставки (с 7:00 до 23:00):</label>
+                    <label>Время доставки *</label>
+                    
+                    <div class="radio-option">
+                        <input type="radio" id="delivery-asap" name="delivery_time" value="asap" checked>
+                        <label for="delivery-asap">Как можно скорее</label>
+                    </div>
+                    
+                    <div class="radio-option">
+                        <input type="radio" id="delivery-scheduled" name="delivery_time" value="scheduled">
+                        <label for="delivery-scheduled">К указанному времени</label>
+                    </div>
+                    
+                    <!-- Поле времени - сразу после радиокнопок -->
+                    <div class="time-selection-panel" id="time-panel">
+                        <div class="time-panel-header">
+                            <span>Укажите время доставки</span>
+                            <div class="time-hint">Доступное время доставки с 7:00 до 23:00</div>
+                        </div>
                         <input type="time" id="scheduled-time" name="scheduled_time" 
                                min="07:00" max="23:00"
-                               title="Выберите время с 7:00 до 23:00">
+                               title="Выберите время с 7:00 до 23:00"
+                               class="time-input">
                     </div>
                 </div>
                 
