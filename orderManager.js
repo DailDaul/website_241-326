@@ -128,22 +128,8 @@ class OrderManager {
     // ОБНОВЛЯЕМ ПОДСВЕТКУ КАРТОЧЕК
     this.updateDishCardsHighlight();
     
-    // ПРОВЕРЯЕМ И ПОКАЗЫВАЕМ УВЕДОМЛЕНИЕ ПРИ НЕВАЛИДНОМ ЗАКАЗЕ
-    if (typeof validateOrder !== 'undefined') {
-        const validation = validateOrder(this.selectedDishes);
-        
-        // Показываем сообщение только если заказ невалиден и есть выбранные блюда
-        const hasSelectedDishes = Object.values(this.selectedDishes).some(d => d !== null);
-        if (!validation.isValid && hasSelectedDishes) {
-            // Не показываем сообщение при полной очистке заказа
-            const isClearing = !Object.values(this.selectedDishes).some(d => d !== null);
-            if (!isClearing) {
-                setTimeout(() => {
-                    showNotification(validation.message, false);
-                }, 300);
-                }
-            }
-        }
+    // УБИРАЕМ АВТОМАТИЧЕСКИЕ УВЕДОМЛЕНИЯ
+    // Кнопка "Перейти к оформлению" сама по себе будет менять состояние
     }
     
     saveOrderToStorage() {
