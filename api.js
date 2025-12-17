@@ -1,4 +1,3 @@
-// api.js
 // Функция для загрузки блюд с API
 async function loadDishes() {
     try {
@@ -11,15 +10,26 @@ async function loadDishes() {
         }
         
         const data = await response.json();
-        console.log('Блюда загружены:', data.length, 'шт.');
+        console.log('Блюда загружены с API:', data.length, 'шт.');
         
-        // Преобразуем данные, если нужно привести к тому же формату
+        // Преобразуем данные к нашему формату
         const transformedDishes = data.map(dish => {
+            // Приводим категории к нашему формату
+            let category = dish.category;
+            
+            // Преобразуем категории API в наши категории
+            if (category === 'main-course') {
+                category = 'main';
+            } else if (category === 'salad') {
+                category = 'starter';
+            }
+            // 'soup', 'drink', 'dessert' - оставляем как есть
+            
             return {
                 keyword: dish.keyword,
                 name: dish.name,
                 price: dish.price,
-                category: dish.category,
+                category: category,
                 kind: dish.kind,
                 count: dish.count,
                 image: dish.image
@@ -30,8 +40,7 @@ async function loadDishes() {
         
     } catch (error) {
         console.error('Ошибка загрузки блюд:', error);
-        // Возвращаем пустой массив или можно загрузить fallback данные
-        return [];
+        throw error; // Пробрасываем ошибку дальше
     }
 }
 
