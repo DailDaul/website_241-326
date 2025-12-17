@@ -243,41 +243,55 @@ class OrderManager {
     
     // метод для обновления панели заказа на странице lunch.html
     updateOrderPanel() {
-        const orderPanel = document.getElementById('order-panel');
-        const orderTotal = document.getElementById('order-total-price');
-        const goToOrderBtn = document.getElementById('go-to-order-btn');
-        
-        if (!orderPanel || !orderTotal || !goToOrderBtn) return;
-        
-        // Рассчитываем общую стоимость
-        let totalPrice = 0;
-        Object.values(this.selectedDishes).forEach(dish => {
-            if (dish) {
-                totalPrice += dish.price;
-            }
-        });
-        
-        // Обновляем стоимость
-        orderTotal.textContent = totalPrice;
-        
-        // Показываем/скрываем панель в зависимости от наличия выбранных блюд
-        if (totalPrice > 0) {
-            orderPanel.style.display = 'block';
-            
-            // Проверяем валидность заказа (соответствие комбо)
-            const validation = validateOrder(this.selectedDishes);
-            goToOrderBtn.disabled = !validation.isValid;
-            if (validation.isValid) {
-                goToOrderBtn.style.backgroundColor = '#ff6b00';
-                goToOrderBtn.style.cursor = 'pointer';
-            } else {
-                goToOrderBtn.style.backgroundColor = '#ccc';
-                goToOrderBtn.style.cursor = 'not-allowed';
-            }
-        } else {
-            orderPanel.style.display = 'none';
+    const orderPanel = document.getElementById('order-panel');
+    const orderTotal = document.getElementById('order-total-price');
+    const goToOrderBtn = document.getElementById('go-to-order-btn');
+    
+    if (!orderPanel || !orderTotal || !goToOrderBtn) return;
+    
+    // Рассчитываем общую стоимость
+    let totalPrice = 0;
+    Object.values(this.selectedDishes).forEach(dish => {
+        if (dish) {
+            totalPrice += dish.price;
         }
+    });
+    
+    // Обновляем стоимость
+    orderTotal.textContent = totalPrice;
+    
+    // Показываем/скрываем панель в зависимости от наличия выбранных блюд
+    if (totalPrice > 0) {
+        orderPanel.style.display = 'block';
+        
+        // Проверяем валидность заказа (соответствие комбо)
+        if (typeof validateOrder !== 'undefined') {
+            const validation = validateOrder(this.selectedDishes);
+            
+            // ВАЖНО: Включаем/выключаем кнопку и меняем стили
+            if (validation.isValid) {
+                goToOrderBtn.disabled = false;
+                goToOrderBtn.style.backgroundColor = '#ff6b00';
+                goToOrderBtn.style.color = 'white';
+                goToOrderBtn.style.cursor = 'pointer';
+                goToOrderBtn.style.opacity = '1';
+                goToOrderBtn.style.pointerEvents = 'auto';
+            } else {
+                goToOrderBtn.disabled = true;
+                goToOrderBtn.style.backgroundColor = '#ccc';
+                goToOrderBtn.style.color = '#666';
+                goToOrderBtn.style.cursor = 'not-allowed';
+                goToOrderBtn.style.opacity = '0.7';
+                goToOrderBtn.style.pointerEvents = 'none';
+                
+                // Также можно показать сообщение о том, что не хватает
+                // console.log('Заказ невалиден:', validation.message);
+            }
+        }
+    } else {
+        orderPanel.style.display = 'none';
     }
+}
     
     // метод для очистки заказа
     clearOrder() {
