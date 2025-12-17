@@ -62,13 +62,39 @@ class OrderManager {
     }
     
     setupEventListeners() {
-        // обработчик клика на кнопку "Добавить"
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('add-button')) {
-                const dishItem = e.target.closest('.dish-item');
-                if (dishItem) {
-                    const dishKeyword = dishItem.getAttribute('data-dish');
-                    this.selectDish(dishKeyword);
+    // обработчик клика на кнопку "Добавить"
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('add-button')) {
+            const dishItem = e.target.closest('.dish-item');
+            if (dishItem) {
+                const dishKeyword = dishItem.getAttribute('data-dish');
+                this.selectDish(dishKeyword);
+            }
+        }
+        
+        // ДОБАВЛЯЕМ обработчик для кнопки "Перейти к оформлению"
+        if (e.target.id === 'go-to-order-btn' || e.target.closest('#go-to-order-btn')) {
+            const goToOrderBtn = document.getElementById('go-to-order-btn');
+            
+            // Проверяем валидность заказа перед переходом
+            if (typeof validateOrder !== 'undefined') {
+                const validation = validateOrder(this.selectedDishes);
+                
+                if (!validation.isValid) {
+                    e.preventDefault(); // Останавливаем переход
+                    e.stopPropagation();
+                    
+                    // Показываем уведомление о невалидном заказе
+                    showNotification(validation.message, false);
+                    
+                    // Добавляем анимацию "тряски" кнопки
+                    goToOrderBtn.style.animation = 'shake 0.5s';
+                    setTimeout(() => {
+                        goToOrderBtn.style.animation = '';
+                    }, 500);
+                    
+                    return false;
+                    }
                 }
             }
         });
