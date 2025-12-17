@@ -974,3 +974,108 @@ input:invalid {
         font-size: 13px;
     }
 }
+
+/* Стили для панели заказа */
+.order-panel {
+    position: sticky;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    background-color: white;
+    padding: 20px 40px;
+    border-radius: 15px;
+    filter: drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.15));
+    border: 2px solid #ff6b00;
+    z-index: 100;
+    margin-top: 30px;
+    animation: slideInUp 0.3s ease;
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.order-panel-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.order-panel-total {
+    font-size: 22px;
+    font-weight: 500;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.order-total-price {
+    font-size: 26px;
+    font-weight: 600;
+    color: #ff6b00;
+}
+
+.go-to-order-btn {
+    display: inline-block;
+    padding: 15px 40px;
+    background-color: #ff6b00;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 500;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+    font-family: 'Oswald', sans-serif;
+    text-align: center;
+    min-width: 200px;
+}
+
+.go-to-order-btn:hover:not(:disabled) {
+    background-color: #e55a00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+}
+
+.go-to-order-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Адаптивность для панели заказа */
+@media (max-width: 768px) {
+    .order-panel {
+        padding: 15px 20px;
+        bottom: 10px;
+    }
+    
+    .order-panel-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .order-panel-total {
+        font-size: 20px;
+    }
+    
+    .order-total-price {
+        font-size: 24px;
+    }
+    
+    .go-to-order-btn {
+        width: 100%;
+        padding: 12px 20px;
+        min-width: auto;
+    }
+}
