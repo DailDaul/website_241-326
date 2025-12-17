@@ -262,19 +262,10 @@
                               <input type="radio" id="delivery-scheduled" name="delivery_time" value="scheduled">
                               <label for="delivery-scheduled">К указанному времени</label>
                            </div>
+                     </div>
         
-        <!-- Поле времени ВНУТРИ контейнера -->
-        <div class="scheduled-time-group">
-            <label for="scheduled-time">Укажите время доставки (с 7:00 до 23:00):</label>
-            <input type="time" id="scheduled-time" name="scheduled_time" 
-                   min="07:00" max="23:00"
-                   title="Выберите время с 7:00 до 23:00">
-        </div>
-    </div>
-</div>
-                    
-                    <!-- Поле времени - скрыто/показано через CSS -->
-                    <div class="form-group scheduled-time-group">
+                    <!-- Поле времени -->
+                    <div class="scheduled-time-group">
                         <label for="scheduled-time">Укажите время доставки (с 7:00 до 23:00):</label>
                         <input type="time" id="scheduled-time" name="scheduled_time" 
                                min="07:00" max="23:00"
@@ -290,6 +281,7 @@
                 <input type="hidden" id="order-dessert" name="dessert">
                 <input type="hidden" id="order-total-price" name="total_price">
                 
+                <!-- Кнопки формы -->
                 <div class="form-buttons">
                     <!-- Кнопка сброса формы -->
                     <input type="reset" value="Сбросить" class="reset-btn">
@@ -298,7 +290,7 @@
             </div>
         </div>
     </form>
-    </section>
+</section>
     </main>
 
     <footer id="contacts">
@@ -367,4 +359,3 @@
     
 </body>
 </html>
-
