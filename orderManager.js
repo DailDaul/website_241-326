@@ -1,3 +1,4 @@
+// orderManager.js - ОБНОВЛЕННАЯ ВЕРСИЯ
 class OrderManager {
     constructor() {
         this.selectedDishes = {
@@ -8,8 +9,37 @@ class OrderManager {
             dessert: null
         };
         
+        // Загружаем сохраненный заказ из localStorage
+        this.loadSavedOrder();
+        
         // Ждем загрузки блюд из API
         this.waitForDishes();
+    }
+    
+    async loadSavedOrder() {
+        try {
+            const savedOrderKeys = loadOrderFromStorage();
+            
+            // Загружаем блюда с API
+            if (typeof loadDishes !== 'undefined') {
+                const dishes = await loadDishes();
+                
+                // Восстанавливаем выбранные блюда по ключам
+                Object.keys(savedOrderKeys).forEach(category => {
+                    const dishKeyword = savedOrderKeys[category];
+                    if (dishKeyword && dishes) {
+                        const dish = dishes.find(d => d.keyword === dishKeyword);
+                        if (dish) {
+                            this.selectedDishes[category] = dish;
+                        }
+                    }
+                });
+                
+                console.log('Восстановлен заказ из localStorage:', this.selectedDishes);
+            }
+        } catch (error) {
+            console.error('Ошибка при загрузке сохраненного заказа:', error);
+        }
     }
     
     waitForDishes() {
@@ -20,7 +50,6 @@ class OrderManager {
             }
         }, 100);
         
-        // Таймаут 10 секунд
         setTimeout(() => {
             clearInterval(checkDishes);
             console.log('Таймаут ожидания загрузки блюд с API');
@@ -64,11 +93,18 @@ class OrderManager {
             this.selectedDishes[dish.category] = dish;
         }
         
+        // сохраняем заказ в localStorage
+        this.saveOrderToStorage();
+        
         // обновляем отображение заказа
         this.updateOrderDisplay();
         
         // ОБНОВЛЯЕМ ПОДСВЕТКУ КАРТОЧЕК
         this.updateDishCardsHighlight();
+    }
+    
+    saveOrderToStorage() {
+        saveOrderToStorage(this.selectedDishes);
     }
     
     updateOrderDisplay() {
@@ -152,6 +188,9 @@ class OrderManager {
                 }
             }
         }
+        
+        // Обновляем панель заказа на странице lunch.html
+        this.updateOrderPanel();
     }
     
     getNotSelectedText(category) {
@@ -201,6 +240,62 @@ class OrderManager {
             }
         });
     }
+    
+    // метод для обновления панели заказа на странице lunch.html
+    updateOrderPanel() {
+        const orderPanel = document.getElementById('order-panel');
+        const orderTotal = document.getElementById('order-total-price');
+        const goToOrderBtn = document.getElementById('go-to-order-btn');
+        
+        if (!orderPanel || !orderTotal || !goToOrderBtn) return;
+        
+        // Рассчитываем общую стоимость
+        let totalPrice = 0;
+        Object.values(this.selectedDishes).forEach(dish => {
+            if (dish) {
+                totalPrice += dish.price;
+            }
+        });
+        
+        // Обновляем стоимость
+        orderTotal.textContent = totalPrice;
+        
+        // Показываем/скрываем панель в зависимости от наличия выбранных блюд
+        if (totalPrice > 0) {
+            orderPanel.style.display = 'block';
+            
+            // Проверяем валидность заказа (соответствие комбо)
+            const validation = validateOrder(this.selectedDishes);
+            goToOrderBtn.disabled = !validation.isValid;
+            if (validation.isValid) {
+                goToOrderBtn.style.backgroundColor = '#ff6b00';
+                goToOrderBtn.style.cursor = 'pointer';
+            } else {
+                goToOrderBtn.style.backgroundColor = '#ccc';
+                goToOrderBtn.style.cursor = 'not-allowed';
+            }
+        } else {
+            orderPanel.style.display = 'none';
+        }
+    }
+    
+    // метод для очистки заказа
+    clearOrder() {
+        this.selectedDishes = {
+            soup: null,
+            main: null,
+            starter: null,
+            drink: null,
+            dessert: null
+        };
+        
+        // Удаляем из localStorage
+        clearOrderFromStorage();
+        
+        // Обновляем отображение
+        this.updateOrderDisplay();
+        this.updateDishCardsHighlight();
+    }
 }
 
 // инициализация менеджера заказов
@@ -209,3 +304,8 @@ let orderManager;
 document.addEventListener('DOMContentLoaded', () => {
     orderManager = new OrderManager();
 });
+
+// Экспортируем менеджер заказов
+if (typeof window !== 'undefined') {
+    window.orderManager = orderManager;
+}
