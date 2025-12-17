@@ -84,8 +84,8 @@ class OrderManager {
                     e.preventDefault(); // Останавливаем переход
                     e.stopPropagation();
                     
-                    // Показываем уведомление о невалидном заказе
-                    showNotification(validation.message, false);
+                    // УБИРАЕМ УВЕДОМЛЕНИЕ, оставляем только блокировку
+                    // Кнопка и так будет неактивна из-за updateOrderPanel()
                     
                     // Добавляем анимацию "тряски" кнопки
                     goToOrderBtn.style.animation = 'shake 0.5s';
