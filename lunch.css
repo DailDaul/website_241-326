@@ -745,11 +745,6 @@
 }
 
 /* Стили для выбора времени доставки */
-.delivery-time-container {
-    margin-top: 5px;
-    margin-bottom: 15px;
-}
-
 .radio-option {
     display: flex;
     align-items: center;
@@ -780,9 +775,9 @@
     flex: 1;
 }
 
-/* Поле времени - скрываем по умолчанию */
-.scheduled-time-group {
-    display: none;
+/* Панель выбора времени - ВИДИМА ВСЕГДА */
+.time-selection-panel {
+    display: block;
     background-color: #f9f9f9;
     padding: 15px;
     border-radius: 8px;
@@ -791,20 +786,27 @@
     animation: fadeIn 0.3s ease;
 }
 
-/* Показываем поле времени с помощью общего sibling селектора */
-#delivery-scheduled:checked ~ .scheduled-time-group {
-    display: block;
+.time-panel-header {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
 }
 
-.scheduled-time-group label {
-    display: block;
-    margin-bottom: 8px;
+.time-panel-header span {
     font-size: 16px;
     font-weight: 500;
     color: #333;
+    display: block;
+    margin-bottom: 5px;
 }
 
-#scheduled-time {
+.time-hint {
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+}
+
+.time-input {
     width: 100%;
     padding: 12px 16px;
     border: 2px solid #ddd;
@@ -812,9 +814,10 @@
     font-size: 16px;
     font-family: 'Oswald', sans-serif;
     background-color: white;
+    margin-top: 10px;
 }
 
-#scheduled-time:focus {
+.time-input:focus {
     outline: none;
     border-color: #ff6b00;
     background-color: white;
@@ -957,5 +960,17 @@ input:invalid {
     .submit-btn {
         width: 100%;
         flex: none;
+    }
+    
+    .time-selection-panel {
+        padding: 12px;
+    }
+    
+    .time-panel-header span {
+        font-size: 15px;
+    }
+    
+    .time-hint {
+        font-size: 13px;
     }
 }
