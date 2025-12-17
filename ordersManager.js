@@ -145,20 +145,26 @@ class OrdersManager {
     }
     
     removeDishFromOrder(dishKeyword, category) {
-        // Удаляем блюдо из текущего заказа
-        this.selectedDishes[category] = null;
+    // Находим блюдо в массиве dishes
+    const dish = dishes.find(d => d.keyword === dishKeyword);
+    
+    // Удаляем блюдо из текущего заказа
+    this.selectedDishes[category] = null;
+    
+    // Удаляем из localStorage
+    removeDishFromStorage(category);
+    
+    // Обновляем отображение
+    this.displayOrderItems();
+    this.updateOrderFormDisplay();
+    
+    // Показываем небольшое уведомление (опционально)
+    if (dish) {
+        // Можно использовать консоль для отладки
+        console.log(`Блюдо "${dish.name}" удалено из заказа`);
         
-        // Удаляем из localStorage
-        removeDishFromStorage(category);
-        
-        // Обновляем отображение
-        this.displayOrderItems();
-        this.updateOrderFormDisplay();
-        
-        // Показываем уведомление
-        const dish = dishes.find(d => d.keyword === dishKeyword);
-        if (dish) {
-            showNotification(`Блюдо "${dish.name}" удалено из заказа`, false);
+        // ИЛИ показать маленькое тостовое уведомление
+        this.showToastNotification(`Блюдо "${dish.name}" удалено из заказа`);
         }
     }
     
@@ -280,116 +286,123 @@ class OrdersManager {
     }
     
     setupFormValidation() {
-        const orderForm = document.getElementById('order-form');
+    const orderForm = document.getElementById('order-form');
+    
+    if (!orderForm) return;
+    
+    orderForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
         
-        if (!orderForm) return;
+        // Проверяем заполнение полей формы
+        const name = document.getElementById('name')?.value.trim();
+        const email = document.getElementById('email')?.value.trim();
+        const phone = document.getElementById('phone')?.value.trim();
+        const address = document.getElementById('address')?.value.trim();
         
-        orderForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            // Проверяем заполнение полей формы
-            const name = document.getElementById('name')?.value.trim();
-            const email = document.getElementById('email')?.value.trim();
-            const phone = document.getElementById('phone')?.value.trim();
-            const address = document.getElementById('address')?.value.trim();
-            
-            if (!name || !email || !phone || !address) {
-                showNotification('Заполните все поля формы: имя, email, телефон и адрес', false);
-                return;
-            }
-            
-            // Проверяем валидность email
-            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if (!emailPattern.test(email)) {
-                showNotification('Введите корректный email адрес', false);
-                return;
-            }
-            
-            // Проверяем валидность телефона
-            const phonePattern = /^[\+]?[0-9\s\-\(\)]{7,20}$/;
-            if (!phonePattern.test(phone)) {
-                showNotification('Введите корректный номер телефона', false);
-                return;
-            }
-            
-            // Проверяем валидность состава заказа
-            const validation = validateOrder(this.selectedDishes);
-            if (!validation.isValid) {
-                showNotification(validation.message, false);
-                return;
-            }
-            
-            // Отправляем заказ на сервер
-            await this.submitOrder();
+        if (!name || !email || !phone || !address) {
+            showNotification('Заполните все поля формы: имя, email, телефон и адрес', false);
+            return;
+        }
+        
+        // Проверяем валидность email
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailPattern.test(email)) {
+            showNotification('Введите корректный email адрес', false);
+            return;
+        }
+        
+        // Проверяем валидность телефона
+        const phonePattern = /^[\+]?[0-9\s\-\(\)]{7,20}$/;
+        if (!phonePattern.test(phone)) {
+            showNotification('Введите корректный номер телефона', false);
+            return;
+        }
+        
+        // Проверяем, что выбрано хотя бы одно блюдо
+        const hasSelectedDishes = Object.values(this.selectedDishes).some(dish => dish !== null);
+        if (!hasSelectedDishes) {
+            showNotification('Выберите блюда для заказа', false);
+            return;
+        }
+        
+        // Проверяем валидность состава заказа
+        const validation = validateOrder(this.selectedDishes);
+        if (!validation.isValid) {
+            showNotification(validation.message, false);
+            return;
+        }
+        
+        // Отправляем заказ на сервер
+        await this.submitOrder();
         });
     }
     
     async submitOrder() {
-        try {
-            // Подготавливаем данные для отправки
-            const formData = new FormData(document.getElementById('order-form'));
-            
-            // Добавляем информацию о блюдах
-            const orderData = {
-                name: formData.get('name'),
-                email: formData.get('email'),
-                phone: formData.get('phone'),
-                address: formData.get('address'),
-                delivery_time: formData.get('delivery_time'),
-                scheduled_time: formData.get('scheduled_time') || null,
-                dishes: {
-                    soup: formData.get('soup'),
-                    main: formData.get('main'),
-                    starter: formData.get('starter'),
-                    drink: formData.get('drink'),
-                    dessert: formData.get('dessert')
-                },
-                total_price: parseInt(formData.get('total_price')) || 0
-            };
-            
-            console.log('Отправка заказа:', orderData);
-            
-            // Отправляем запрос на сервер
-            const response = await fetch('https://edu.std-900.ist.mospolytech.ru/labs/api/order', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(orderData)
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Ошибка сервера: ${response.status}`);
-            }
-            
-            const result = await response.json();
-            console.log('Ответ сервера:', result);
-            
-            // Очищаем localStorage после успешной отправки
-            clearOrderFromStorage();
-            
-            // Показываем сообщение об успехе
-            showNotification('Заказ успешно оформлен! Мы свяжемся с вами для подтверждения.', true);
-            
-            // Очищаем форму
-            document.getElementById('order-form').reset();
-            
-            // Очищаем текущий заказ
-            this.selectedDishes = {
-                soup: null,
-                main: null,
-                starter: null,
-                drink: null,
-                dessert: null
-            };
-            
-            // Обновляем отображение
-            this.displayOrderItems();
-            this.updateOrderFormDisplay();
-            
+    try {
+        // Подготавливаем данные для отправки
+        const formData = new FormData(document.getElementById('order-form'));
+        
+        // Добавляем информацию о блюдах
+        const orderData = {
+            name: formData.get('name'),
+            email: formData.get('email'),
+            phone: formData.get('phone'),
+            address: formData.get('address'),
+            delivery_time: formData.get('delivery_time'),
+            scheduled_time: formData.get('scheduled_time') || null,
+            dishes: {
+                soup: formData.get('soup'),
+                main: formData.get('main'),
+                starter: formData.get('starter'),
+                drink: formData.get('drink'),
+                dessert: formData.get('dessert')
+            },
+            total_price: parseInt(formData.get('total_price')) || 0
+        };
+        
+        console.log('Отправка заказа:', orderData);
+        
+        // Отправляем запрос на сервер
+        const response = await fetch('https://edu.std-900.ist.mospolytech.ru/labs/api/order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(orderData)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Ошибка сервера: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        console.log('Ответ сервера:', result);
+        
+        // Очищаем localStorage после успешной отправки
+        clearOrderFromStorage();
+        
+        // Показываем сообщение об успехе
+        showNotification('Заказ успешно оформлен! Мы свяжемся с вами для подтверждения.', true);
+        
+        // Очищаем форму
+        document.getElementById('order-form').reset();
+        
+        // Очищаем текущий заказ
+        this.selectedDishes = {
+            soup: null,
+            main: null,
+            starter: null,
+            drink: null,
+            dessert: null
+        };
+        
+        // Обновляем отображение
+        this.displayOrderItems();
+        this.updateOrderFormDisplay();
+        
         } catch (error) {
-            console.error('Ошибка при отправке заказа:', error);
-            showNotification('Ошибка при оформлении заказа. Пожалуйста, попробуйте еще раз.', false);
+        console.error('Ошибка при отправке заказа:', error);
+        showNotification('Ошибка при оформлении заказа. Пожалуйста, попробуйте еще раз.', false);
         }
     }
     
