@@ -101,32 +101,49 @@ class OrderManager {
     }
     
     selectDish(dishKeyword) {
-        // Ищем блюдо в глобальном массиве dishes (загруженном из API)
-        const dish = dishes.find(d => d.keyword === dishKeyword);
-        if (!dish) {
-            console.error('Блюдо не найдено:', dishKeyword);
-            return;
+    // Ищем блюдо в глобальном массиве dishes (загруженном из API)
+    const dish = dishes.find(d => d.keyword === dishKeyword);
+    if (!dish) {
+        console.error('Блюдо не найдено:', dishKeyword);
+        return;
+    }
+    
+    // проверяем, было ли это блюдо уже выбрано
+    const wasSelected = this.selectedDishes[dish.category]?.keyword === dishKeyword;
+    
+    // если блюдо уже выбрано, снимаем выбор
+    if (wasSelected) {
+        this.selectedDishes[dish.category] = null;
+    } else {
+        // иначе выбираем новое блюдо
+        this.selectedDishes[dish.category] = dish;
+    }
+    
+    // сохраняем заказ в localStorage
+    this.saveOrderToStorage();
+    
+    // обновляем отображение заказа
+    this.updateOrderDisplay();
+    
+    // ОБНОВЛЯЕМ ПОДСВЕТКУ КАРТОЧЕК
+    this.updateDishCardsHighlight();
+    
+    // ПРОВЕРЯЕМ И ПОКАЗЫВАЕМ УВЕДОМЛЕНИЕ ПРИ НЕВАЛИДНОМ ЗАКАЗЕ
+    if (typeof validateOrder !== 'undefined') {
+        const validation = validateOrder(this.selectedDishes);
+        
+        // Показываем сообщение только если заказ невалиден и есть выбранные блюда
+        const hasSelectedDishes = Object.values(this.selectedDishes).some(d => d !== null);
+        if (!validation.isValid && hasSelectedDishes) {
+            // Не показываем сообщение при полной очистке заказа
+            const isClearing = !Object.values(this.selectedDishes).some(d => d !== null);
+            if (!isClearing) {
+                setTimeout(() => {
+                    showNotification(validation.message, false);
+                }, 300);
+                }
+            }
         }
-        
-        // проверяем, было ли это блюдо уже выбрано
-        const wasSelected = this.selectedDishes[dish.category]?.keyword === dishKeyword;
-        
-        // если блюдо уже выбрано, снимаем выбор
-        if (wasSelected) {
-            this.selectedDishes[dish.category] = null;
-        } else {
-            // иначе выбираем новое блюдо
-            this.selectedDishes[dish.category] = dish;
-        }
-        
-        // сохраняем заказ в localStorage
-        this.saveOrderToStorage();
-        
-        // обновляем отображение заказа
-        this.updateOrderDisplay();
-        
-        // ОБНОВЛЯЕМ ПОДСВЕТКУ КАРТОЧЕК
-        this.updateDishCardsHighlight();
     }
     
     saveOrderToStorage() {
