@@ -270,7 +270,6 @@ class OrderManager {
         });
     }
     
-    // метод для обновления панели заказа на странице lunch.html
     updateOrderPanel() {
     const orderPanel = document.getElementById('order-panel');
     const orderTotal = document.getElementById('order-total-price');
@@ -297,30 +296,25 @@ class OrderManager {
         if (typeof validateOrder !== 'undefined') {
             const validation = validateOrder(this.selectedDishes);
             
-            // ВАЖНО: Включаем/выключаем кнопку и меняем стили
+            // УПРОЩАЕМ: просто делаем кнопку активной/неактивной
             if (validation.isValid) {
-                goToOrderBtn.disabled = false;
-                goToOrderBtn.style.backgroundColor = '#ff6b00';
-                goToOrderBtn.style.color = 'white';
-                goToOrderBtn.style.cursor = 'pointer';
-                goToOrderBtn.style.opacity = '1';
+                // Заказ валиден - кнопка активна
+                goToOrderBtn.classList.remove('disabled');
                 goToOrderBtn.style.pointerEvents = 'auto';
+                goToOrderBtn.style.opacity = '1';
+                goToOrderBtn.title = 'Перейти к оформлению заказа';
             } else {
-                goToOrderBtn.disabled = true;
-                goToOrderBtn.style.backgroundColor = '#ccc';
-                goToOrderBtn.style.color = '#666';
-                goToOrderBtn.style.cursor = 'not-allowed';
-                goToOrderBtn.style.opacity = '0.7';
+                // Заказ невалиден - кнопка неактивна
+                goToOrderBtn.classList.add('disabled');
                 goToOrderBtn.style.pointerEvents = 'none';
-                
-                // Также можно показать сообщение о том, что не хватает
-                // console.log('Заказ невалиден:', validation.message);
+                goToOrderBtn.style.opacity = '0.6';
+                goToOrderBtn.title = 'Выберите один из доступных комбо-ланчей';
+                }
             }
-        }
-    } else {
+        } else {
         orderPanel.style.display = 'none';
+        }
     }
-}
     
     // метод для очистки заказа
     clearOrder() {
