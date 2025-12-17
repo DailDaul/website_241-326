@@ -173,128 +173,19 @@
             <h2>Десерты</h2>
             <div class="dishes-grid"></div>
         </section>
-
-        <!-- Блок оформления заказа -->
-<section class="order-section">
-    <h2>Сделать заказ</h2>
-    
-    <form class="order-form" method="POST" action="https://httpbin.org/post">
-        <div class="form-columns">
-            <!-- Левая колонка: Ваш заказ -->
-            <div class="order-block">
-                <h3>Ваш заказ</h3>
-                <div class="current-order">
-                    <div id="empty-message" class="empty-message">Ничего не выбрано</div>
-                    
-                    <div class="order-category">
-                        <h4 id="soup-title" style="display: none;">Суп</h4>
-                        <div id="selected-soup" class="selected-dishes"></div>
-                    </div>
-                    
-                    <div class="order-category">
-                        <h4 id="main-title" style="display: none;">Главное блюдо</h4>
-                        <div id="selected-main" class="selected-dishes"></div>
-                    </div>
-
-                    <div class="order-category">
-                        <h4 id="starter-title" style="display: none;">Салат или стартер</h4>
-                        <div id="selected-starter" class="selected-dishes"></div>
-                    </div>
-                    
-                    <div class="order-category">
-                        <h4 id="drink-title" style="display: none;">Напиток</h4>
-                        <div id="selected-drink" class="selected-dishes"></div>
-                    </div>
-
-                    <div class="order-category">
-                        <h4 id="dessert-title" style="display: none;">Десерт</h4>
-                        <div id="selected-dessert" class="selected-dishes"></div>
-                    </div>
-                    
-                    <div id="order-total" class="order-total" style="display: none;">
-                        <h4>Стоимость заказа</h4>
-                        <div class="total-price">
-                            <span id="total-price">0</span>Р
-                        </div>
-                    </div>
-                </div>
+        
+        <!-- Панель заказа -->
+        <div id="order-panel" class="order-panel" style="display: none;">
+            <div class="order-panel-content">
+            <div class="order-panel-total">
+                <span>Стоимость заказа:</span>
+                <span id="order-total-price" class="order-total-price">0</span>Р
             </div>
-            
-            <!-- Правая колонка: Ваши данные -->
-            <div class="client-block">
-                <h3>Ваши данные</h3>
-                
-                <div class="form-group">
-                    <label for="name">Имя *</label>
-                    <input type="text" id="name" name="name" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="email">Email *</label>
-                    <input type="email" id="email" name="email" 
-                           required
-                           pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-                           title="Введите корректный email (например: example@mail.ru)">
-                </div>
-                
-                <div class="form-group">
-                    <label for="phone">Телефон *</label>
-                    <input type="tel" id="phone" name="phone" 
-                           required
-                           pattern="[+0-9\s\-\(\)]{7,20}"
-                           title="Введите корректный номер телефона">
-                </div>
-                
-                <div class="form-group">
-                    <label for="address">Адрес доставки *</label>
-                    <input type="text" id="address" name="address" required>
-                </div>
-                
-                <!-- Время доставки - ПРОСТАЯ СТРУКТУРА -->
-                <div class="form-group">
-                    <label>Время доставки *</label>
-                    
-                    <div class="radio-option">
-                        <input type="radio" id="delivery-asap" name="delivery_time" value="asap" checked>
-                        <label for="delivery-asap">Как можно скорее</label>
-                    </div>
-                    
-                    <div class="radio-option">
-                        <input type="radio" id="delivery-scheduled" name="delivery_time" value="scheduled">
-                        <label for="delivery-scheduled">К указанному времени</label>
-                    </div>
-                    
-                    <!-- Поле времени - сразу после радиокнопок -->
-                    <div class="time-selection-panel" id="time-panel">
-                        <div class="time-panel-header">
-                            <span>Укажите время доставки</span>
-                            <div class="time-hint">Доступное время доставки с 7:00 до 23:00</div>
-                        </div>
-                        <input type="time" id="scheduled-time" name="scheduled_time" 
-                               min="07:00" max="23:00"
-                               title="Выберите время с 7:00 до 23:00"
-                               class="time-input">
-                    </div>
-                </div>
-                
-                <!-- Скрытые поля для данных заказа -->
-                <input type="hidden" id="order-soup" name="soup">
-                <input type="hidden" id="order-main" name="main">
-                <input type="hidden" id="order-starter" name="starter">
-                <input type="hidden" id="order-drink" name="drink">
-                <input type="hidden" id="order-dessert" name="dessert">
-                <input type="hidden" id="order-total-price" name="total_price">
-                
-                <!-- Кнопки формы -->
-                <div class="form-buttons">
-                    <!-- Кнопка сброса формы -->
-                    <input type="reset" value="Сбросить" class="reset-btn">
-                    <button type="submit" class="submit-btn">Отправить заказ</button>
-                </div>
-            </div>
+            <a href="orders.html" id="go-to-order-btn" class="go-to-order-btn" disabled>
+            Перейти к оформлению
+            </a>
         </div>
-    </form>
-</section>
+    </div>
     </main>
 
     <footer id="contacts">
@@ -302,64 +193,9 @@
     </footer>
 
     <script src="api.js"></script>
+    <script src="orderStorage.js"></script>
+    <script src="orderValidator.js"></script>
     <script src="displayDishes.js"></script>
     <script src="orderManager.js"></script>
-    <script src="orderValidator.js"></script>
-    
-    <!-- Скрипт для заполнения скрытых полей формы -->
-    <script>
-        // Функция для обновления скрытых полей формы
-        function updateFormHiddenFields() {
-            if (!orderManager) return;
-            
-            const orderData = orderManager.getOrderData();
-            
-            // Заполняем скрытые поля
-            document.getElementById('order-soup').value = orderData.soup ? orderData.soup.name : '';
-            document.getElementById('order-main').value = orderData.main ? orderData.main.name : '';
-            document.getElementById('order-starter').value = orderData.starter ? orderData.starter.name : '';
-            document.getElementById('order-drink').value = orderData.drink ? orderData.drink.name : '';
-            document.getElementById('order-dessert').value = orderData.dessert ? orderData.dessert.name : '';
-            
-            // Рассчитываем и заполняем общую стоимость
-            let totalPrice = 0;
-            Object.values(orderData).forEach(dish => {
-                if (dish && dish.price) {
-                    totalPrice += dish.price;
-                }
-            });
-            document.getElementById('order-total-price').value = totalPrice;
-        }
-        
-        // Обновляем поля при изменении заказа
-        document.addEventListener('DOMContentLoaded', function() {
-            // Ждем инициализации orderManager
-            const checkOrderManager = setInterval(function() {
-                if (typeof orderManager !== 'undefined') {
-                    clearInterval(checkOrderManager);
-                    
-                    // Обновляем поля при каждом изменении заказа
-                    const originalSelectDish = orderManager.selectDish;
-                    orderManager.selectDish = function(dishKeyword) {
-                        originalSelectDish.call(this, dishKeyword);
-                        updateFormHiddenFields();
-                    };
-                    
-                    // Также обновляем при загрузке
-                    updateFormHiddenFields();
-                }
-            }, 100);
-            
-            // Также обновляем при нажатии на кнопку отправки
-            const submitBtn = document.querySelector('.submit-btn');
-            if (submitBtn) {
-                submitBtn.addEventListener('click', function(e) {
-                    // Не предотвращаем отправку, валидация сделает это сама
-                    updateFormHiddenFields();
-                });
-            }
-        });
-    </script>
-    
 </body>
 </html>
