@@ -261,12 +261,11 @@ async function initializeDishes() {
         });
         
         // Загружаем блюда через API
-        const loadedDishes = await loadDishes();
+        dishes = await loadDishes();
         
-        console.log('Загружено блюд:', loadedDishes.length);
+        console.log('Загружено блюд:', dishes.length);
         
-        if (loadedDishes && loadedDishes.length > 0) {
-            dishes = loadedDishes;
+        if (dishes && dishes.length > 0) {
             console.log('Блюда успешно загружены с API:', dishes.length, 'шт.');
             
             // Инициализируем фильтры и отображаем блюда
@@ -275,7 +274,16 @@ async function initializeDishes() {
             
             // Инициализируем OrderManager после загрузки блюд
             if (typeof orderManager !== 'undefined' && orderManager) {
-                orderManager.updateDishCardsHighlight();
+                // Загружаем сохраненный заказ из localStorage
+                const savedOrder = loadOrderFromStorage();
+                
+                // Загружаем полные данные заказа
+                const fullOrder = await getFullOrderData(savedOrder);
+                if (fullOrder) {
+                    orderManager.selectedDishes = fullOrder;
+                    orderManager.updateOrderDisplay();
+                    orderManager.updateDishCardsHighlight();
+                }
             }
             
             return true;
