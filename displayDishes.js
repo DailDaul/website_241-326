@@ -15,7 +15,7 @@ function createDishCard(dish) {
     
     dishItem.innerHTML = `
         <div class="dish-image-container">
-            <img src="${dish.image}" alt="${dish.name}" class="dish-image" onerror="this.onerror=null; this.src='images/default.jpg';">
+            <img src="${dish.image}" alt="${dish.name}" class="dish-image">
         </div>
         <p class="dish-name">${dish.name}</p>
         <p class="dish-weight">${dish.count}</p>
@@ -66,7 +66,7 @@ function displayDishes() {
     
     // Проверяем, что dishes существует
     if (!dishes || !Array.isArray(dishes) || dishes.length === 0) {
-        console.error('Dishes array is empty or not defined');
+        console.error('Dishes array is empty');
         
         // Показываем сообщение об отсутствии блюд
         const sections = ['soups', 'main-dishes', 'drinks', 'starters', 'desserts'];
@@ -75,7 +75,7 @@ function displayDishes() {
             if (section) {
                 const grid = section.querySelector('.dishes-grid');
                 if (grid) {
-                    grid.innerHTML = '<div class="loading-message">Загрузка блюд...</div>';
+                    grid.innerHTML = '<div class="loading-message">Нет доступных блюд</div>';
                 }
             }
         });
@@ -86,7 +86,7 @@ function displayDishes() {
     // сортируем блюда по алфавиту
     const sortedDishes = [...dishes].sort((a, b) => a.name.localeCompare(b.name));
     
-    // группируем блюда по категориям (исправленные ID)
+    // группируем блюда по категориям
     const categories = {
         soup: document.getElementById('soups')?.querySelector('.dishes-grid'),
         main: document.getElementById('main-dishes')?.querySelector('.dishes-grid'),
@@ -246,6 +246,8 @@ function initFilters() {
 // функция для инициализации загрузки блюд
 async function initializeDishes() {
     try {
+        console.log('Инициализация загрузки блюд с API...');
+        
         // Показываем индикатор загрузки
         const sections = ['soups', 'main-dishes', 'drinks', 'starters', 'desserts'];
         sections.forEach(sectionId => {
@@ -253,42 +255,39 @@ async function initializeDishes() {
             if (section) {
                 const grid = section.querySelector('.dishes-grid');
                 if (grid) {
-                    grid.innerHTML = '<div class="loading-message">Загрузка блюд...</div>';
+                    grid.innerHTML = '<div class="loading-message">Загрузка меню...</div>';
                 }
             }
         });
         
         // Загружаем блюда через API
-        if (typeof loadDishes === 'function') {
-            const loadedDishes = await loadDishes();
+        const loadedDishes = await loadDishes();
+        
+        console.log('Загружено блюд:', loadedDishes.length);
+        
+        if (loadedDishes && loadedDishes.length > 0) {
+            dishes = loadedDishes;
+            console.log('Блюда успешно загружены с API:', dishes.length, 'шт.');
             
-            if (loadedDishes && loadedDishes.length > 0) {
-                dishes = loadedDishes;
-                console.log('Блюда успешно загружены:', dishes.length);
-                
-                // Инициализируем фильтры и отображаем блюда
-                initFilters();
-                displayDishes();
-                
-                // Инициализируем OrderManager после загрузки блюд
-                if (typeof orderManager !== 'undefined' && orderManager) {
-                    orderManager.updateDishCardsHighlight();
-                }
-                
-                return true;
-            } else {
-                console.error('Не удалось загрузить блюда или список пуст');
-                showErrorMessage('Не удалось загрузить меню. Пожалуйста, обновите страницу.');
-                return false;
+            // Инициализируем фильтры и отображаем блюда
+            initFilters();
+            displayDishes();
+            
+            // Инициализируем OrderManager после загрузки блюд
+            if (typeof orderManager !== 'undefined' && orderManager) {
+                orderManager.updateDishCardsHighlight();
             }
+            
+            return true;
         } else {
-            console.error('Функция loadDishes не найдена');
-            showErrorMessage('Ошибка загрузки. Пожалуйста, проверьте подключение файлов.');
+            console.error('API вернул пустой список блюд');
+            showErrorMessage('Меню временно недоступно');
             return false;
         }
+        
     } catch (error) {
-        console.error('Ошибка при инициализации блюд:', error);
-        showErrorMessage('Ошибка при загрузке меню. Пожалуйста, обновите страницу.');
+        console.error('Ошибка при загрузке блюд с API:', error);
+        showErrorMessage('Ошибка загрузки меню. Попробуйте обновить страницу.');
         return false;
     }
 }
@@ -309,7 +308,7 @@ function showErrorMessage(message) {
 
 // запускаем отображение при загрузке страницы
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('DOM loaded, initializing...');
+    console.log('DOM loaded, starting API initialization...');
     
     // Добавляем стили для сообщений
     const style = document.createElement('style');
@@ -330,7 +329,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     `;
     document.head.appendChild(style);
     
-    // Инициализируем загрузку блюд
+    // Инициализируем загрузку блюд с API
     await initializeDishes();
 });
 
