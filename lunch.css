@@ -791,8 +791,8 @@
     animation: fadeIn 0.3s ease;
 }
 
-/* Показываем поле времени с помощью CSS селектора */
-#delivery-scheduled:checked ~ .delivery-time-container ~ .scheduled-time-group {
+/* Показываем поле времени с помощью общего sibling селектора */
+#delivery-scheduled:checked ~ .scheduled-time-group {
     display: block;
 }
 
@@ -836,17 +836,17 @@ input:invalid {
     background-color: white;
 }
 
-/* Кнопки формы - УЛУЧШЕННЫЙ СТИЛЬ */
+/* Кнопки формы - УБИРАЕМ СЕРУЮ ПЛАШКУ */
 .form-buttons {
     display: flex;
     gap: 15px;
     margin-top: 30px;
     padding-top: 20px;
     border-top: 2px solid #f1eee9; /* Более светлая граница */
-    background-color: #f9f9f9; /* Легкий фон для всей панели кнопок */
-    padding: 20px;
-    border-radius: 10px;
-    border: 1px solid #e0e0e0;
+    padding: 20px 0 0 0; /* Убираем лишние отступы */
+    border-radius: 0; /* Убираем скругления */
+    border: none; /* Убираем рамку */
+    background-color: transparent; /* Убираем фон */
 }
 
 .reset-btn {
@@ -957,28 +957,5 @@ input:invalid {
     .submit-btn {
         width: 100%;
         flex: none;
-    }
-    
-    /* На мобильных делаем поле времени всегда видимым, но скрытым */
-    .scheduled-time-group {
-        position: relative;
-        display: block;
-        height: 0;
-        padding: 0;
-        margin: 0;
-        overflow: hidden;
-        opacity: 0;
-        transition: all 0.3s;
-        border: none;
-        background: none;
-    }
-    
-    #delivery-scheduled:checked ~ .delivery-time-container ~ .scheduled-time-group {
-        height: auto;
-        padding: 15px;
-        margin-top: 10px;
-        opacity: 1;
-        border: 1px solid #eee;
-        background-color: #f9f9f9;
     }
 }
