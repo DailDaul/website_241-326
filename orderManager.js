@@ -1,4 +1,3 @@
-// orderManager.js
 class OrderManager {
     constructor() {
         this.selectedDishes = {
@@ -9,13 +8,8 @@ class OrderManager {
             dessert: null
         };
         
-        // Ждем загрузки блюд перед инициализацией
-        if (typeof dishes !== 'undefined' && dishes.length > 0) {
-            this.init();
-        } else {
-            // Если блюда еще не загружены, ждем
-            this.waitForDishes();
-        }
+        // Ждем загрузки блюд из API
+        this.waitForDishes();
     }
     
     waitForDishes() {
@@ -26,20 +20,16 @@ class OrderManager {
             }
         }, 100);
         
-        // На всякий случай таймаут
+        // Таймаут 10 секунд
         setTimeout(() => {
             clearInterval(checkDishes);
-            console.log('Таймаут ожидания блюд');
-        }, 5000);
+            console.log('Таймаут ожидания загрузки блюд с API');
+        }, 10000);
     }
     
     init() {
         this.setupEventListeners();
         this.updateOrderDisplay();
-        // Обновляем отображение блюд при инициализации
-        if (typeof displayDishes === 'function') {
-            setTimeout(() => displayDishes(), 100);
-        }
     }
     
     setupEventListeners() {
@@ -56,7 +46,7 @@ class OrderManager {
     }
     
     selectDish(dishKeyword) {
-        // Ищем блюдо в глобальном массиве dishes
+        // Ищем блюдо в глобальном массиве dishes (загруженном из API)
         const dish = dishes.find(d => d.keyword === dishKeyword);
         if (!dish) {
             console.error('Блюдо не найдено:', dishKeyword);
@@ -79,11 +69,6 @@ class OrderManager {
         
         // ОБНОВЛЯЕМ ПОДСВЕТКУ КАРТОЧЕК
         this.updateDishCardsHighlight();
-        
-        // обновляем отображение всех блюд для подсветки
-        if (typeof displayDishes === 'function') {
-            displayDishes();
-        }
     }
     
     updateOrderDisplay() {
