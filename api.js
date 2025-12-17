@@ -30,14 +30,7 @@ async function loadDishes() {
         
     } catch (error) {
         console.error('Ошибка загрузки блюд:', error);
-        
-        // Fallback: используем локальные данные, если API недоступно
-        console.log('Использую локальные данные...');
-        if (typeof window !== 'undefined' && window.dishes) {
-            return window.dishes;
-        }
-        
-        // Или возвращаем пустой массив
+        // Возвращаем пустой массив или можно загрузить fallback данные
         return [];
     }
 }
