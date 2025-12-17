@@ -747,6 +747,7 @@
 /* Стили для выбора времени доставки */
 .delivery-time-container {
     margin-top: 5px;
+    margin-bottom: 15px;
 }
 
 .radio-option {
@@ -790,8 +791,8 @@
     animation: fadeIn 0.3s ease;
 }
 
-/* Показываем поле времени с помощью общего sibling селектора */
-#delivery-scheduled:checked ~ .scheduled-time-group {
+/* Показываем поле времени с помощью CSS селектора */
+#delivery-scheduled:checked ~ .delivery-time-container ~ .scheduled-time-group {
     display: block;
 }
 
@@ -835,21 +836,25 @@ input:invalid {
     background-color: white;
 }
 
-/* Кнопки формы */
+/* Кнопки формы - УЛУЧШЕННЫЙ СТИЛЬ */
 .form-buttons {
     display: flex;
     gap: 15px;
     margin-top: 30px;
     padding-top: 20px;
-    border-top: 1px solid #eee;
+    border-top: 2px solid #f1eee9; /* Более светлая граница */
+    background-color: #f9f9f9; /* Легкий фон для всей панели кнопок */
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
 }
 
 .reset-btn {
     flex: 1;
     padding: 16px 30px;
-    background-color: #f8f8f8;
-    color: #666;
-    border: 2px solid #ddd;
+    background-color: white; /* Белый фон вместо серого */
+    color: #333; /* Темно-серый текст */
+    border: 2px solid #ff6b00; /* Оранжевая рамка */
     border-radius: 10px;
     font-size: 18px;
     font-family: 'Oswald', sans-serif;
@@ -861,9 +866,16 @@ input:invalid {
 }
 
 .reset-btn:hover {
-    background-color: #eee;
-    border-color: #ccc;
-    color: #333;
+    background-color: #ff6b00; /* Оранжевый фон при наведении */
+    color: white; /* Белый текст при наведении */
+    border-color: #ff6b00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.2);
+}
+
+.reset-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(255, 107, 0, 0.2);
 }
 
 .submit-btn {
@@ -877,11 +889,50 @@ input:invalid {
     font-family: 'Oswald', sans-serif;
     font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
 }
 
 .submit-btn:hover {
     background-color: #e55a00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(255, 107, 0, 0.2);
+}
+
+/* Эффект при нажатии для обеих кнопок */
+.reset-btn:focus,
+.submit-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.3);
+}
+
+/* Улучшаем стиль для уведомлений */
+.notification-btn {
+    background-color: #ff6b00;
+    color: white;
+    border: none;
+    padding: 12px 40px;
+    border-radius: 10px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    min-width: 120px;
+    border: 2px solid #ff6b00;
+}
+
+.notification-btn:hover {
+    background-color: white;
+    color: #ff6b00;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);
 }
 
 /* Анимация для плавного появления */
@@ -922,7 +973,7 @@ input:invalid {
         background: none;
     }
     
-    #delivery-scheduled:checked ~ .scheduled-time-group {
+    #delivery-scheduled:checked ~ .delivery-time-container ~ .scheduled-time-group {
         height: auto;
         padding: 15px;
         margin-top: 10px;
