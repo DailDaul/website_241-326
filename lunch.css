@@ -1079,3 +1079,71 @@ input:invalid {
         min-width: auto;
     }
 }
+
+.error-message {
+    text-align: center;
+    padding: 40px;
+    color: #ff6b00;
+    font-size: 18px;
+    background-color: #fff5f0;
+    border-radius: 10px;
+    border: 2px solid #ff6b00;
+    margin: 20px 0;
+}
+
+.success-message {
+    text-align: center;
+    padding: 40px;
+    color: #2e7d32;
+    font-size: 18px;
+    background-color: #f0fff4;
+    border-radius: 10px;
+    border: 2px solid #2e7d32;
+    margin: 20px 0;
+}
+
+/* Анимация для кнопки при ошибке */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.shake {
+    animation: shake 0.5s;
+}
+
+/* Стили для подтверждения удаления */
+.confirm-dialog {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.confirm-dialog-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.confirm-btn, .cancel-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Oswald', sans-serif;
+}
+
+.confirm-btn {
+    background-color: #ff6b00;
+    color: white;
+}
+
+.cancel-btn {
+    background-color: #f1eee9;
+    color: #333;
+}
