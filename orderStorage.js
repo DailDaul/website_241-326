@@ -1,12 +1,11 @@
-// orderStorage.js
-// Утилиты для работы с localStorage
 
+//утилиты для работы с localStorage
 const STORAGE_KEY = 'foodConstruct_order';
 
-// Функция для сохранения заказа в localStorage
+//функция для сохранения заказа в localStorage
 function saveOrderToStorage(orderData) {
     try {
-        // Сохраняем только ключи выбранных блюд
+        //сохраняем только ключи выбранных блюд
         const orderToSave = {};
         
         Object.keys(orderData).forEach(category => {
@@ -24,7 +23,7 @@ function saveOrderToStorage(orderData) {
     }
 }
 
-// Функция для загрузки заказа из localStorage
+//функция для загрузки заказа из localStorage
 function loadOrderFromStorage() {
     try {
         const savedOrder = localStorage.getItem(STORAGE_KEY);
@@ -53,7 +52,7 @@ function loadOrderFromStorage() {
     }
 }
 
-// Функция для получения полных данных заказа на основе ключей
+//функция для получения полных данных заказа на основе ключей
 async function getFullOrderData(savedOrderKeys) {
     try {
         // Загружаем все блюда с API
@@ -70,7 +69,7 @@ async function getFullOrderData(savedOrderKeys) {
             dessert: null
         };
         
-        // Заполняем полные данные для каждого выбранного блюда
+        //заполняем полные данные для каждого выбранного блюда
         Object.keys(savedOrderKeys).forEach(category => {
             const dishKeyword = savedOrderKeys[category];
             if (dishKeyword) {
@@ -88,7 +87,7 @@ async function getFullOrderData(savedOrderKeys) {
     }
 }
 
-// Функция для удаления заказа из localStorage
+//функция для удаления заказа из localStorage
 function clearOrderFromStorage() {
     try {
         localStorage.removeItem(STORAGE_KEY);
@@ -100,7 +99,7 @@ function clearOrderFromStorage() {
     }
 }
 
-// Функция для удаления блюда из заказа в localStorage
+//функция для удаления блюда из заказа в localStorage
 function removeDishFromStorage(category) {
     try {
         const savedOrder = loadOrderFromStorage();
@@ -117,7 +116,7 @@ function removeDishFromStorage(category) {
     }
 }
 
-// Экспортируем функции
+//экспортируем функции
 if (typeof window !== 'undefined') {
     window.saveOrderToStorage = saveOrderToStorage;
     window.loadOrderFromStorage = loadOrderFromStorage;
