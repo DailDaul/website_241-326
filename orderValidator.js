@@ -1,4 +1,4 @@
-// Глобальные функции для работы с менеджерами заказов
+//глобальные функции для работы с менеджерами заказов
 function getOrderManager() {
     //в lunch.html используем orderManager
     //вorders.html используем ordersManager
