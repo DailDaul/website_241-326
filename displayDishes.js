@@ -61,8 +61,6 @@ let dishes = [];
 
 // функция для отображения блюд по категориям с фильтрацией
 function displayDishes() {
-    console.log('Displaying dishes with filters:', activeFilters);
-    
     // Проверяем, что dishes существует
     if (!dishes || !Array.isArray(dishes) || dishes.length === 0) {
         console.error('Dishes array is empty');
@@ -93,8 +91,6 @@ function displayDishes() {
         starter: document.getElementById('starters')?.querySelector('.dishes-grid'),
         dessert: document.getElementById('desserts')?.querySelector('.dishes-grid')
     };
-    
-    console.log('Categories found:', categories);
     
     // очищаем контейнеры
     Object.values(categories).forEach(container => {
@@ -131,8 +127,6 @@ function displayDishes() {
 
 // функция для инициализации фильтров
 function initFilters() {
-    console.log('Initializing filters...');
-    
     const filterConfig = {
         soup: [
             { label: 'рыбный', value: 'fish' },
@@ -175,7 +169,6 @@ function initFilters() {
         }
         
         const section = document.getElementById(sectionId);
-        console.log(`Looking for section ${sectionId}:`, section);
         
         if (section) {
             const filtersContainer = createFilters(category, filterConfig[category]);
@@ -184,10 +177,7 @@ function initFilters() {
             // Вставляем фильтры ПОСЛЕ заголовка и ПЕРЕД контейнером с блюдами
             if (heading && heading.nextElementSibling) {
                 section.insertBefore(filtersContainer, heading.nextElementSibling);
-                console.log(`Filters added to ${sectionId}`);
             }
-        } else {
-            console.log(`Section ${sectionId} not found!`);
         }
     });
     
@@ -197,8 +187,6 @@ function initFilters() {
             const filterBtn = e.target;
             const filterKind = filterBtn.getAttribute('data-kind');
             const category = filterBtn.getAttribute('data-category');
-            
-            console.log(`Filter clicked: ${filterKind} for category ${category}`);
             
             // находим секцию и все фильтры в ней
             let sectionId;
@@ -213,7 +201,6 @@ function initFilters() {
             
             const section = document.getElementById(sectionId);
             if (!section) {
-                console.log(`Section ${sectionId} not found!`);
                 return;
             }
             
@@ -228,12 +215,10 @@ function initFilters() {
                 // если фильтр уже был активен, снимаем фильтрацию
                 activeFilters[category] = null;
                 filterBtn.classList.remove('active');
-                console.log(`Filter ${filterKind} deactivated for ${category}`);
             } else {
                 // активируем фильтр
                 activeFilters[category] = filterKind;
                 filterBtn.classList.add('active');
-                console.log(`Filter ${filterKind} activated for ${category}`);
             }
             
             // обновляем отображение блюд
@@ -245,8 +230,6 @@ function initFilters() {
 // функция для инициализации загрузки блюд
 async function initializeDishes() {
     try {
-        console.log('Инициализация загрузки блюд с API...');
-        
         // Показываем индикатор загрузки
         const sections = ['soups', 'main-dishes', 'drinks', 'starters', 'desserts'];
         sections.forEach(sectionId => {
@@ -262,11 +245,7 @@ async function initializeDishes() {
         // Загружаем блюда через API
         dishes = await loadDishes();
         
-        console.log('Загружено блюд:', dishes.length);
-        
         if (dishes && dishes.length > 0) {
-            console.log('Блюда успешно загружены с API:', dishes.length, 'шт.');
-            
             // Инициализируем фильтры и отображаем блюда
             initFilters();
             displayDishes();
@@ -276,18 +255,27 @@ async function initializeDishes() {
                 // Загружаем сохраненный заказ из localStorage
                 const savedOrder = loadOrderFromStorage();
                 
-                // Загружаем полные данные заказа
-                const fullOrder = await getFullOrderData(savedOrder);
-                if (fullOrder) {
-                    orderManager.selectedDishes = fullOrder;
-                    orderManager.updateOrderDisplay();
-                    orderManager.updateDishCardsHighlight();
+                // Восстанавливаем выбранные блюда напрямую без getFullOrderData
+                Object.keys(savedOrder).forEach(category => {
+                    const dishKeyword = savedOrder[category];
+                    if (dishKeyword && dishes) {
+                        const dish = dishes.find(d => d.keyword === dishKeyword);
+                        if (dish) {
+                            orderManager.selectedDishes[category] = dish;
+                        }
+                    }
+                });
+                
+                orderManager.updateDishCardsHighlight();
+                
+                // Обновляем панель заказа если она есть
+                if (orderManager.updateOrderPanel) {
+                    orderManager.updateOrderPanel();
                 }
             }
             
             return true;
         } else {
-            console.error('API вернул пустой список блюд');
             showErrorMessage('Меню временно недоступно');
             return false;
         }
@@ -315,8 +303,6 @@ function showErrorMessage(message) {
 
     // запускаем отображение при загрузке страницы
     document.addEventListener('DOMContentLoaded', async () => {
-        console.log('DOM loaded, starting API initialization...');
-        
         // Добавляем стили для сообщений
         const style = document.createElement('style');
         style.textContent = `
@@ -339,14 +325,3 @@ function showErrorMessage(message) {
         // Инициализируем загрузку блюд с API
         await initializeDishes();
     });
-
-/*
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        displayDishes,
-        initFilters,
-        activeFilters,
-        dishes,
-        initializeDishes
-    };
-} */
