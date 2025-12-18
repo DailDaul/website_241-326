@@ -1,3 +1,4 @@
+// orderValidator.js
 // Глобальные функции для работы с менеджерами заказов
 function getOrderManager() {
     // На странице lunch.html используем orderManager
@@ -234,29 +235,16 @@ function setupOrderValidation() {
         return;
     }
     
-    console.log('🚫 Блокируем стандартную отправку формы');
+    console.log('Настраиваем валидацию формы...');
     
-    // 1. Удаляем все старые обработчики
-    const formClone = orderForm.cloneNode(true);
-    orderForm.parentNode.replaceChild(formClone, orderForm);
-    
-    // 2. Вешаем наш главный обработчик
-    formClone.addEventListener('submit', function(e) {
-        console.log('🛑 СТОП: Форма пытается отправиться');
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        
-        // Вызываем нашу логику валидации
-        processOrderForm();
-        
-        return false;
-    }, true);
-    
-    // 3. Также вешаем на кнопку
-    const submitBtn = formClone.querySelector('.submit-btn');
+    // Вешаем обработчик на кнопку отправки (не клонируем всю форму!)
+    const submitBtn = orderForm.querySelector('.submit-btn');
     if (submitBtn) {
-        submitBtn.addEventListener('click', function(e) {
+        // Удаляем старые обработчики
+        const newSubmitBtn = submitBtn.cloneNode(true);
+        submitBtn.parentNode.replaceChild(newSubmitBtn, submitBtn);
+        
+        newSubmitBtn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             processOrderForm();
@@ -264,7 +252,66 @@ function setupOrderValidation() {
         }, true);
         
         // Меняем type на button чтобы браузер не пытался отправить
-        submitBtn.type = 'button';
+        newSubmitBtn.type = 'button';
+    }
+    
+    // Вешаем обработчик на кнопку очистки заказа
+    const clearOrderBtn = orderForm.querySelector('#clear-order-btn');
+    if (clearOrderBtn) {
+        // Удаляем старые обработчики
+        const newClearBtn = clearOrderBtn.cloneNode(true);
+        clearOrderBtn.parentNode.replaceChild(newClearBtn, clearOrderBtn);
+        
+        newClearBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            clearCurrentOrder();
+            return false;
+        });
+    }
+    
+    // Вешаем обработчик на саму форму
+    orderForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        processOrderForm();
+        return false;
+    }, true);
+    
+    // Функция для очистки заказа
+    function clearCurrentOrder() {
+        console.log('Очистка заказа...');
+        const manager = getOrderManager();
+        
+        if (manager && typeof manager.clearOrder === 'function') {
+            manager.clearOrder();
+            showNotification('Заказ успешно очищен', true);
+        } else if (manager && manager.selectedDishes) {
+            // Очищаем текущий заказ
+            manager.selectedDishes = {
+                soup: null,
+                main: null,
+                starter: null,
+                drink: null,
+                dessert: null
+            };
+            
+            // Очищаем localStorage
+            if (typeof clearOrderFromStorage === 'function') {
+                clearOrderFromStorage();
+            }
+            
+            // Обновляем отображение
+            if (typeof manager.updateOrderFormDisplay === 'function') {
+                manager.updateOrderFormDisplay();
+            }
+            if (typeof manager.displayOrderItems === 'function') {
+                manager.displayOrderItems();
+            }
+            
+            showNotification('Заказ успешно очищен', true);
+        } else {
+            showNotification('Не удалось очистить заказ', false);
+        }
     }
     
     // Функция обработки заказа
