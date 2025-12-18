@@ -1,4 +1,3 @@
-// orderManager.js - ОБНОВЛЕННАЯ ВЕРСИЯ
 class OrderManager {
     constructor() {
         this.selectedDishes = {
@@ -9,10 +8,10 @@ class OrderManager {
             dessert: null
         };
         
-        // Загружаем сохраненный заказ из localStorage
+        //загружаем сохраненный заказ из localStorage
         this.loadSavedOrder();
         
-        // Ждем загрузки блюд из API
+        //ждем загрузки блюд из API
         this.waitForDishes();
     }
     
@@ -20,11 +19,11 @@ class OrderManager {
         try {
             const savedOrderKeys = loadOrderFromStorage();
             
-            // Загружаем блюда с API
+            //загружаем блюда с API
             if (typeof loadDishes !== 'undefined') {
                 const dishes = await loadDishes();
                 
-                // Восстанавливаем выбранные блюда по ключам
+                //восстанавливаем выбранные блюда по ключам
                 Object.keys(savedOrderKeys).forEach(category => {
                     const dishKeyword = savedOrderKeys[category];
                     if (dishKeyword && dishes) {
@@ -62,7 +61,7 @@ class OrderManager {
     }
     
     setupEventListeners() {
-    // обработчик клика на кнопку "Добавить"
+    //обработчик клика на кнопку "Добавить"
     document.addEventListener('click', (e) => {
         if (e.target.classList.contains('add-button')) {
             const dishItem = e.target.closest('.dish-item');
@@ -72,22 +71,19 @@ class OrderManager {
             }
         }
         
-        // ДОБАВЛЯЕМ обработчик для кнопки "Перейти к оформлению"
+        //добавляем обработчик для кнопки "Перейти к оформлению"
         if (e.target.id === 'go-to-order-btn' || e.target.closest('#go-to-order-btn')) {
             const goToOrderBtn = document.getElementById('go-to-order-btn');
             
-            // Проверяем валидность заказа перед переходом
+            //проверяем валидность заказа перед переходом
             if (typeof validateOrder !== 'undefined') {
                 const validation = validateOrder(this.selectedDishes);
                 
                 if (!validation.isValid) {
-                    e.preventDefault(); // Останавливаем переход
+                    e.preventDefault(); //останавливаем переход
                     e.stopPropagation();
                     
-                    // УБИРАЕМ УВЕДОМЛЕНИЕ, оставляем только блокировку
-                    // Кнопка и так будет неактивна из-за updateOrderPanel()
-                    
-                    // Добавляем анимацию "тряски" кнопки
+                    //добавляем анимацию "тряски" кнопки
                     goToOrderBtn.style.animation = 'shake 0.5s';
                     setTimeout(() => {
                         goToOrderBtn.style.animation = '';
@@ -101,35 +97,32 @@ class OrderManager {
     }
     
     selectDish(dishKeyword) {
-    // Ищем блюдо в глобальном массиве dishes (загруженном из API)
+    //ищем блюдо в глобальном массиве dishes (загруженном из API)
     const dish = dishes.find(d => d.keyword === dishKeyword);
     if (!dish) {
         console.error('Блюдо не найдено:', dishKeyword);
         return;
     }
     
-    // проверяем, было ли это блюдо уже выбрано
+    //проверяем, было ли это блюдо уже выбрано
     const wasSelected = this.selectedDishes[dish.category]?.keyword === dishKeyword;
     
-    // если блюдо уже выбрано, снимаем выбор
+    //если блюдо уже выбрано, снимаем выбор
     if (wasSelected) {
         this.selectedDishes[dish.category] = null;
     } else {
-        // иначе выбираем новое блюдо
+        //иначе выбираем новое блюдо
         this.selectedDishes[dish.category] = dish;
     }
     
-    // сохраняем заказ в localStorage
+    //сохраняем заказ в localStorage
     this.saveOrderToStorage();
     
-    // обновляем отображение заказа
+    //обновляем отображение заказа
     this.updateOrderDisplay();
     
-    // ОБНОВЛЯЕМ ПОДСВЕТКУ КАРТОЧЕК
+    //обновляем подсветку карточек
     this.updateDishCardsHighlight();
-    
-    // УБИРАЕМ АВТОМАТИЧЕСКИЕ УВЕДОМЛЕНИЯ
-    // Кнопка "Перейти к оформлению" сама по себе будет менять состояние
     }
     
     saveOrderToStorage() {
@@ -160,7 +153,7 @@ class OrderManager {
         let hasSelectedDishes = false;
         let totalPrice = 0;
         
-        // обновляем отображение для каждой категории
+        //обновляем отображение для каждой категории
         Object.keys(this.selectedDishes).forEach(category => {
             const dish = this.selectedDishes[category];
             const orderBlock = orderBlocks[category];
@@ -190,7 +183,7 @@ class OrderManager {
             }
         });
         
-        // управляем отображением сообщения "Ничего не выбрано"
+        //управляем отображением сообщения "Ничего не выбрано"
         if (emptyMessage) {
             if (!hasSelectedDishes) {
                 emptyMessage.style.display = 'block';
@@ -218,7 +211,7 @@ class OrderManager {
             }
         }
         
-        // Обновляем панель заказа на странице lunch.html
+        //обновляем панель заказа на странице lunch.html
         this.updateOrderPanel();
     }
     
@@ -233,7 +226,7 @@ class OrderManager {
         return texts[category] || 'Блюдо не выбрано';
     }
     
-    // метод для получения данных заказа для формы
+    //метод для получения данных заказа для формы
     getOrderData() {
         return {
             soup: this.selectedDishes.soup,
@@ -244,9 +237,9 @@ class OrderManager {
         };
     }
     
-    // метод для обновления подсветки карточек
+    //метод для обновления подсветки карточек
     updateDishCardsHighlight() {
-        // Удаляем подсветку со всех карточек
+        //удаляем подсветку со всех карточек
         document.querySelectorAll('.dish-item').forEach(item => {
             item.classList.remove('selected');
             const addButton = item.querySelector('.add-button');
@@ -255,7 +248,7 @@ class OrderManager {
             }
         });
         
-        // Добавляем подсветку выбранным карточкам
+        //добавляем подсветку выбранным карточкам
         Object.values(this.selectedDishes).forEach(dish => {
             if (dish) {
                 const dishItem = document.querySelector(`[data-dish="${dish.keyword}"]`);
@@ -277,7 +270,7 @@ class OrderManager {
     
     if (!orderPanel || !orderTotal || !goToOrderBtn) return;
     
-    // Рассчитываем общую стоимость
+    //рассчитываем общую стоимость
     let totalPrice = 0;
     Object.values(this.selectedDishes).forEach(dish => {
         if (dish) {
@@ -285,26 +278,26 @@ class OrderManager {
         }
     });
     
-    // Обновляем стоимость
+    //обновляем стоимость
     orderTotal.textContent = totalPrice;
     
-    // Показываем/скрываем панель в зависимости от наличия выбранных блюд
+    //показываем/скрываем панель в зависимости от наличия выбранных блюд
     if (totalPrice > 0) {
         orderPanel.style.display = 'block';
         
-        // Проверяем валидность заказа (соответствие комбо)
+        //проверяем валидность заказа (соответствие комбо)
         if (typeof validateOrder !== 'undefined') {
             const validation = validateOrder(this.selectedDishes);
             
-            // УПРОЩАЕМ: просто делаем кнопку активной/неактивной
+            //просто делаем кнопку активной/неактивной
             if (validation.isValid) {
-                // Заказ валиден - кнопка активна
+                //заказ валиден - кнопка активна
                 goToOrderBtn.classList.remove('disabled');
                 goToOrderBtn.style.pointerEvents = 'auto';
                 goToOrderBtn.style.opacity = '1';
                 goToOrderBtn.title = 'Перейти к оформлению заказа';
             } else {
-                // Заказ невалиден - кнопка неактивна
+                //заказ невалиден - кнопка неактивна
                 goToOrderBtn.classList.add('disabled');
                 goToOrderBtn.style.pointerEvents = 'none';
                 goToOrderBtn.style.opacity = '0.6';
@@ -316,7 +309,7 @@ class OrderManager {
         }
     }
     
-    // метод для очистки заказа
+    //метод для очистки заказа
     clearOrder() {
         this.selectedDishes = {
             soup: null,
@@ -326,23 +319,23 @@ class OrderManager {
             dessert: null
         };
         
-        // Удаляем из localStorage
+        //удаляем из localStorage
         clearOrderFromStorage();
         
-        // Обновляем отображение
+        //обновляем отображение
         this.updateOrderDisplay();
         this.updateDishCardsHighlight();
     }
 }
 
-// инициализация менеджера заказов
+//инициализация менеджера заказов
 let orderManager;
 
 document.addEventListener('DOMContentLoaded', () => {
     orderManager = new OrderManager();
 });
 
-// Экспортируем менеджер заказов
+//экспортируем менеджер заказов
 if (typeof window !== 'undefined') {
     window.orderManager = orderManager;
 }
