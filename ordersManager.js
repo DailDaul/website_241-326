@@ -9,19 +9,22 @@ class OrdersManager {
         };
         
         this.isInitialized = false;
+        this.dishes = []; // Массив для хранения блюд с API
         this.init();
     }
     
     async init() {
         try {
+            console.log('OrdersManager: Начало инициализации...');
+            
             // Ждем загрузки DOM
-            if (document.readyState !== 'loading') {
-                await this.initialize();
-            } else {
+            if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', () => this.initialize());
+            } else {
+                await this.initialize();
             }
         } catch (error) {
-            console.error('Ошибка при инициализации OrdersManager:', error);
+            console.error('OrdersManager: Ошибка инициализации:', error);
             this.showErrorMessage('Ошибка загрузки данных заказа');
         }
     }
@@ -36,23 +39,73 @@ class OrdersManager {
                 return;
             }
             
-            // Загружаем сохраненный заказ
+            // 1. Загружаем блюда с API
+            await this.loadDishesFromAPI();
+            
+            // 2. Загружаем сохраненный заказ
             await this.loadSavedOrder();
             
-            // Отображаем выбранные блюда
+            // 3. Отображаем выбранные блюда
             this.displayOrderItems();
             
-            // Настраиваем обработчики событий
+            // 4. Настраиваем обработчики событий
             this.setupEventListeners();
             
-            // Настраиваем время доставки
+            // 5. Настраиваем время доставки
             this.setupDeliveryTime();
             
             this.isInitialized = true;
-            console.log('OrdersManager: Инициализация завершена');
+            console.log('OrdersManager: Инициализация завершена успешно');
             
         } catch (error) {
-            console.error('Ошибка при инициализации:', error);
+            console.error('OrdersManager: Ошибка при инициализации:', error);
+            this.showErrorMessage('Не удалось загрузить данные меню');
+        }
+    }
+    
+    // НОВАЯ ФУНКЦИЯ: Загрузка блюд с API
+    async loadDishesFromAPI() {
+        try {
+            console.log('Загрузка блюд с API...');
+            
+            const response = await fetch('https://edu.std-900.ist.mospolytech.ru/labs/api/dishes');
+            
+            if (!response.ok) {
+                throw new Error(`Ошибка HTTP: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('Блюда загружены с API:', data.length, 'шт.');
+            
+            // Преобразуем данные к нашему формату
+            this.dishes = data.map(dish => {
+                // Приводим категории к нашему формату
+                let category = dish.category;
+                
+                if (category === 'main-course') {
+                    category = 'main';
+                } else if (category === 'salad') {
+                    category = 'starter';
+                }
+                // 'soup', 'drink', 'dessert' - оставляем как есть
+                
+                return {
+                    keyword: dish.keyword,
+                    name: dish.name,
+                    price: dish.price,
+                    category: category,
+                    kind: dish.kind,
+                    count: dish.count,
+                    image: dish.image
+                };
+            });
+            
+            console.log('Блюда преобразованы:', this.dishes.length);
+            return this.dishes;
+            
+        } catch (error) {
+            console.error('Ошибка загрузки блюд:', error);
+            throw error;
         }
     }
     
@@ -70,20 +123,22 @@ class OrdersManager {
                 return;
             }
             
-            // Загружаем все блюда с API
-            const dishes = await loadDishes();
-            if (!dishes || !Array.isArray(dishes)) {
-                throw new Error('Не удалось загрузить блюда с API');
+            // Проверяем, что блюда загружены
+            if (!this.dishes || this.dishes.length === 0) {
+                console.log('Блюда еще не загружены, ждем...');
+                return;
             }
             
             // Восстанавливаем полные данные блюд
             Object.keys(savedOrderKeys).forEach(category => {
                 const dishKeyword = savedOrderKeys[category];
                 if (dishKeyword) {
-                    const dish = dishes.find(d => d.keyword === dishKeyword);
+                    const dish = this.dishes.find(d => d.keyword === dishKeyword);
                     if (dish) {
                         this.selectedDishes[category] = dish;
                         console.log(`Восстановлено блюдо: ${category} - ${dish.name}`);
+                    } else {
+                        console.warn(`Блюдо с ключом "${dishKeyword}" не найдено в загруженных данных`);
                     }
                 }
             });
@@ -143,7 +198,7 @@ class OrdersManager {
             <p class="dish-name">${dish.name}</p>
             <p class="dish-weight">${dish.count}</p>
             <p class="dish-price">${dish.price}Р</p>
-            <button class="add-button remove-btn">Удалить</button>
+            <button class="add-button remove-btn" type="button">Удалить</button>
         `;
         
         return dishItem;
@@ -167,12 +222,10 @@ class OrdersManager {
         // Обработчик для кнопки "Очистить заказ"
         const clearOrderBtn = document.getElementById('clear-order-btn');
         if (clearOrderBtn) {
-            // Удаляем старые обработчики
-            const newClearBtn = clearOrderBtn.cloneNode(true);
-            clearOrderBtn.parentNode.replaceChild(newClearBtn, clearOrderBtn);
+            // Убедимся, что это кнопка, а не submit
+            clearOrderBtn.type = 'button';
             
-            // Добавляем новый обработчик
-            newClearBtn.addEventListener('click', (e) => {
+            clearOrderBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 this.clearOrder();
             });
@@ -182,16 +235,12 @@ class OrdersManager {
         // Обработчик для кнопки "Отправить заказ"
         const submitBtn = document.querySelector('.submit-btn');
         if (submitBtn) {
-            // Меняем type на button чтобы предотвратить стандартную отправку
+            // Меняем type на button чтобы предотвратить стандартную отправку формы
             submitBtn.type = 'button';
             
-            // Удаляем старые обработчики
-            const newSubmitBtn = submitBtn.cloneNode(true);
-            submitBtn.parentNode.replaceChild(newSubmitBtn, submitBtn);
-            
-            // Добавляем новый обработчик
-            newSubmitBtn.addEventListener('click', (e) => {
+            submitBtn.addEventListener('click', (e) => {
                 e.preventDefault();
+                console.log('Кнопка "Отправить заказ" нажата');
                 this.submitOrder();
             });
             console.log('Обработчик для "Отправить заказ" установлен');
@@ -204,6 +253,16 @@ class OrdersManager {
                 this.toggleTimeInput(e.target.value === 'scheduled');
             });
         });
+        
+        // Обработчик для предотвращения стандартной отправки формы
+        const orderForm = document.getElementById('order-form');
+        if (orderForm) {
+            orderForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                console.log('Форма пытается отправиться, блокируем...');
+                return false;
+            });
+        }
     }
     
     setupDeliveryTime() {
@@ -235,8 +294,8 @@ class OrdersManager {
     }
     
     removeDishFromOrder(dishKeyword, category) {
-        // Находим блюдо в глобальном массиве dishes
-        const dish = dishes && dishes.find(d => d.keyword === dishKeyword);
+        // Находим блюдо в нашем массиве dishes
+        const dish = this.dishes && this.dishes.find(d => d.keyword === dishKeyword);
         
         if (!dish) {
             console.error('Блюдо не найдено:', dishKeyword);
@@ -286,8 +345,6 @@ class OrdersManager {
     }
     
     updateOrderFormDisplay() {
-        console.log('Обновление отображения формы заказа...');
-        
         const orderBlocks = {
             soup: document.getElementById('selected-soup'),
             main: document.getElementById('selected-main'),
@@ -366,18 +423,18 @@ class OrdersManager {
             main: 'Главное блюдо не выбрано',
             starter: 'Салат или стартер не выбран',
             drink: 'Напиток не выбран',
-            dessert: 'Десерт не выбран'
+            dessert: 'Десерт не выбрано'
         };
         return texts[category] || 'Блюдо не выбрано';
     }
     
     updateFormHiddenFields() {
         // Заполняем скрытые поля формы
-        document.getElementById('order-soup').value = this.selectedDishes.soup ? this.selectedDishes.soup.name : '';
-        document.getElementById('order-main').value = this.selectedDishes.main ? this.selectedDishes.main.name : '';
-        document.getElementById('order-starter').value = this.selectedDishes.starter ? this.selectedDishes.starter.name : '';
-        document.getElementById('order-drink').value = this.selectedDishes.drink ? this.selectedDishes.drink.name : '';
-        document.getElementById('order-dessert').value = this.selectedDishes.dessert ? this.selectedDishes.dessert.name : '';
+        document.getElementById('order-soup').value = this.selectedDishes.soup ? this.selectedDishes.soup.keyword : '';
+        document.getElementById('order-main').value = this.selectedDishes.main ? this.selectedDishes.main.keyword : '';
+        document.getElementById('order-starter').value = this.selectedDishes.starter ? this.selectedDishes.starter.keyword : '';
+        document.getElementById('order-drink').value = this.selectedDishes.drink ? this.selectedDishes.drink.keyword : '';
+        document.getElementById('order-dessert').value = this.selectedDishes.dessert ? this.selectedDishes.dessert.keyword : '';
         
         // Рассчитываем и заполняем общую стоимость
         let totalPrice = 0;
@@ -390,10 +447,10 @@ class OrdersManager {
     }
     
     async submitOrder() {
-        console.log('Отправка заказа...');
+        console.log('=== НАЧАЛО ОТПРАВКИ ЗАКАЗА ===');
         
         try {
-            // 1. Проверяем заполнение полей формы
+            // 1. ВАЛИДАЦИЯ ФОРМЫ
             const name = document.getElementById('name')?.value.trim();
             const email = document.getElementById('email')?.value.trim();
             const phone = document.getElementById('phone')?.value.trim();
@@ -404,35 +461,35 @@ class OrdersManager {
                 return;
             }
             
-            // 2. Проверяем валидность email
+            // 2. ВАЛИДАЦИЯ EMAIL
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailPattern.test(email)) {
                 showNotification('Введите корректный email адрес', false);
                 return;
             }
             
-            // 3. Проверяем валидность телефона
+            // 3. ВАЛИДАЦИЯ ТЕЛЕФОНА
             const phonePattern = /^[\+]?[0-9\s\-\(\)]{7,20}$/;
             if (!phonePattern.test(phone)) {
                 showNotification('Введите корректный номер телефона', false);
                 return;
             }
             
-            // 4. Проверяем, что выбрано хотя бы одно блюдо
+            // 4. ПРОВЕРКА ВЫБРАННЫХ БЛЮД
             const hasSelectedDishes = Object.values(this.selectedDishes).some(dish => dish !== null);
             if (!hasSelectedDishes) {
                 showNotification('Выберите блюда для заказа', false);
                 return;
             }
             
-            // 5. Проверяем валидность состава заказа
+            // 5. ВАЛИДАЦИЯ КОМБО-ЛАНЧА
             const validation = validateOrder(this.selectedDishes);
             if (!validation.isValid) {
                 showNotification(validation.message, false);
                 return;
             }
             
-            // 6. Проверяем время доставки если выбрано "по расписанию"
+            // 6. ПРОВЕРКА ВРЕМЕНИ ДОСТАВКИ
             const deliveryTime = document.querySelector('input[name="delivery_time"]:checked')?.value;
             const scheduledTime = document.getElementById('scheduled-time')?.value;
             
@@ -441,7 +498,7 @@ class OrdersManager {
                 return;
             }
             
-            // 7. Подготавливаем данные для отправки
+            // 7. ПОДГОТОВКА ДАННЫХ ДЛЯ ОТПРАВКИ
             const orderData = {
                 name: name,
                 email: email,
@@ -453,7 +510,7 @@ class OrdersManager {
                 total_price: 0
             };
             
-            // Добавляем блюда
+            // Добавляем блюда (используем keyword, как требует API)
             Object.keys(this.selectedDishes).forEach(category => {
                 if (this.selectedDishes[category]) {
                     orderData.dishes[category] = this.selectedDishes[category].keyword;
@@ -461,9 +518,11 @@ class OrdersManager {
                 }
             });
             
-            console.log('Отправка заказа на сервер:', orderData);
+            console.log('Данные для отправки на сервер:', orderData);
             
-            // 8. Отправляем запрос на сервер
+            // 8. ОТПРАВКА НА СЕРВЕР ЧЕРЕЗ fetch
+            console.log('Отправка запроса на сервер...');
+            
             const response = await fetch('https://edu.std-900.ist.mospolytech.ru/labs/api/order', {
                 method: 'POST',
                 headers: {
@@ -473,27 +532,44 @@ class OrdersManager {
                 body: JSON.stringify(orderData)
             });
             
+            console.log('Ответ сервера получен. Статус:', response.status);
+            
             if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Ошибка сервера: ${response.status} - ${errorText}`);
+                // Если сервер вернул ошибку
+                let errorMessage = `Ошибка сервера: ${response.status}`;
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.message || errorMessage;
+                } catch (e) {
+                    // Если не удалось распарсить JSON
+                    const errorText = await response.text();
+                    errorMessage = errorText || errorMessage;
+                }
+                
+                throw new Error(errorMessage);
             }
             
+            // 9. ОБРАБОТКА УСПЕШНОГО ОТВЕТА
             const result = await response.json();
-            console.log('Ответ сервера:', result);
+            console.log('Успешный ответ сервера:', result);
             
-            // 9. Очищаем localStorage после успешной отправки
+            // 10. ОЧИСТКА localStorage ПОСЛЕ УСПЕШНОЙ ОТПРАВКИ
             clearOrderFromStorage();
+            console.log('Данные удалены из localStorage');
             
-            // 10. Показываем сообщение об успехе
+            // 11. ПОКАЗ УВЕДОМЛЕНИЯ ОБ УСПЕХЕ
             showNotification(
-                `Заказ успешно оформлен!<br>Номер вашего заказа: ${result.orderNumber || '#' + Date.now()}<br>Сумма: ${orderData.total_price}Р`, 
+                `✅ Заказ успешно оформлен!<br><br>
+                <strong>Номер заказа:</strong> ${result.orderNumber || '#' + Date.now()}<br>
+                <strong>Сумма:</strong> ${orderData.total_price}Р<br>
+                <strong>Статус:</strong> ${result.status || 'принят'}<br><br>
+                Мы свяжемся с вами для подтверждения.`,
                 true
             );
             
-            // 11. Очищаем форму
+            // 12. ОЧИСТКА ФОРМЫ И ЗАКАЗА
             document.getElementById('order-form').reset();
             
-            // 12. Очищаем текущий заказ
             this.selectedDishes = {
                 soup: null,
                 main: null,
@@ -502,19 +578,27 @@ class OrdersManager {
                 dessert: null
             };
             
-            // 13. Обновляем отображение
+            // 13. ОБНОВЛЕНИЕ ОТОБРАЖЕНИЯ
             this.displayOrderItems();
             this.updateOrderFormDisplay();
-            
-            // 14. Скрываем панель выбора времени
             this.toggleTimeInput(false);
             
+            console.log('=== ЗАКАЗ УСПЕШНО ОТПРАВЛЕН ===');
+            
         } catch (error) {
-            console.error('Ошибка при отправке заказа:', error);
+            console.error('=== ОШИБКА ПРИ ОТПРАВКЕ ЗАКАЗА ===', error);
+            
+            // ПОКАЗ УВЕДОМЛЕНИЯ ОБ ОШИБКЕ
             showNotification(
-                `Ошибка при оформлении заказа: ${error.message}<br>Пожалуйста, попробуйте еще раз.`, 
+                `❌ Ошибка при оформлении заказа!<br><br>
+                <strong>Причина:</strong> ${error.message}<br><br>
+                Пожалуйста, проверьте данные и попробуйте еще раз.<br>
+                <small>Данные заказа сохранены в корзине.</small>`,
                 false
             );
+            
+            // В случае ошибки НЕ удаляем данные из localStorage
+            console.log('Данные сохранены в localStorage из-за ошибки');
         }
     }
     
@@ -522,16 +606,7 @@ class OrdersManager {
         const container = document.getElementById('order-items-container');
         if (container) {
             container.innerHTML = `
-                <div class="error-message" style="
-                    text-align: center;
-                    padding: 40px;
-                    color: #ff6b00;
-                    font-size: 18px;
-                    background-color: #fff5f0;
-                    border-radius: 10px;
-                    border: 2px solid #ff6b00;
-                    margin: 20px 0;
-                ">
+                <div class="error-message">
                     ${message}
                 </div>
             `;
@@ -547,10 +622,12 @@ if (window.location.pathname.includes('orders.html') ||
     document.getElementById('order-form')) {
     
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('Инициализация OrdersManager для страницы оформления заказа...');
+        console.log('=== ИНИЦИАЛИЗАЦИЯ OrdersManager ===');
         ordersManager = new OrdersManager();
         
         // Экспортируем для отладки
         window.ordersManager = ordersManager;
     });
+} else {
+    console.log('OrdersManager: Эта страница не требует инициализации менеджера заказов');
 }
