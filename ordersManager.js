@@ -416,6 +416,10 @@ class OrdersManager {
             `;
         }
     }
+    
+    getOrderData() {
+    return this.selectedDishes;
+    }
 }
 
 // Инициализируем менеджер заказов
