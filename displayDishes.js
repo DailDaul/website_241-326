@@ -1,4 +1,4 @@
-// функция для создания карточки блюда
+//функция для создания карточки блюда
 function createDishCard(dish) {
     const dishItem = document.createElement('div');
     dishItem.className = 'dish-item';
@@ -6,7 +6,7 @@ function createDishCard(dish) {
     dishItem.setAttribute('data-kind', dish.kind);
     dishItem.setAttribute('data-category', dish.category);
     
-    // Проверяем, выбрано ли это блюдо
+    //проверяем, выбрано ли это блюдо
     let isSelected = false;
     if (typeof orderManager !== 'undefined' && orderManager && orderManager.selectedDishes) {
         isSelected = orderManager.selectedDishes[dish.category]?.keyword === dish.keyword;
@@ -22,7 +22,7 @@ function createDishCard(dish) {
         <button class="add-button">${isSelected ? 'Добавлено' : 'Добавить'}</button>
     `;
     
-    // Добавляем класс selected если блюдо выбрано
+    //добавляем класс selected если блюдо выбрано
     if (isSelected) {
         dishItem.classList.add('selected');
     }
@@ -30,7 +30,7 @@ function createDishCard(dish) {
     return dishItem;
 }
 
-// функция для создания фильтров
+//функция для создания фильтров
 function createFilters(category, filters) {
     const filtersContainer = document.createElement('div');
     filtersContainer.className = 'filters';
@@ -47,7 +47,7 @@ function createFilters(category, filters) {
     return filtersContainer;
 }
 
-// текущие активные фильтры для каждой категории
+//текущие активные фильтры для каждой категории
 let activeFilters = {
     soup: null,
     main: null,
@@ -56,16 +56,16 @@ let activeFilters = {
     dessert: null
 };
 
-// глобальная переменная для блюд
+//глобальная переменная для блюд
 let dishes = [];
 
-// функция для отображения блюд по категориям с фильтрацией
+//функция для отображения блюд по категориям с фильтрацией
 function displayDishes() {
-    // Проверяем, что dishes существует
+    //проверяем, что dishes существует
     if (!dishes || !Array.isArray(dishes) || dishes.length === 0) {
         console.error('Dishes array is empty');
         
-        // Показываем сообщение об отсутствии блюд
+        //показываем сообщение об отсутствии блюд
         const sections = ['soups', 'main-dishes', 'drinks', 'starters', 'desserts'];
         sections.forEach(sectionId => {
             const section = document.getElementById(sectionId);
@@ -80,10 +80,10 @@ function displayDishes() {
         return;
     }
     
-    // сортируем блюда по алфавиту
+    //сортируем блюда по алфавиту
     const sortedDishes = [...dishes].sort((a, b) => a.name.localeCompare(b.name));
     
-    // группируем блюда по категориям
+    //группируем блюда по категориям
     const categories = {
         soup: document.getElementById('soups')?.querySelector('.dishes-grid'),
         main: document.getElementById('main-dishes')?.querySelector('.dishes-grid'),
@@ -92,32 +92,32 @@ function displayDishes() {
         dessert: document.getElementById('desserts')?.querySelector('.dishes-grid')
     };
     
-    // очищаем контейнеры
+    //очищаем контейнеры
     Object.values(categories).forEach(container => {
         if (container) container.innerHTML = '';
     });
     
-    // добавляем блюда в соответствующие категории с учетом фильтров
+    //добавляем блюда в соответствующие категории с учетом фильтров
     sortedDishes.forEach(dish => {
         const container = categories[dish.category];
         if (container) {
             const activeFilter = activeFilters[dish.category];
             
-            // если есть активный фильтр для этой категории, проверяем соответствие
+            //если есть активный фильтр для этой категории, проверяем соответствие
             if (activeFilter) {
                 if (dish.kind === activeFilter) {
                     const dishCard = createDishCard(dish);
                     container.appendChild(dishCard);
                 }
             } else {
-                // если фильтра нет, показываем все блюда
+                //если фильтра нет, показываем все блюда
                 const dishCard = createDishCard(dish);
                 container.appendChild(dishCard);
             }
         }
     });
     
-    // ВЫЗЫВАЕМ ПОДСВЕТКУ ПОСЛЕ ОТОБРАЖЕНИЯ ВСЕХ КАРТОЧЕК
+    //включение подсветки (перехода на другую страницу) после выбора нужных карточек
     if (typeof orderManager !== 'undefined' && orderManager && orderManager.updateDishCardsHighlight) {
         setTimeout(() => {
             orderManager.updateDishCardsHighlight();
@@ -125,7 +125,7 @@ function displayDishes() {
     }
 }
 
-// функция для инициализации фильтров
+//функция для инициализации фильтров
 function initFilters() {
     const filterConfig = {
         soup: [
@@ -154,11 +154,11 @@ function initFilters() {
         ]
     };
     
-    // добавляем фильтры для каждой категории
+    //добавляем фильтры для каждой категории
     Object.keys(filterConfig).forEach(category => {
         let sectionId;
         
-        // определяем правильный ID секции
+        //определяем правильный ID секции
         switch(category) {
             case 'soup': sectionId = 'soups'; break;
             case 'main': sectionId = 'main-dishes'; break;
@@ -174,21 +174,21 @@ function initFilters() {
             const filtersContainer = createFilters(category, filterConfig[category]);
             const heading = section.querySelector('h2');
             
-            // Вставляем фильтры ПОСЛЕ заголовка и ПЕРЕД контейнером с блюдами
+            //вставляем фильтры ПОСЛЕ заголовка и ПЕРЕД контейнером с блюдами
             if (heading && heading.nextElementSibling) {
                 section.insertBefore(filtersContainer, heading.nextElementSibling);
             }
         }
     });
     
-    // обработчики для фильтров
+    //обработчики для фильтров
     document.addEventListener('click', (e) => {
         if (e.target.classList.contains('filter-btn')) {
             const filterBtn = e.target;
             const filterKind = filterBtn.getAttribute('data-kind');
             const category = filterBtn.getAttribute('data-category');
             
-            // находим секцию и все фильтры в ней
+            //находим секцию и все фильтры в ней
             let sectionId;
             switch(category) {
                 case 'soup': sectionId = 'soups'; break;
@@ -204,33 +204,33 @@ function initFilters() {
                 return;
             }
             
-            // убираем активный класс у всех фильтров в этой категории
+            //убираем активный класс у всех фильтров в этой категории
             const allFilters = section.querySelectorAll('.filter-btn');
             allFilters.forEach(btn => btn.classList.remove('active'));
             
-            // проверяем, был ли этот фильтр уже активен
+            //проверяем, был ли этот фильтр уже активен
             const wasActive = activeFilters[category] === filterKind;
             
             if (wasActive) {
-                // если фильтр уже был активен, снимаем фильтрацию
+                //если фильтр уже был активен, снимаем фильтрацию
                 activeFilters[category] = null;
                 filterBtn.classList.remove('active');
             } else {
-                // активируем фильтр
+                //активируем фильтр
                 activeFilters[category] = filterKind;
                 filterBtn.classList.add('active');
             }
             
-            // обновляем отображение блюд
+            //обновляем отображение блюд
             displayDishes();
         }
     });
 }
 
-// функция для инициализации загрузки блюд
+//функция для инициализации загрузки блюд
 async function initializeDishes() {
     try {
-        // Показываем индикатор загрузки
+        //показываем индикатор загрузки
         const sections = ['soups', 'main-dishes', 'drinks', 'starters', 'desserts'];
         sections.forEach(sectionId => {
             const section = document.getElementById(sectionId);
@@ -242,20 +242,20 @@ async function initializeDishes() {
             }
         });
         
-        // Загружаем блюда через API
+        //загружаем блюда через API
         dishes = await loadDishes();
         
         if (dishes && dishes.length > 0) {
-            // Инициализируем фильтры и отображаем блюда
+            //инициализируем фильтры и отображаем блюда
             initFilters();
             displayDishes();
             
-            // Инициализируем OrderManager после загрузки блюд
+            //инициализируем OrderManager после загрузки блюд
             if (typeof orderManager !== 'undefined' && orderManager) {
                 // Загружаем сохраненный заказ из localStorage
                 const savedOrder = loadOrderFromStorage();
                 
-                // Восстанавливаем выбранные блюда напрямую без getFullOrderData
+                //восстанавливаем выбранные блюда напрямую без getFullOrderData
                 Object.keys(savedOrder).forEach(category => {
                     const dishKeyword = savedOrder[category];
                     if (dishKeyword && dishes) {
@@ -268,7 +268,7 @@ async function initializeDishes() {
                 
                 orderManager.updateDishCardsHighlight();
                 
-                // Обновляем панель заказа если она есть
+                //обновляем панель заказа если она есть
                 if (orderManager.updateOrderPanel) {
                     orderManager.updateOrderPanel();
                 }
@@ -287,7 +287,7 @@ async function initializeDishes() {
     }
 }
 
-// функция для показа сообщения об ошибке
+//функция для показа сообщения об ошибке
 function showErrorMessage(message) {
     const sections = ['soups', 'main-dishes', 'drinks', 'starters', 'desserts'];
     sections.forEach(sectionId => {
@@ -301,9 +301,9 @@ function showErrorMessage(message) {
         });
     }
 
-    // запускаем отображение при загрузке страницы
+    //запускаем отображение при загрузке страницы
     document.addEventListener('DOMContentLoaded', async () => {
-        // Добавляем стили для сообщений
+        //добавляем стили для сообщений
         const style = document.createElement('style');
         style.textContent = `
             .loading-message, .error-message {
@@ -322,6 +322,6 @@ function showErrorMessage(message) {
         `;
         document.head.appendChild(style);
         
-        // Инициализируем загрузку блюд с API
+        //инициализируем загрузку блюд с API
         await initializeDishes();
     });
