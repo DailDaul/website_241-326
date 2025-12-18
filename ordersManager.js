@@ -726,7 +726,6 @@ class OrdersManager {
 
 // Инициализация только на странице orders.html
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM загружен, проверяем страницу...');
     
     // Проверяем, что мы на странице orders.html
     const isOrdersPage = window.location.pathname.includes('orders.html') || 
@@ -734,10 +733,8 @@ document.addEventListener('DOMContentLoaded', function() {
                          document.querySelector('.order-form');
     
     if (isOrdersPage) {
-        console.log('Это страница оформления заказа, инициализируем OrdersManager');
         
         // Создаем экземпляр менеджера
         window.ordersManager = new OrdersManager();
-        console.log('OrdersManager создан');
     }
 });
