@@ -245,14 +245,25 @@ class OrdersManager {
         const submitBtn = document.querySelector('.submit-btn');
         if (submitBtn) {
             submitBtn.type = 'button';
-            
+        
             submitBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log('Кнопка "Отправить заказ" нажата');
-                this.submitOrder();
+            
+                // Добавляем индикатор загрузки
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Отправка...';
+                submitBtn.disabled = true;
+            
+                // Запускаем отправку
+                this.submitOrder().finally(() => {
+                    // Восстанавливаем кнопку
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                });
             });
-            console.log('Обработчик для "Отправить заказ" установлен');
+        console.log('Обработчик для "Отправить заказ" установлен');
         }
         
         // 4. Обработчики для радио кнопок времени доставки
