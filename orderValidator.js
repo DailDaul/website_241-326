@@ -1,4 +1,4 @@
-//определяем допустимые комбинации ланчей
+// определяем допустимые комбинации ланчей
 const validCombos = [
     { soup: true, main: true, starter: true, drink: true },
     { soup: true, main: true, starter: false, drink: true },
@@ -7,7 +7,7 @@ const validCombos = [
     { soup: false, main: true, starter: false, drink: true }
 ];
 
-//функция для проверки валидности заказа
+// функция для проверки валидности заказа
 function validateOrder(selectedDishes) {
     const currentCombo = {
         soup: !!selectedDishes.soup,
@@ -16,7 +16,7 @@ function validateOrder(selectedDishes) {
         drink: !!selectedDishes.drink
     };
     
-    //проверяем, соответствует ли заказ какому-либо комбо
+    // проверяем, соответствует ли заказ какому-либо комбо
     for (const combo of validCombos) {
         let match = true;
         for (const key in combo) {
@@ -66,17 +66,17 @@ function validateOrder(selectedDishes) {
     return { isValid: false, message };
 }
 
-//функция для показа уведомления
+// функция для показа уведомления
 function showNotification(message, isSuccess = false) {
     console.log('Showing notification:', message);
     
-    // Проверяем, есть ли уже уведомление
+    // удаляем предыдущие уведомления
     const oldNotification = document.querySelector('.notification-overlay');
     if (oldNotification) {
         oldNotification.remove();
     }
     
-    // Создаем уведомление
+    // создаем уведомление
     const overlay = document.createElement('div');
     overlay.className = 'notification-overlay';
     
@@ -84,26 +84,85 @@ function showNotification(message, isSuccess = false) {
     const icon = isSuccess ? '✅' : '⚠️';
     
     overlay.innerHTML = `
-        <div class="notification">
+        <div class="notification" style="
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+            text-align: center;
+        ">
             <div class="notification-content">
-                <h3>${icon} ${title}</h3>
-                <p>${message}</p>
-                <button class="notification-btn">Понятно</button>
+                <h3 style="
+                    font-size: 24px;
+                    color: #333;
+                    margin-bottom: 20px;
+                    border-bottom: 2px solid #ff6b00;
+                    padding-bottom: 10px;
+                    display: inline-block;
+                ">${icon} ${title}</h3>
+                <p style="
+                    font-size: 18px;
+                    color: #666;
+                    margin-bottom: 30px;
+                    line-height: 1.5;
+                ">${message}</p>
+                <button class="notification-btn" style="
+                    background-color: #ff6b00;
+                    color: white;
+                    border: none;
+                    padding: 12px 40px;
+                    border-radius: 10px;
+                    font-family: 'Oswald', sans-serif;
+                    font-size: 16px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                    min-width: 120px;
+                    border: 2px solid #ff6b00;
+                ">Окей</button>
             </div>
         </div>
+        <style>
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes slideIn {
+                from {
+                    transform: translateY(-50px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+            .notification-btn:hover {
+                background-color: white !important;
+                color: #ff6b00 !important;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);
+            }
+        </style>
     `;
     
     document.body.appendChild(overlay);
-    document.body.style.overflow = 'hidden'; // Блокируем прокрутку
     
-    // Обработчик для кнопки
+    // обработчик для кнопки
     const okButton = overlay.querySelector('.notification-btn');
     okButton.addEventListener('click', () => {
+        console.log('Notification closed');
         overlay.remove();
-        document.body.style.overflow = ''; // Восстанавливаем прокрутку
+        document.body.style.overflow = '';
     });
     
-    // Закрытие по клику вне уведомления
+    // блокируем прокрутку страницы под уведомлением
+    document.body.style.overflow = 'hidden';
+    
+    // закрытие по клику вне уведомления
     overlay.addEventListener('click', (e) => {
         if (e.target === overlay) {
             overlay.remove();
@@ -111,7 +170,7 @@ function showNotification(message, isSuccess = false) {
         }
     });
     
-    // Автозакрытие через 10 секунд для успешных сообщений
+    // автозакрытие через 10 секунд для успешных сообщений
     if (isSuccess) {
         setTimeout(() => {
             if (document.body.contains(overlay)) {
@@ -124,16 +183,16 @@ function showNotification(message, isSuccess = false) {
     return overlay;
 }
 
-//функция для проверки заказа при отправке формы
+// функция для проверки заказа при отправке формы
 function setupOrderValidation() {
     const orderForm = document.querySelector('.order-form');
     
     if (!orderForm) {
-        console.error('Order form not found!');
+        console.log('Order form not found! Возможно, мы не на странице orders.html');
         return;
     }
     
-    console.log('🚫 Блокируем стандартную отправку формы');
+    console.log('Настройка валидации формы заказа...');
     
     // 1. Удаляем все старые обработчики
     const formClone = orderForm.cloneNode(true);
@@ -187,19 +246,19 @@ function setupOrderValidation() {
             return;
         }
         
-        //получаем текущий заказ
+        // получаем текущий заказ
         const orderData = orderManager.getOrderData();
         console.log('Current order data:', orderData);
         
-        //проверяем валидность
+        // проверяем валидность
         const validation = validateOrder(orderData);
         console.log('Validation result:', validation);
         
         if (!validation.isValid) {
-            //показываем уведомление об ошибке
+            // показываем уведомление об ошибке
             showNotification(validation.message, false);
         } else {
-            //если заказ валиден, показываем успешное сообщение
+            // если заказ валиден, показываем успешное сообщение
             console.log('Order is valid!');
             
             // Собираем данные для отображения
@@ -229,12 +288,24 @@ function setupOrderValidation() {
     }
 }
 
-//инициализация с повторными попытками
+// инициализация с повторными попытками
 function initializeValidation() {
     const maxAttempts = 10;
     let attempts = 0;
     
     const tryInitialize = () => {
+        // ПРОВЕРЯЕМ, МЫ НА СТРАНИЦЕ ORDERS.HTML ИЛИ LUNCH.HTML?
+        const isOrdersPage = window.location.pathname.includes('orders.html') || 
+                           document.getElementById('order-form')?.classList.contains('order-form');
+        
+        // Если мы на странице orders.html, НЕ инициализируем эту валидацию
+        // так как там уже есть своя логика в ordersManager.js
+        if (isOrdersPage) {
+            console.log('На странице orders.html - пропускаем инициализацию orderValidator');
+            return;
+        }
+        
+        // Проверяем только для страницы lunch.html
         if (typeof orderManager !== 'undefined' && orderManager) {
             console.log('OrderManager found, setting up validation...');
             setupOrderValidation();
@@ -243,22 +314,41 @@ function initializeValidation() {
             console.log(`Waiting for OrderManager... attempt ${attempts}`);
             setTimeout(tryInitialize, 300);
         } else {
-            console.error('Failed to initialize: OrderManager not loaded');
-            // Все равно настраиваем валидацию, но с fallback
-            setTimeout(setupOrderValidation, 500);
+            console.log('OrderManager не загружен, возможно мы не на странице lunch.html');
         }
     };
     
     tryInitialize();
 }
 
-// Запускаем инициализацию
+// Запускаем инициализацию ТОЛЬКО если мы не на странице orders.html
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded, starting validation initialization...');
-    setTimeout(initializeValidation, 500);
+    console.log('DOM loaded, checking page type...');
+    
+    // Проверяем, на какой мы странице
+    const isOrdersPage = window.location.pathname.includes('orders.html') || 
+                        (document.getElementById('order-form') && 
+                         document.getElementById('order-form').classList.contains('order-form'));
+    
+    const isLunchPage = window.location.pathname.includes('lunch.html') ||
+                       document.getElementById('soups') ||
+                       document.querySelector('.dishes-grid');
+    
+    console.log('isOrdersPage:', isOrdersPage);
+    console.log('isLunchPage:', isLunchPage);
+    
+    // Инициализируем валидацию ТОЛЬКО для страницы lunch.html
+    if (isLunchPage && !isOrdersPage) {
+        console.log('Это страница lunch.html, инициализируем валидацию...');
+        setTimeout(initializeValidation, 500);
+    } else if (isOrdersPage) {
+        console.log('Это страница orders.html - пропускаем инициализацию orderValidator');
+    } else {
+        console.log('Неизвестная страница, пропускаем инициализацию');
+    }
 });
 
-// Экспортируем функции для тестирования
+// Экспортируем функции для использования в других файлах
 if (typeof window !== 'undefined') {
     window.validateOrder = validateOrder;
     window.showNotification = showNotification;
