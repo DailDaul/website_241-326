@@ -236,6 +236,9 @@ function setupOrderValidation() {
     
     console.log('Настраиваем валидацию формы...');
     
+    //настраиваем переключение времени доставки
+    setupTimeDeliveryToggle();
+    
     //вешаем обработчик на кнопку отправки (не клонируем всю форму!)
     const submitBtn = orderForm.querySelector('.submit-btn');
     if (submitBtn) {
@@ -335,6 +338,18 @@ function setupOrderValidation() {
             showNotification('Укажите время доставки');
             return;
         }
+
+        if (scheduledTime) {
+            const time = new Date(`2000-01-01T${scheduledTime}`);
+            const hours = time.getHours();
+            const minutes = time.getMinutes();
+    
+        // Проверяем, что время в пределах 7:00 - 23:00
+        if (hours < 7 || hours > 23 || (hours === 23 && minutes > 0)) {
+            showNotification('Время доставки должно быть с 7:00 до 23:00');
+            return;
+            }
+        }
         
         //получаем текущий заказ
         const orderData = getCurrentOrderData();
@@ -381,6 +396,40 @@ function setupOrderValidation() {
             showNotification(successMessage, true);
         }
     }
+}
+
+// Функция для настройки переключения времени доставки
+function setupTimeDeliveryToggle() {
+    const asapRadio = document.getElementById('delivery-asap');
+    const scheduledRadio = document.getElementById('delivery-scheduled');
+    const timePanel = document.getElementById('time-panel');
+    
+    if (!asapRadio || !scheduledRadio || !timePanel) {
+        console.log('Элементы выбора времени не найдены');
+        return;
+    }
+    
+    // Изначально скрываем панель выбора времени
+    timePanel.style.display = 'none';
+    
+    // Функция для обновления видимости панели времени
+    function updateTimePanelVisibility() {
+        if (scheduledRadio.checked) {
+            timePanel.style.display = 'block';
+            timePanel.style.animation = 'fadeIn 0.3s ease';
+        } else {
+            timePanel.style.display = 'none';
+        }
+    }
+    
+    // Вешаем обработчики на радио-кнопки
+    asapRadio.addEventListener('change', updateTimePanelVisibility);
+    scheduledRadio.addEventListener('change', updateTimePanelVisibility);
+    
+    // Инициализируем видимость
+    updateTimePanelVisibility();
+    
+    console.log('Настроено переключение времени доставки');
 }
 
 //инициализация с повторными попытками
