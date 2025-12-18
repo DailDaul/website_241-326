@@ -1,4 +1,3 @@
-// displayDishes.js
 // функция для создания карточки блюда
 function createDishCard(dish) {
     const dishItem = document.createElement('div');
@@ -307,41 +306,41 @@ function showErrorMessage(message) {
         const section = document.getElementById(sectionId);
         if (section) {
             const grid = section.querySelector('.dishes-grid');
-            if (grid) {
-                grid.innerHTML = `<div class="error-message">${message}</div>`;
+                if (grid) {
+                    grid.innerHTML = `<div class="error-message">${message}</div>`;
+                }
             }
-        }
+        });
+    }
+
+    // запускаем отображение при загрузке страницы
+    document.addEventListener('DOMContentLoaded', async () => {
+        console.log('DOM loaded, starting API initialization...');
+        
+        // Добавляем стили для сообщений
+        const style = document.createElement('style');
+        style.textContent = `
+            .loading-message, .error-message {
+                text-align: center;
+                padding: 40px;
+                font-size: 18px;
+                color: #666;
+                background-color: #f9f9f9;
+                border-radius: 10px;
+                margin: 20px 0;
+            }
+            .error-message {
+                color: #ff6b00;
+                border: 2px solid #ff6b00;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Инициализируем загрузку блюд с API
+        await initializeDishes();
     });
-}
 
-// запускаем отображение при загрузке страницы
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log('DOM loaded, starting API initialization...');
-    
-    // Добавляем стили для сообщений
-    const style = document.createElement('style');
-    style.textContent = `
-        .loading-message, .error-message {
-            text-align: center;
-            padding: 40px;
-            font-size: 18px;
-            color: #666;
-            background-color: #f9f9f9;
-            border-radius: 10px;
-            margin: 20px 0;
-        }
-        .error-message {
-            color: #ff6b00;
-            border: 2px solid #ff6b00;
-        }
-    `;
-    document.head.appendChild(style);
-    
-    // Инициализируем загрузку блюд с API
-    await initializeDishes();
-});
-
-// Экспортируем функции для использования в других файлах
+/*
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         displayDishes,
@@ -350,4 +349,4 @@ if (typeof module !== 'undefined' && module.exports) {
         dishes,
         initializeDishes
     };
-}
+} */
