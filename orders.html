@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оформить заказ - Food Construct</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="lunch.css">
+</head>
+<body>
+    <header>
+        <h1>Food Construct</h1>
+        <nav>
+            <a href="index.html">Главная</a>
+            <a href="lunch.html">Собрать ланч</a>
+            <a href="orders.html" id="active">Оформить заказ</a>
+            <a href="index.html#contacts">Контакты</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="order-summary-section">
+            <h2>Состав заказа</h2>
+            <div id="order-items-container" class="dishes-grid">
+                <!-- Здесь будут отображаться выбранные блюда -->
+                <div id="empty-order-message" class="empty-message">
+                    Ничего не выбрано. Чтобы добавить блюда в заказ, 
+                    перейдите на страницу <a href="lunch.html">Собрать ланч</a>.
+                </div>
+            </div>
+        </section>
+
+        <section class="order-section">
+            <h2>Оформление заказа</h2>
+            
+            <form class="order-form" id="order-form" method="POST">
+                <div class="form-columns">
+                    <!-- Левая колонка: Ваш заказ -->
+                    <div class="order-block">
+                        <h3>Ваш заказ</h3>
+                        <div class="current-order">
+                            <div id="empty-message" class="empty-message" style="display: none;">Ничего не выбрано</div>
+                            
+                            <div class="order-category">
+                                <h4 id="soup-title" style="display: none;">Суп</h4>
+                                <div id="selected-soup" class="selected-dishes">
+                                    <div class="not-selected">Суп не выбран</div>
+                                </div>
+                            </div>
+                            
+                            <div class="order-category">
+                                <h4 id="main-title" style="display: none;">Главное блюдо</h4>
+                                <div id="selected-main" class="selected-dishes">
+                                    <div class="not-selected">Главное блюдо не выбрано</div>
+                                </div>
+                            </div>
+
+                            <div class="order-category">
+                                <h4 id="starter-title" style="display: none;">Салат или стартер</h4>
+                                <div id="selected-starter" class="selected-dishes">
+                                    <div class="not-selected">Салат или стартер не выбран</div>
+                                </div>
+                            </div>
+                            
+                            <div class="order-category">
+                                <h4 id="drink-title" style="display: none;">Напиток</h4>
+                                <div id="selected-drink" class="selected-dishes">
+                                    <div class="not-selected">Напиток не выбран</div>
+                                </div>
+                            </div>
+
+                            <div class="order-category">
+                                <h4 id="dessert-title" style="display: none;">Десерт</h4>
+                                <div id="selected-dessert" class="selected-dishes">
+                                    <div class="not-selected">Десерт не выбран</div>
+                                </div>
+                            </div>
+                            
+                            <div id="order-total" class="order-total">
+                                <h4>Стоимость заказа</h4>
+                                <div class="total-price">
+                                    <span id="total-price">0</span>Р
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Правая колонка: Ваши данные -->
+                    <div class="client-block">
+                        <h3>Ваши данные</h3>
+                        
+                        <div class="form-group">
+                            <label for="name">Имя *</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" 
+                                   required
+                                   pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                                   title="Введите корректный email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Телефон *</label>
+                            <input type="tel" id="phone" name="phone" 
+                                   required
+                                   pattern="[+0-9\s\-\(\)]{7,20}"
+                                   title="Введите корректный номер телефона">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address">Адрес доставки *</label>
+                            <input type="text" id="address" name="address" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Время доставки *</label>
+                            
+                            <div class="radio-option">
+                                <input type="radio" id="delivery-asap" name="delivery_time" value="asap" checked>
+                                <label for="delivery-asap">Как можно скорее</label>
+                            </div>
+                            
+                            <div class="radio-option">
+                                <input type="radio" id="delivery-scheduled" name="delivery_time" value="scheduled">
+                                <label for="delivery-scheduled">К указанному времени</label>
+                            </div>
+                            
+                            <div class="time-selection-panel" id="time-panel">
+                                <div class="time-panel-header">
+                                    <span>Укажите время доставки</span>
+                                    <div class="time-hint">Доступное время доставки с 7:00 до 23:00</div>
+                                </div>
+                                <input type="time" id="scheduled-time" name="scheduled_time" 
+                                       min="07:00" max="23:00"
+                                       title="Выберите время с 7:00 до 23:00"
+                                       class="time-input">
+                            </div>
+                        </div>
+                        
+                        <!-- Скрытые поля для данных заказа -->
+                        <input type="hidden" id="order-soup" name="soup">
+                        <input type="hidden" id="order-main" name="main">
+                        <input type="hidden" id="order-starter" name="starter">
+                        <input type="hidden" id="order-drink" name="drink">
+                        <input type="hidden" id="order-dessert" name="dessert">
+                        <input type="hidden" id="order-total-price" name="total_price">
+                        
+                        <div class="form-buttons">
+                            <button type="button" id="clear-order-btn" class="reset-btn">Очистить заказ</button>
+                            <button type="submit" class="submit-btn">Отправить заказ</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <footer id="contacts">
+        <p>Позвонить нам: <a href="tel:+70000000000">+7-000-000-00-00</a></p>
+    </footer>
+
+    <script src="api.js"></script>
+    <script src="orderStorage.js"></script>
+    <script src="orderValidator.js"></script>
+    <script src="ordersManager.js"></script>
+</body>
+</html>
