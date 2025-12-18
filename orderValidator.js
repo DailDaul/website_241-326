@@ -1,8 +1,7 @@
-// orderValidator.js
 // Глобальные функции для работы с менеджерами заказов
 function getOrderManager() {
-    // На странице lunch.html используем orderManager
-    // На странице orders.html используем ordersManager
+    //в lunch.html используем orderManager
+    //вorders.html используем ordersManager
     if (typeof orderManager !== 'undefined' && orderManager) {
         return orderManager;
     }
@@ -12,16 +11,16 @@ function getOrderManager() {
     return null;
 }
 
-// Функция для получения данных заказа
+//функция для получения данных заказа
 function getCurrentOrderData() {
     const manager = getOrderManager();
     if (!manager) return null;
     
-    // Проверяем, есть ли метод getOrderData
+    //проверяем, есть ли метод getOrderData
     if (typeof manager.getOrderData === 'function') {
         return manager.getOrderData();
     }
-    // Если метода нет, используем selectedDishes напрямую
+    //если метода нет, используем selectedDishes напрямую
     return manager.selectedDishes || {
         soup: null,
         main: null,
@@ -63,14 +62,14 @@ function validateOrder(selectedDishes) {
         }
     }
     
-    // Определяем тип уведомления
+    //определяем тип уведомления
     let message = '';
     
-    // 1. Ничего не выбрано
+    //1. ничего не выбрано
     if (!currentCombo.soup && !currentCombo.main && !currentCombo.starter && !currentCombo.drink) {
         message = 'Ничего не выбрано. Выберите блюда для заказа';
     }
-    // 2. Выбраны все необходимые блюда, кроме напитка
+    //2. выбраны все необходимые блюда, кроме напитка
     else if ((currentCombo.soup && currentCombo.main && currentCombo.starter && !currentCombo.drink) ||
              (currentCombo.soup && currentCombo.main && !currentCombo.starter && !currentCombo.drink) ||
              (currentCombo.soup && !currentCombo.main && currentCombo.starter && !currentCombo.drink) ||
@@ -78,20 +77,20 @@ function validateOrder(selectedDishes) {
              (!currentCombo.soup && currentCombo.main && !currentCombo.starter && !currentCombo.drink)) {
         message = 'Выберите напиток';
     }
-    // 3. Выбран суп, но не выбраны главное блюдо и салат/стартер
+    //3. выбран суп, но не выбраны главное блюдо и салат/стартер
     else if (currentCombo.soup && !currentCombo.main && !currentCombo.starter) {
         message = 'Выберите главное блюдо/салат/стартер';
     }
-    // 4. Выбран салат/стартер, но не выбраны суп и главное блюдо
+    //4. выбран салат/стартер, но не выбраны суп и главное блюдо
     else if (!currentCombo.soup && !currentCombo.main && currentCombo.starter) {
         message = 'Выберите суп или главное блюдо';
     }
-    // 5. Выбран только напиток или десерт
+    //5. выбран только напиток или десерт
     else if ((!currentCombo.soup && !currentCombo.main && !currentCombo.starter) && 
              (currentCombo.drink || selectedDishes.dessert)) {
         message = 'Выберите главное блюдо';
     }
-    // Другие комбинации
+    //другие комбинации
     else {
         message = 'Выберите один из доступных вариантов комбо-ланча.';
     }
@@ -113,7 +112,7 @@ function showNotification(message, isSuccess = false) {
     const overlay = document.createElement('div');
     overlay.className = 'notification-overlay';
     
-    // ДОБАВЛЯЕМ ИНЛАЙН-СТИЛИ для гарантии работы
+    //добавляем стили для гарантии работы (ваще хз, как оно работает, но без кнопки не фурычат :(
     overlay.style.cssText = `
         position: fixed;
         top: 0;
@@ -217,17 +216,17 @@ function showNotification(message, isSuccess = false) {
 
 //функция для проверки заказа при отправке формы
 function setupOrderValidation() {
-    // Проверяем, на какой странице мы находимся
+    //проверяем, на какой странице мы находимся
     const isLunchPage = window.location.pathname.includes('lunch.html');
     const isOrdersPage = window.location.pathname.includes('orders.html');
     
-    // На странице lunch.html нет формы заказа, поэтому выходим
+    //в lunch.html нет формы заказа, поэтому выходим
     if (isLunchPage) {
         console.log('На странице "Собрать ланч" - валидация формы не требуется');
         return;
     }
     
-    // На странице orders.html ищем форму
+    //в orders.html ищем форму
     const orderForm = document.querySelector('.order-form');
     
     if (!orderForm) {
@@ -237,10 +236,10 @@ function setupOrderValidation() {
     
     console.log('Настраиваем валидацию формы...');
     
-    // Вешаем обработчик на кнопку отправки (не клонируем всю форму!)
+    //вешаем обработчик на кнопку отправки (не клонируем всю форму!)
     const submitBtn = orderForm.querySelector('.submit-btn');
     if (submitBtn) {
-        // Удаляем старые обработчики
+        //удаляем старые обработчики
         const newSubmitBtn = submitBtn.cloneNode(true);
         submitBtn.parentNode.replaceChild(newSubmitBtn, submitBtn);
         
@@ -251,14 +250,14 @@ function setupOrderValidation() {
             return false;
         }, true);
         
-        // Меняем type на button чтобы браузер не пытался отправить
+        //меняем type на button чтобы браузер не пытался отправить
         newSubmitBtn.type = 'button';
     }
     
-    // Вешаем обработчик на кнопку очистки заказа
+    //вешаем обработчик на кнопку очистки заказа
     const clearOrderBtn = orderForm.querySelector('#clear-order-btn');
     if (clearOrderBtn) {
-        // Удаляем старые обработчики
+        //удаляем старые обработчики
         const newClearBtn = clearOrderBtn.cloneNode(true);
         clearOrderBtn.parentNode.replaceChild(newClearBtn, clearOrderBtn);
         
@@ -269,7 +268,7 @@ function setupOrderValidation() {
         });
     }
     
-    // Вешаем обработчик на саму форму
+    //вешаем обработчик на саму форму
     orderForm.addEventListener('submit', function(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -277,7 +276,7 @@ function setupOrderValidation() {
         return false;
     }, true);
     
-    // Функция для очистки заказа
+    //функция для очистки заказа
     function clearCurrentOrder() {
         console.log('Очистка заказа...');
         const manager = getOrderManager();
@@ -295,12 +294,12 @@ function setupOrderValidation() {
                 dessert: null
             };
             
-            // Очищаем localStorage
+            //очищаем localStorage
             if (typeof clearOrderFromStorage === 'function') {
                 clearOrderFromStorage();
             }
             
-            // Обновляем отображение
+            //обновляем отображение
             if (typeof manager.updateOrderFormDisplay === 'function') {
                 manager.updateOrderFormDisplay();
             }
@@ -314,11 +313,11 @@ function setupOrderValidation() {
         }
     }
     
-    // Функция обработки заказа
+    //функция обработки заказа
     function processOrderForm() {
         console.log('=== ОБРАБОТКА ЗАКАЗА ===');
         
-        // Проверяем заполнение полей формы
+        //проверяем заполнение полей формы
         const name = document.getElementById('name')?.value.trim();
         const email = document.getElementById('email')?.value.trim();
         const phone = document.getElementById('phone')?.value.trim();
@@ -331,7 +330,7 @@ function setupOrderValidation() {
             return;
         }
         
-        // Если выбрано "К указанному времени", проверяем заполнение времени
+        //если выбрано "К указанному времени", проверяем заполнение времени
         if (deliveryTime === 'scheduled' && !scheduledTime) {
             showNotification('Укажите время доставки');
             return;
@@ -357,7 +356,7 @@ function setupOrderValidation() {
             //если заказ валиден, показываем успешное сообщение
             console.log('Order is valid!');
             
-            // Собираем данные для отображения
+            //собираем данные для отображения
             const selectedItems = [];
             if (orderData.soup) selectedItems.push(orderData.soup.name);
             if (orderData.main) selectedItems.push(orderData.main.name);
@@ -378,7 +377,7 @@ function setupOrderValidation() {
                 <small>В демо-версии форма не отправляется на сервер.</small>
             `;
             
-            // Показываем уведомление об успехе
+            //показываем уведомление об успехе
             showNotification(successMessage, true);
         }
     }
@@ -386,22 +385,22 @@ function setupOrderValidation() {
 
 //инициализация с повторными попытками
 function initializeValidation() {
-    const maxAttempts = 15; // Увеличим количество попыток
+    const maxAttempts = 15; //увеличим количество попыток
     let attempts = 0;
     
     const tryInitialize = () => {
-        // Проверяем, на какой странице мы находимся
+        //проверяем, на какой странице мы находимся
         const isLunchPage = window.location.pathname.includes('lunch.html');
         const isOrdersPage = window.location.pathname.includes('orders.html');
         
-        // Для разных страниц используем разных менеджеров
+        //для разных страниц используем разных менеджеров
         let managerFound = false;
         
         if (isLunchPage) {
-            // На lunch.html используем orderManager
+            //в lunch.html используем orderManager
             managerFound = typeof orderManager !== 'undefined' && orderManager;
         } else if (isOrdersPage) {
-            // На orders.html используем ordersManager
+            //в orders.html используем ordersManager
             managerFound = typeof ordersManager !== 'undefined' && ordersManager;
         }
         
@@ -421,13 +420,13 @@ function initializeValidation() {
     tryInitialize();
 }
 
-// Запускаем инициализацию
+//запускаем инициализацию
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM loaded, starting validation initialization...');
     setTimeout(initializeValidation, 500);
 });
 
-// Экспортируем функции для тестирования
+//экспортируем функции для тестирования
 if (typeof window !== 'undefined') {
     window.validateOrder = validateOrder;
     window.showNotification = showNotification;
