@@ -1,3 +1,35 @@
+// Глобальные функции для работы с менеджерами заказов
+function getOrderManager() {
+    // На странице lunch.html используем orderManager
+    // На странице orders.html используем ordersManager
+    if (typeof orderManager !== 'undefined' && orderManager) {
+        return orderManager;
+    }
+    if (typeof ordersManager !== 'undefined' && ordersManager) {
+        return ordersManager;
+    }
+    return null;
+}
+
+// Функция для получения данных заказа
+function getCurrentOrderData() {
+    const manager = getOrderManager();
+    if (!manager) return null;
+    
+    // Проверяем, есть ли метод getOrderData
+    if (typeof manager.getOrderData === 'function') {
+        return manager.getOrderData();
+    }
+    // Если метода нет, используем selectedDishes напрямую
+    return manager.selectedDishes || {
+        soup: null,
+        main: null,
+        starter: null,
+        drink: null,
+        dessert: null
+    };
+}
+
 //определяем допустимые комбинации ланчей
 const validCombos = [
     { soup: true, main: true, starter: true, drink: true },
@@ -184,6 +216,17 @@ function showNotification(message, isSuccess = false) {
 
 //функция для проверки заказа при отправке формы
 function setupOrderValidation() {
+    // Проверяем, на какой странице мы находимся
+    const isLunchPage = window.location.pathname.includes('lunch.html');
+    const isOrdersPage = window.location.pathname.includes('orders.html');
+    
+    // На странице lunch.html нет формы заказа, поэтому выходим
+    if (isLunchPage) {
+        console.log('На странице "Собрать ланч" - валидация формы не требуется');
+        return;
+    }
+    
+    // На странице orders.html ищем форму
     const orderForm = document.querySelector('.order-form');
     
     if (!orderForm) {
@@ -228,26 +271,33 @@ function setupOrderValidation() {
     function processOrderForm() {
         console.log('=== ОБРАБОТКА ЗАКАЗА ===');
         
-        if (!orderManager) {
-            console.error('Order manager not initialized');
-            showNotification('Ошибка инициализации заказа');
-            return;
-        }
-        
         // Проверяем заполнение полей формы
         const name = document.getElementById('name')?.value.trim();
         const email = document.getElementById('email')?.value.trim();
         const phone = document.getElementById('phone')?.value.trim();
         const address = document.getElementById('address')?.value.trim();
+        const deliveryTime = document.querySelector('input[name="delivery_time"]:checked')?.value;
+        const scheduledTime = document.getElementById('scheduled-time')?.value;
         
         if (!name || !email || !phone || !address) {
             showNotification('Заполните все поля формы: имя, email, телефон и адрес');
             return;
         }
         
+        // Если выбрано "К указанному времени", проверяем заполнение времени
+        if (deliveryTime === 'scheduled' && !scheduledTime) {
+            showNotification('Укажите время доставки');
+            return;
+        }
+        
         //получаем текущий заказ
-        const orderData = orderManager.getOrderData();
+        const orderData = getCurrentOrderData();
         console.log('Current order data:', orderData);
+        
+        if (!orderData) {
+            showNotification('Ошибка загрузки данных заказа');
+            return;
+        }
         
         //проверяем валидность
         const validation = validateOrder(orderData);
@@ -289,21 +339,35 @@ function setupOrderValidation() {
 
 //инициализация с повторными попытками
 function initializeValidation() {
-    const maxAttempts = 10;
+    const maxAttempts = 15; // Увеличим количество попыток
     let attempts = 0;
     
     const tryInitialize = () => {
-        if (typeof orderManager !== 'undefined' && orderManager) {
-            console.log('OrderManager found, setting up validation...');
+        // Проверяем, на какой странице мы находимся
+        const isLunchPage = window.location.pathname.includes('lunch.html');
+        const isOrdersPage = window.location.pathname.includes('orders.html');
+        
+        // Для разных страниц используем разных менеджеров
+        let managerFound = false;
+        
+        if (isLunchPage) {
+            // На lunch.html используем orderManager
+            managerFound = typeof orderManager !== 'undefined' && orderManager;
+        } else if (isOrdersPage) {
+            // На orders.html используем ordersManager
+            managerFound = typeof ordersManager !== 'undefined' && ordersManager;
+        }
+        
+        if (managerFound) {
+            console.log('Менеджер заказов найден, настраиваем валидацию...');
             setupOrderValidation();
         } else if (attempts < maxAttempts) {
             attempts++;
-            console.log(`Waiting for OrderManager... attempt ${attempts}`);
-            setTimeout(tryInitialize, 300);
+            console.log(`Ожидаем загрузки менеджера... попытка ${attempts}`);
+            setTimeout(tryInitialize, 200);
         } else {
-            console.error('Failed to initialize: OrderManager not loaded');
-            // Все равно настраиваем валидацию, но с fallback
-            setTimeout(setupOrderValidation, 500);
+            console.log('Менеджер не загрузился, но настраиваем валидацию в любом случае');
+            setupOrderValidation();
         }
     };
     
@@ -320,4 +384,6 @@ document.addEventListener('DOMContentLoaded', () => {
 if (typeof window !== 'undefined') {
     window.validateOrder = validateOrder;
     window.showNotification = showNotification;
+    window.getOrderManager = getOrderManager;
+    window.getCurrentOrderData = getCurrentOrderData;
 }
