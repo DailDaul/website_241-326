@@ -567,110 +567,151 @@ class OrdersManager {
             console.log('Данные для отправки на сервер:', orderData);
             
             // 8. ОТПРАВКА НА СЕРВЕР ЧЕРЕЗ fetch
-            console.log('Отправка запроса на сервер...');
-            
-            const response = await fetch('https://edu.std-900.ist.mospolytech.ru/labs/api/order', {
+        console.log('Отправка запроса на сервер...');
+        
+        // Добавляем таймаут для fetch запроса
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 секунд таймаут
+        
+        let response;
+        try {
+            response = await fetch('https://edu.std-900.ist.mospolytech.ru/labs/api/order', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify(orderData)
+                body: JSON.stringify(orderData),
+                signal: controller.signal
             });
+        } catch (fetchError) {
+            clearTimeout(timeoutId);
             
-            console.log('Ответ сервера получен. Статус:', response.status);
-            
-            if (!response.ok) {
-                // Если сервер вернул ошибку
-                let errorMessage = `Ошибка сервера: ${response.status}`;
+            // Проверяем тип ошибки
+            if (fetchError.name === 'AbortError') {
+                throw new Error('Таймаут запроса. Сервер не отвечает. Проверьте подключение к интернету.');
+            } else if (fetchError.message.includes('Failed to fetch')) {
+                throw new Error('Ошибка сети. Проверьте подключение к интернету.');
+            } else {
+                throw new Error(`Ошибка подключения: ${fetchError.message}`);
+            }
+        }
+        
+        clearTimeout(timeoutId);
+        
+        console.log('Ответ сервера получен. Статус:', response.status);
+        
+        if (!response.ok) {
+            // Если сервер вернул ошибку
+            let errorMessage = `Ошибка сервера: ${response.status}`;
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorData.error || errorMessage;
+                console.log('Детали ошибки от сервера:', errorData);
+            } catch (e) {
+                // Если не удалось распарсить JSON
                 try {
-                    const errorData = await response.json();
-                    errorMessage = errorData.message || errorMessage;
-                } catch (e) {
-                    // Если не удалось распарсить JSON
                     const errorText = await response.text();
                     errorMessage = errorText || errorMessage;
+                } catch (textError) {
+                    errorMessage = `Ошибка ${response.status}: ${response.statusText}`;
                 }
-                
-                throw new Error(errorMessage);
             }
             
-            // 9. ОБРАБОТКА УСПЕШНОГО ОТВЕТА
-            const result = await response.json();
-            console.log('Успешный ответ сервера:', result);
-            
-            // 10. ОЧИСТКА localStorage ПОСЛЕ УСПЕШНОЙ ОТПРАВКИ
-            if (typeof clearOrderFromStorage === 'function') {
-                clearOrderFromStorage();
-            }
-            console.log('Данные удалены из localStorage');
-            
-            // 11. ПОКАЗ УВЕДОМЛЕНИЯ ОБ УСПЕХЕ
-            if (typeof showNotification === 'function') {
-                showNotification(
-                    `✅ Заказ успешно оформлен!<br><br>
-                    <strong>Номер заказа:</strong> ${result.orderNumber || '#' + Date.now()}<br>
-                    <strong>Сумма:</strong> ${orderData.total_price}Р<br>
-                    <strong>Статус:</strong> ${result.status || 'принят'}<br><br>
-                    Мы свяжемся с вами для подтверждения.`,
-                    true
-                );
-            } else {
-                alert(`✅ Заказ успешно оформлен!\nСумма: ${orderData.total_price}Р\nНомер: ${result.orderNumber || '#' + Date.now()}`);
-            }
-            
-            // 12. ОЧИСТКА ФОРМЫ И ЗАКАЗА
-            if (document.getElementById('order-form')) {
-                document.getElementById('order-form').reset();
-            }
-            
-            this.selectedDishes = {
-                soup: null,
-                main: null,
-                starter: null,
-                drink: null,
-                dessert: null
-            };
-            
-            // 13. ОБНОВЛЕНИЕ ОТОБРАЖЕНИЯ
-            this.displayOrderItems();
-            this.updateOrderFormDisplay();
-            this.toggleTimeInput(false);
-            
-            console.log('=== ЗАКАЗ УСПЕШНО ОТПРАВЛЕН ===');
-            
-        } catch (error) {
-            console.error('=== ОШИБКА ПРИ ОТПРАВКЕ ЗАКАЗА ===', error);
-            
-            // ПОКАЗ УВЕДОМЛЕНИЯ ОБ ОШИБКЕ
-            if (typeof showNotification === 'function') {
-                showNotification(
-                    `❌ Ошибка при оформлении заказа!<br><br>
-                    <strong>Причина:</strong> ${error.message}<br><br>
-                    Пожалуйста, проверьте данные и попробуйте еще раз.<br>
-                    <small>Данные заказа сохранены в корзине.</small>`,
-                    false
-                );
-            } else {
-                alert(`❌ Ошибка при оформлении заказа!\nПричина: ${error.message}`);
-            }
-            
-            // В случае ошибки НЕ удаляем данные из localStorage
-            console.log('Данные сохранены в localStorage из-за ошибки');
+            throw new Error(errorMessage);
+        }
+        
+        // 9. ОБРАБОТКА УСПЕШНОГО ОТВЕТА
+        const result = await response.json();
+        console.log('Успешный ответ сервера:', result);
+        
+        // 10. ОЧИСТКА localStorage ПОСЛЕ УСПЕШНОЙ ОТПРАВКИ
+        if (typeof clearOrderFromStorage === 'function') {
+            clearOrderFromStorage();
+        }
+        console.log('Данные удалены из localStorage');
+        
+        // 11. ПОКАЗ УВЕДОМЛЕНИЯ ОБ УСПЕХЕ
+        let notificationMessage = `✅ Заказ успешно оформлен!<br><br>`;
+        
+        if (result.orderNumber) {
+            notificationMessage += `<strong>Номер заказа:</strong> ${result.orderNumber}<br>`;
+        }
+        
+        notificationMessage += `<strong>Сумма:</strong> ${orderData.total_price}Р<br>`;
+        
+        if (result.status) {
+            notificationMessage += `<strong>Статус:</strong> ${result.status}<br>`;
+        }
+        
+        notificationMessage += `<br>Мы свяжемся с вами для подтверждения.`;
+        
+        if (typeof showNotification === 'function') {
+            showNotification(notificationMessage, true);
+        } else {
+            alert(`✅ Заказ успешно оформлен!\nСумма: ${orderData.total_price}Р`);
+        }
+        
+        // 12. ОЧИСТКА ФОРМЫ И ЗАКАЗА
+        if (document.getElementById('order-form')) {
+            document.getElementById('order-form').reset();
+        }
+        
+        this.selectedDishes = {
+            soup: null,
+            main: null,
+            starter: null,
+            drink: null,
+            dessert: null
+        };
+        
+        // 13. ОБНОВЛЕНИЕ ОТОБРАЖЕНИЯ
+        this.displayOrderItems();
+        this.updateOrderFormDisplay();
+        this.toggleTimeInput(false);
+        
+        console.log('=== ЗАКАЗ УСПЕШНО ОТПРАВЛЕН ===');
+        
+    } catch (error) {
+        console.error('=== ОШИБКА ПРИ ОТПРАВКЕ ЗАКАЗА ===', error);
+        
+        // Определяем тип ошибки для пользователя
+        let userErrorMessage = '';
+        
+        if (error.message.includes('Таймаут') || error.message.includes('не отвечает')) {
+            userErrorMessage = `⏱️ Сервер не отвечает. Пожалуйста, попробуйте позже.<br><br>
+                <strong>Причина:</strong> ${error.message}`;
+        } else if (error.message.includes('сеть') || error.message.includes('Failed to fetch') || 
+                  error.message.includes('Network Error')) {
+            userErrorMessage = `📶 Проблема с подключением к интернету.<br><br>
+                <strong>Причина:</strong> ${error.message}<br><br>
+                Проверьте ваше интернет-соединение.`;
+        } else if (error.message.includes('400') || error.message.includes('Bad Request')) {
+            userErrorMessage = `❌ Неверные данные в заказе.<br><br>
+                <strong>Причина:</strong> ${error.message}<br><br>
+                Проверьте правильность заполнения формы.`;
+        } else if (error.message.includes('500') || error.message.includes('Internal Server')) {
+            userErrorMessage = `🔧 Внутренняя ошибка сервера.<br><br>
+                <strong>Причина:</strong> ${error.message}<br><br>
+                Пожалуйста, попробуйте позже или свяжитесь с поддержкой.`;
+        } else {
+            userErrorMessage = `❌ Ошибка при оформлении заказа!<br><br>
+                <strong>Причина:</strong> ${error.message}`;
+        }
+        
+        userErrorMessage += `<br><br><small>Данные заказа сохранены в корзине.</small>`;
+        
+        // ПОКАЗ УВЕДОМЛЕНИЯ ОБ ОШИБКЕ
+        if (typeof showNotification === 'function') {
+            showNotification(userErrorMessage, false);
+        } else {
+            alert(`❌ Ошибка: ${error.message}\nДанные сохранены в корзине.`);
+        }
+        
+        // В случае ошибки НЕ удаляем данные из localStorage
+        console.log('Данные сохранены в localStorage из-за ошибки:', error.message);
         }
     }
-    
-    showErrorMessage(message) {
-        const container = document.getElementById('order-items-container');
-        if (container) {
-            container.innerHTML = `
-                <div class="error-message">
-                    ${message}
-                </div>
-            `;
-        }
-    }
-}
 
 // Инициализация только на странице orders.html
 document.addEventListener('DOMContentLoaded', function() {
