@@ -171,288 +171,49 @@
     <script src="orderValidator.js"></script>
     <script src="ordersManager.js"></script>
     
-    <!-- Вспомогательный скрипт для гарантии работы кнопок -->
     <script>
-    // Простой fallback для гарантии работы кнопок
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('=== ИНИЦИАЛИЗАЦИЯ СТРАНИЦЫ ОФОРМЛЕНИЯ ЗАКАЗА ===');
-        
-        // Функция для показа простых уведомлений если основная не работает
-        function showSimpleNotification(message, isSuccess = false) {
-            if (typeof showNotification === 'function') {
-                showNotification(message, isSuccess);
-            } else {
-                alert((isSuccess ? '✅ ' : '⚠️ ') + message);
-            }
-        }
-        
-        // Глобальные обработчики для кнопок (делегирование событий)
-        document.body.addEventListener('click', function(e) {
-            // Кнопка "Удалить" на карточке блюда
-            if (e.target.classList.contains('remove-btn') || e.target.closest('.remove-btn')) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const removeBtn = e.target.classList.contains('remove-btn') ? 
-                                e.target : e.target.closest('.remove-btn');
-                const dishItem = removeBtn.closest('.dish-item');
-                
-                if (dishItem) {
-                    const dishKeyword = dishItem.getAttribute('data-dish');
-                    const category = dishItem.getAttribute('data-category');
-                    
-                    // Используем ordersManager если он доступен
-                    if (window.ordersManager && typeof window.ordersManager.removeDishFromOrder === 'function') {
-                        window.ordersManager.removeDishFromOrder(dishKeyword, category);
-                    } else {
-                        // Fallback: просто удаляем элемент
-                        if (confirm('Удалить блюдо из заказа?')) {
-                            dishItem.remove();
-                            showSimpleNotification('Блюдо удалено из заказа', true);
-                        }
-                    }
-                }
-            }
-            
-            // Кнопка "Очистить заказ"
-            if (e.target.id === 'clear-order-btn' || e.target.closest('#clear-order-btn')) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                if (window.ordersManager && typeof window.ordersManager.clearOrder === 'function') {
-                    window.ordersManager.clearOrder();
-                } else {
-                    // Fallback: очищаем вручную
-                    if (confirm('Очистить весь заказ?')) {
-                        const container = document.getElementById('order-items-container');
-                        const emptyMessage = document.getElementById('empty-order-message');
-                        
-                        if (container) container.innerHTML = '';
-                        if (emptyMessage) emptyMessage.style.display = 'block';
-                        
-                        // Очищаем форму
-                        const orderBlocks = ['soup', 'main', 'starter', 'drink', 'dessert'];
-                        orderBlocks.forEach(category => {
-                            const block = document.getElementById(`selected-${category}`);
-                            if (block) {
-                                block.innerHTML = `<div class="not-selected">${getCategoryText(category)}</div>`;
-                            }
-                        });
-                        
-                        // Скрываем итоговую стоимость
-                        const orderTotal = document.getElementById('order-total');
-                        if (orderTotal) orderTotal.style.display = 'none';
-                        
-                        showSimpleNotification('Заказ очищен', true);
-                    }
-                }
-            }
-            
-            // Кнопка "Отправить заказ"
-            if (e.target.classList.contains('submit-btn') || e.target.closest('.submit-btn')) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                console.log('Кнопка "Отправить заказ" нажата');
-                
-                if (window.ordersManager && typeof window.ordersManager.submitOrder === 'function') {
-                    window.ordersManager.submitOrder();
-                } else {
-                    // Fallback: валидация и отправка вручную
-                    handleOrderSubmission();
-                }
-            }
+document.addEventListener('DOMContentLoaded', function() {
+    // Просто предотвращаем стандартную отправку формы
+    const orderForm = document.getElementById('order-form');
+    if (orderForm) {
+        orderForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            return false;
         });
+    }
+    
+    // Простая настройка времени доставки
+    function setupDeliveryTime() {
+        const timePanel = document.getElementById('time-panel');
+        const deliveryRadios = document.querySelectorAll('input[name="delivery_time"]');
         
-        // Функция для получения текста категории
-        function getCategoryText(category) {
-            const texts = {
-                soup: 'Суп не выбран',
-                main: 'Главное блюдо не выбрано',
-                starter: 'Салат или стартер не выбрано',
-                drink: 'Напиток не выбран',
-                dessert: 'Десерт не выбран'
-            };
-            return texts[category] || 'Блюдо не выбрано';
-        }
-        
-        // Fallback функция для отправки заказа
-        async function handleOrderSubmission() {
-            try {
-                // Проверка обязательных полей
-                const name = document.getElementById('name')?.value.trim();
-                const email = document.getElementById('email')?.value.trim();
-                const phone = document.getElementById('phone')?.value.trim();
-                const address = document.getElementById('address')?.value.trim();
-                
-                if (!name || !email || !phone || !address) {
-                    showSimpleNotification('Заполните все поля формы', false);
-                    return;
-                }
-                
-                // Проверка email
-                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailPattern.test(email)) {
-                    showSimpleNotification('Введите корректный email', false);
-                    return;
-                }
-                
-                // Проверка, что есть выбранные блюда
-                const hasSelectedDishes = document.querySelectorAll('.dish-item').length > 0;
-                if (!hasSelectedDishes) {
-                    showSimpleNotification('Выберите блюда для заказа', false);
-                    return;
-                }
-                
-                // Подготовка данных заказа
-                const orderData = {
-                    name: name,
-                    email: email,
-                    phone: phone,
-                    address: address,
-                    delivery_time: document.querySelector('input[name="delivery_time"]:checked')?.value || 'asap',
-                    scheduled_time: document.getElementById('scheduled-time')?.value || null,
-                    dishes: {},
-                    total_price: 0
-                };
-                
-                // Собираем блюда из карточек
-                document.querySelectorAll('.dish-item').forEach(item => {
-                    const category = item.getAttribute('data-category');
-                    const dishName = item.querySelector('.dish-name')?.textContent;
-                    const priceText = item.querySelector('.dish-price')?.textContent;
-                    const price = parseInt(priceText) || 0;
-                    
-                    if (category && dishName) {
-                        orderData.dishes[category] = dishName;
-                        orderData.total_price += price;
-                    }
-                });
-                
-                console.log('Отправка заказа:', orderData);
-                
-                // Показываем сообщение об отправке
-                showSimpleNotification('Отправка заказа...', true);
-                
-                // Отправка на сервер
-                const response = await fetch('https://edu.std-900.ist.mospolytech.ru/labs/api/order', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(orderData)
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`Ошибка сервера: ${response.status}`);
-                }
-                
-                const result = await response.json();
-                console.log('Заказ успешно отправлен:', result);
-                
-                // Очистка после успешной отправки
-                if (typeof clearOrderFromStorage === 'function') {
-                    clearOrderFromStorage();
-                }
-                
-                // Очистка формы
-                document.getElementById('order-form').reset();
-                document.getElementById('order-items-container').innerHTML = '';
-                document.getElementById('empty-order-message').style.display = 'block';
-                
-                showSimpleNotification(`Заказ успешно оформлен! Сумма: ${orderData.total_price}Р`, true);
-                
-            } catch (error) {
-                console.error('Ошибка отправки заказа:', error);
-                showSimpleNotification(`Ошибка: ${error.message}`, false);
+        if (timePanel) {
+            timePanel.style.display = 'none';
+            
+            const now = new Date();
+            now.setHours(now.getHours() + 1);
+            const timeInput = document.getElementById('scheduled-time');
+            if (timeInput) {
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                timeInput.value = `${hours}:${minutes}`;
             }
         }
         
-        // Предотвращаем стандартную отправку формы
-        const orderForm = document.getElementById('order-form');
-        if (orderForm) {
-            orderForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('Стандартная отправка формы заблокирована');
-                
-                // Вызываем нашу функцию отправки
-                if (window.ordersManager && typeof window.ordersManager.submitOrder === 'function') {
-                    window.ordersManager.submitOrder();
-                } else {
-                    handleOrderSubmission();
-                }
-                
-                return false;
-            });
-        }
-        
-        // Настройка времени доставки
-        function setupDeliveryTime() {
-            const timePanel = document.getElementById('time-panel');
-            const deliveryRadios = document.querySelectorAll('input[name="delivery_time"]');
-            
-            if (timePanel) {
-                timePanel.style.display = 'none';
-                
-                // Устанавливаем время по умолчанию (текущее + 1 час)
-                const now = new Date();
-                now.setHours(now.getHours() + 1);
-                const timeInput = document.getElementById('scheduled-time');
-                if (timeInput) {
-                    const hours = now.getHours().toString().padStart(2, '0');
-                    const minutes = now.getMinutes().toString().padStart(2, '0');
-                    timeInput.value = `${hours}:${minutes}`;
-                }
-            }
-            
-            // Обработчики для радио кнопок
-            if (deliveryRadios) {
-                deliveryRadios.forEach(radio => {
-                    radio.addEventListener('change', function(e) {
-                        const timePanel = document.getElementById('time-panel');
-                        if (timePanel) {
-                            timePanel.style.display = e.target.value === 'scheduled' ? 'block' : 'none';
+        if (deliveryRadios) {
+            deliveryRadios.forEach(radio => {
+                radio.addEventListener('change', function(e) {
+                    const timePanel = document.getElementById('time-panel');
+                    if (timePanel) {
+                        timePanel.style.display = e.target.value === 'scheduled' ? 'block' : 'none';
                         }
                     });
                 });
             }
         }
-        
-        // Инициализируем настройки
+    
         setupDeliveryTime();
-        
-        // Периодически проверяем инициализацию OrdersManager
-        let checkCount = 0;
-        const checkInterval = setInterval(function() {
-            checkCount++;
-            
-            if (window.ordersManager && window.ordersManager.isInitialized) {
-                console.log('✅ OrdersManager успешно инициализирован');
-                clearInterval(checkInterval);
-            } else if (window.ordersManager) {
-                console.log(`🔄 OrdersManager создан, но не инициализирован. Попытка ${checkCount}`);
-                
-                if (checkCount >= 3 && window.ordersManager.initialize) {
-                    console.log('Принудительная инициализация OrdersManager...');
-                    window.ordersManager.initialize();
-                }
-            } else if (checkCount >= 5) {
-                console.log('❌ OrdersManager не создан после 5 попыток');
-                clearInterval(checkInterval);
-                showSimpleNotification('Загрузка заказа завершена. Кнопки должны работать.', true);
-            }
-        }, 500);
-        
-        // Останавливаем проверку через 10 секунд
-        setTimeout(() => {
-            clearInterval(checkInterval);
-            console.log('Проверка инициализации завершена');
-        }, 10000);
-        
-        console.log('=== ИНИЦИАЛИЗАЦИЯ ЗАВЕРШЕНА ===');
-    });
+        });
     </script>
 </body>
 </html>
