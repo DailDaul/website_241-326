@@ -1,6 +1,3 @@
-// orderStorage.js
-// Утилиты для работы с localStorage
-
 const STORAGE_KEY = 'foodConstruct_order';
 
 // Функция для сохранения заказа в localStorage
@@ -53,41 +50,6 @@ function loadOrderFromStorage() {
     }
 }
 
-// Функция для получения полных данных заказа на основе ключей
-async function getFullOrderData(savedOrderKeys) {
-    try {
-        // Загружаем все блюда с API
-        const dishes = await loadDishes();
-        if (!dishes || !Array.isArray(dishes)) {
-            throw new Error('Не удалось загрузить блюда');
-        }
-        
-        const fullOrder = {
-            soup: null,
-            main: null,
-            starter: null,
-            drink: null,
-            dessert: null
-        };
-        
-        // Заполняем полные данные для каждого выбранного блюда
-        Object.keys(savedOrderKeys).forEach(category => {
-            const dishKeyword = savedOrderKeys[category];
-            if (dishKeyword) {
-                const dish = dishes.find(d => d.keyword === dishKeyword);
-                if (dish) {
-                    fullOrder[category] = dish;
-                }
-            }
-        });
-        
-        return fullOrder;
-    } catch (error) {
-        console.error('Ошибка при получении полных данных заказа:', error);
-        return null;
-    }
-}
-
 // Функция для удаления заказа из localStorage
 function clearOrderFromStorage() {
     try {
@@ -121,7 +83,6 @@ function removeDishFromStorage(category) {
 if (typeof window !== 'undefined') {
     window.saveOrderToStorage = saveOrderToStorage;
     window.loadOrderFromStorage = loadOrderFromStorage;
-    window.getFullOrderData = getFullOrderData;
     window.clearOrderFromStorage = clearOrderFromStorage;
     window.removeDishFromStorage = removeDishFromStorage;
 }
