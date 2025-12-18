@@ -70,114 +70,56 @@ function validateOrder(selectedDishes) {
 function showNotification(message, isSuccess = false) {
     console.log('Showing notification:', message);
     
-    //удаляем предыдущие уведомления
+    // Проверяем, есть ли уже уведомление
     const oldNotification = document.querySelector('.notification-overlay');
     if (oldNotification) {
         oldNotification.remove();
     }
     
-    //создаем уведомление
+    // Создаем уведомление
     const overlay = document.createElement('div');
     overlay.className = 'notification-overlay';
     
-    // ДОБАВЛЯЕМ ИНЛАЙН-СТИЛИ для гарантии работы
-    overlay.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.7);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-        animation: fadeIn 0.3s ease;
-    `;
-    
-    const title = isSuccess ? 'Заказ отправлен!' : 'Внимание';
+    const title = isSuccess ? 'Успешно!' : 'Внимание';
+    const icon = isSuccess ? '✅' : '⚠️';
     
     overlay.innerHTML = `
-        <div class="notification" style="
-            background: white;
-            border-radius: 15px;
-            padding: 40px;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            animation: slideIn 0.3s ease;
-            text-align: center;
-        ">
+        <div class="notification">
             <div class="notification-content">
-                <h3 style="
-                    font-size: 24px;
-                    color: #333;
-                    margin-bottom: 20px;
-                    border-bottom: 2px solid #ff6b00;
-                    padding-bottom: 10px;
-                    display: inline-block;
-                ">${title}</h3>
-                <p style="
-                    font-size: 18px;
-                    color: #666;
-                    margin-bottom: 30px;
-                    line-height: 1.5;
-                ">${message}</p>
-                <button class="notification-btn" style="
-                    background-color: #ff6b00;
-                    color: white;
-                    border: none;
-                    padding: 12px 40px;
-                    border-radius: 10px;
-                    font-family: 'Oswald', sans-serif;
-                    font-size: 16px;
-                    font-weight: 500;
-                    cursor: pointer;
-                    transition: all 0.3s;
-                    min-width: 120px;
-                    border: 2px solid #ff6b00;
-                ">Окей</button>
+                <h3>${icon} ${title}</h3>
+                <p>${message}</p>
+                <button class="notification-btn">Понятно</button>
             </div>
         </div>
-        <style>
-            @keyframes fadeIn {
-                from { opacity: 0; }
-                to { opacity: 1; }
-            }
-            @keyframes slideIn {
-                from {
-                    transform: translateY(-50px);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateY(0);
-                    opacity: 1;
-                }
-            }
-            .notification-btn:hover {
-                background-color: white !important;
-                color: #ff6b00 !important;
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);
-            }
-        </style>
     `;
     
     document.body.appendChild(overlay);
+    document.body.style.overflow = 'hidden'; // Блокируем прокрутку
     
-    //обработчик для кнопки
+    // Обработчик для кнопки
     const okButton = overlay.querySelector('.notification-btn');
     okButton.addEventListener('click', () => {
-        console.log('Notification closed');
         overlay.remove();
+        document.body.style.overflow = ''; // Восстанавливаем прокрутку
     });
     
-    //закрытие по клику вне уведомления
+    // Закрытие по клику вне уведомления
     overlay.addEventListener('click', (e) => {
         if (e.target === overlay) {
             overlay.remove();
+            document.body.style.overflow = '';
         }
     });
+    
+    // Автозакрытие через 10 секунд для успешных сообщений
+    if (isSuccess) {
+        setTimeout(() => {
+            if (document.body.contains(overlay)) {
+                overlay.remove();
+                document.body.style.overflow = '';
+            }
+        }, 10000);
+    }
     
     return overlay;
 }
