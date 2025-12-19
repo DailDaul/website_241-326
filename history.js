@@ -1,9 +1,8 @@
-// Класс для управления историей заказов
+//управление страницей истории заказов
 class HistoryManager {
     constructor() {
         this.orders = [];
         this.currentOrderId = null;
-        this.storageKey = 'foodConstruct_order_history';
         this.init();
     }
     
@@ -62,40 +61,19 @@ class HistoryManager {
                 }
             });
         });
-        
-        // Переключение времени доставки в форме редактирования
-        document.addEventListener('change', (e) => {
-            if (e.target.name === 'delivery_type') {
-                const timeInput = document.getElementById('edit-delivery-time');
-                if (timeInput) {
-                    timeInput.style.display = e.target.value === 'scheduled' ? 'block' : 'none';
-                    if (e.target.value === 'scheduled') {
-                        timeInput.required = true;
-                    } else {
-                        timeInput.required = false;
-                    }
-                }
-            }
-        });
     }
     
     async loadOrders() {
         try {
             this.showLoading();
             
-            // Загружаем из localStorage
-            const savedOrders = localStorage.getItem(this.storageKey);
+            // Загружаем из localStorage через storageManager
+            this.orders = loadOrderHistory();
             
-            if (savedOrders) {
-                this.orders = JSON.parse(savedOrders);
-                
-                // Сортируем по убыванию даты
-                this.orders.sort((a, b) => {
-                    return new Date(b.created_at) - new Date(a.created_at);
-                });
-            } else {
-                this.orders = [];
-            }
+            // Сортируем по убыванию даты
+            this.orders.sort((a, b) => {
+                return new Date(b.created_at) - new Date(a.created_at);
+            });
             
             this.displayOrders();
             
@@ -103,31 +81,6 @@ class HistoryManager {
             console.error('Ошибка при загрузке заказов:', error);
             this.showError('Не удалось загрузить заказы. Пожалуйста, попробуйте позже.');
         }
-    }
-    
-    // Метод для добавления нового заказа из страницы оформления
-    addNewOrder(orderData) {
-        const newOrder = {
-            id: Date.now().toString(), // Генерируем уникальный ID
-            ...orderData,
-            created_at: new Date().toISOString()
-        };
-        
-        // Загружаем существующие заказы
-        const savedOrders = localStorage.getItem(this.storageKey);
-        let orders = [];
-        
-        if (savedOrders) {
-            orders = JSON.parse(savedOrders);
-        }
-        
-        // Добавляем новый заказ
-        orders.push(newOrder);
-        
-        // Сохраняем обратно
-        localStorage.setItem(this.storageKey, JSON.stringify(orders));
-        
-        return newOrder;
     }
     
     displayOrders() {
@@ -155,22 +108,12 @@ class HistoryManager {
             const row = document.createElement('tr');
             
             // Форматируем состав заказа
-            let dishNames = '';
-            if (order.dishes && order.dishes.length > 0) {
-                dishNames = order.dishes.map(dish => dish.name).join(', ');
-            } else if (order.dishNames) {
-                dishNames = order.dishNames;
-            }
+            const dishNames = order.dishes.map(dish => dish.name).join(', ');
             
             // Форматируем время доставки
             let deliveryTime = 'Как можно скорее (с 7:00 до 23:00)';
             if (order.delivery_type === 'scheduled' && order.delivery_time) {
-                let timeStr = order.delivery_time;
-                // Если это полная дата-время, извлекаем только время
-                if (timeStr.includes('T')) {
-                    timeStr = timeStr.split('T')[1].substring(0, 5);
-                }
-                deliveryTime = timeStr;
+                deliveryTime = order.delivery_time;
             }
             
             // Форматируем дату
@@ -188,7 +131,7 @@ class HistoryManager {
                 <td>${index + 1}</td>
                 <td>${formattedDate}</td>
                 <td>${dishNames}</td>
-                <td>${order.total_price || 0}Р</td>
+                <td>${order.total_price}Р</td>
                 <td>${deliveryTime}</td>
                 <td class="actions-cell">
                     <div class="action-buttons">
@@ -246,41 +189,19 @@ class HistoryManager {
             // Форматируем время доставки
             let deliveryTimeDisplay = 'Как можно скорее (с 7:00 до 23:00)';
             if (order.delivery_type === 'scheduled' && order.delivery_time) {
-                let timeStr = order.delivery_time;
-                // Если это полная дата-время, извлекаем только время
-                if (timeStr.includes('T')) {
-                    const time = new Date(timeStr);
-                    deliveryTimeDisplay = time.toLocaleTimeString('ru-RU', { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
-                    });
-                } else {
-                    deliveryTimeDisplay = timeStr;
-                }
+                deliveryTimeDisplay = order.delivery_time;
             }
             
             // Форматируем тип доставки
             const deliveryTypeText = order.delivery_type === 'scheduled' ? 'К указанному времени' : 'Как можно скорее';
             
             // Формируем список блюд
-            let dishesHTML = '';
-            if (order.dishes && order.dishes.length > 0) {
-                dishesHTML = order.dishes.map(dish => `
-                    <li>
-                        <span>${dish.name}</span>
-                        <span>${dish.price}Р</span>
-                    </li>
-                `).join('');
-            } else if (order.dishNames) {
-                // Если блюда хранятся как строка
-                const dishList = order.dishNames.split(',').map(name => name.trim());
-                dishesHTML = dishList.map(name => `
-                    <li>
-                        <span>${name}</span>
-                        <span>0Р</span>
-                    </li>
-                `).join('');
-            }
+            const dishesHTML = order.dishes.map(dish => `
+                <li>
+                    <span>${dish.name}</span>
+                    <span>${dish.price}Р</span>
+                </li>
+            `).join('');
             
             // Создаем HTML для деталей заказа
             const detailsHTML = `
@@ -356,16 +277,7 @@ class HistoryManager {
             this.currentOrderId = orderId;
             
             // Форматируем время доставки для input[type="time"]
-            let deliveryTimeValue = '';
-            if (order.delivery_type === 'scheduled' && order.delivery_time) {
-                let timeStr = order.delivery_time;
-                // Если это полная дата-время, извлекаем только время
-                if (timeStr.includes('T')) {
-                    deliveryTimeValue = timeStr.split('T')[1].substring(0, 5);
-                } else {
-                    deliveryTimeValue = timeStr;
-                }
-            }
+            let deliveryTimeValue = order.delivery_time || '';
             
             // Создаем HTML для формы редактирования
             const formHTML = `
@@ -456,61 +368,32 @@ class HistoryManager {
             const formData = new FormData(form);
             
             // Собираем данные
-            const orderData = {
+            const updatedData = {
                 full_name: formData.get('full_name'),
                 email: formData.get('email'),
                 phone: formData.get('phone'),
                 delivery_address: formData.get('delivery_address'),
                 delivery_type: formData.get('delivery_type'),
-                comment: formData.get('comment')
+                comment: formData.get('comment'),
+                delivery_time: formData.get('delivery_time') || null
             };
             
-            // Добавляем время доставки если нужно
-            if (orderData.delivery_type === 'scheduled') {
-                const deliveryTime = formData.get('delivery_time');
-                if (!deliveryTime) {
-                    this.showNotification('Укажите время доставки', false);
-                    return;
-                }
+            // Обновляем заказ в localStorage
+            const updated = updateOrderInHistory(orderId, updatedData);
+            
+            if (updated) {
+                // Обновляем локальный список
+                await this.loadOrders();
                 
-                // Проверяем время
-                const time = new Date(`2000-01-01T${deliveryTime}`);
-                const hours = time.getHours();
-                const minutes = time.getMinutes();
+                // Закрываем модальное окно
+                this.closeModal('order-edit-modal');
                 
-                if (hours < 7 || hours > 23 || (hours === 23 && minutes > 0)) {
-                    this.showNotification('Время доставки должно быть с 7:00 до 23:00', false);
-                    return;
-                }
+                // Показываем уведомление об успехе
+                this.showNotification('Заказ успешно изменён', true);
                 
-                orderData.delivery_time = deliveryTime;
             } else {
-                orderData.delivery_time = null;
+                this.showNotification('Не удалось обновить заказ', false);
             }
-            
-            // Находим и обновляем заказ
-            const orderIndex = this.orders.findIndex(o => o.id == orderId);
-            if (orderIndex !== -1) {
-                // Сохраняем неизменяемые данные
-                const originalOrder = this.orders[orderIndex];
-                this.orders[orderIndex] = {
-                    ...originalOrder,
-                    ...orderData,
-                    updated_at: new Date().toISOString()
-                };
-                
-                // Сохраняем в localStorage
-                localStorage.setItem(this.storageKey, JSON.stringify(this.orders));
-            }
-            
-            // Закрываем модальное окно
-            this.closeModal('order-edit-modal');
-            
-            // Показываем уведомление об успехе
-            this.showNotification('Заказ успешно изменён', true);
-            
-            // Обновляем таблицу
-            this.displayOrders();
             
         } catch (error) {
             console.error('Ошибка при обновлении заказа:', error);
@@ -520,20 +403,22 @@ class HistoryManager {
     
     async deleteOrder(orderId) {
         try {
-            // Удаляем заказ из списка
-            this.orders = this.orders.filter(o => o.id != orderId);
+            // Удаляем заказ из localStorage
+            const deleted = deleteOrderFromHistory(orderId);
             
-            // Сохраняем в localStorage
-            localStorage.setItem(this.storageKey, JSON.stringify(this.orders));
-            
-            // Закрываем модальное окно
-            this.closeModal('order-delete-modal');
-            
-            // Показываем уведомление об успехе
-            this.showNotification('Заказ успешно удалён', true);
-            
-            // Обновляем таблицу
-            this.displayOrders();
+            if (deleted) {
+                // Обновляем локальный список
+                await this.loadOrders();
+                
+                // Закрываем модальное окно
+                this.closeModal('order-delete-modal');
+                
+                // Показываем уведомление об успехе
+                this.showNotification('Заказ успешно удалён', true);
+                
+            } else {
+                this.showNotification('Не удалось удалить заказ', false);
+            }
             
         } catch (error) {
             console.error('Ошибка при удалении заказа:', error);
@@ -585,7 +470,6 @@ class HistoryManager {
     }
     
     showNotification(message, isSuccess) {
-        // Создаем уведомление
         const notification = document.createElement('div');
         notification.className = `notification ${isSuccess ? 'success' : 'error'}`;
         notification.style.cssText = `
@@ -611,7 +495,6 @@ class HistoryManager {
         
         document.body.appendChild(notification);
         
-        // Автоматически скрываем через 5 секунд
         setTimeout(() => {
             notification.style.animation = 'slideOutRight 0.3s ease';
             setTimeout(() => {
@@ -621,7 +504,6 @@ class HistoryManager {
             }, 300);
         }, 5000);
         
-        // Добавляем анимации
         const style = document.createElement('style');
         style.textContent = `
             @keyframes slideInRight {
@@ -656,7 +538,6 @@ document.addEventListener('DOMContentLoaded', () => {
     historyManager = new HistoryManager();
 });
 
-// Экспорт для тестирования
 if (typeof window !== 'undefined') {
     window.historyManager = historyManager;
 }
