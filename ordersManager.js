@@ -591,6 +591,40 @@ document.body.appendChild(testButton);
     }
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    const orderForm = document.getElementById('order-form');
+    
+    if (orderForm && window.ordersManager) {
+        console.log('✅ Найдена форма и менеджер заказов');
+        
+        // Удаляем старые обработчики
+        orderForm.replaceWith(orderForm.cloneNode(true));
+        const newForm = document.getElementById('order-form');
+        
+        // Вешаем новый обработчик
+        newForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            console.log('🎯 Форма отправлена, вызываем submitOrder');
+            
+            // Получаем данные формы
+            const name = document.getElementById('name')?.value.trim();
+            const email = document.getElementById('email')?.value.trim();
+            const phone = document.getElementById('phone')?.value.trim();
+            const address = document.getElementById('address')?.value.trim();
+            const comment = document.getElementById('comment')?.value.trim() || '';
+            
+            // Вызываем метод submitOrder
+            await window.ordersManager.submitOrder(name, email, phone, address, comment);
+            
+            return false;
+        }, true);
+        
+        console.log('✅ Новый обработчик формы установлен');
+    }
+});
+
 // Инициализация менеджера заказов
 let ordersManager;
 
