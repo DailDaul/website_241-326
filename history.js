@@ -20,47 +20,72 @@ class OrderHistory {
     }
     
     loadOrders() {
-        console.log('📥 Загрузка заказов...');
-        const container = document.getElementById('orders-container');
+    console.log('📥 Загрузка заказов...');
+    const container = document.getElementById('orders-container');
+    
+    if (!container) {
+        console.error('❌ Не найден контейнер для заказов');
+        return;
+    }
+    
+    try {
+        // Получаем данные из localStorage
+        const STORAGE_KEY = 'foodConstruct_orders';
+        const savedData = localStorage.getItem(STORAGE_KEY);
         
-        if (!container) {
-            console.error('❌ Не найден контейнер для заказов');
+        console.log('📦 Проверка localStorage:', {
+            key: STORAGE_KEY,
+            exists: !!savedData,
+            data: savedData
+        });
+        
+        // Для отладки: покажем все ключи в localStorage
+        console.log('Все ключи в localStorage:');
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            console.log(`${i}: ${key}`);
+        }
+        
+        if (!savedData) {
+            container.innerHTML = `
+                <div class="empty-message">
+                    У вас пока нет заказов. Оформите первый заказ на странице 
+                    <a href="orders.html">Оформить заказ</a>.
+                </div>
+            `;
             return;
         }
         
-        try {
-            // Получаем данные из localStorage
-            const savedData = localStorage.getItem(this.STORAGE_KEY);
-            console.log('📦 Данные из localStorage:', savedData ? 'есть' : 'нет');
-            
-            if (!savedData) {
-                container.innerHTML = `
-                    <div class="empty-message">
-                        У вас пока нет заказов. Оформите первый заказ на странице 
-                        <a href="orders.html">Оформить заказ</a>.
-                    </div>
-                `;
-                return;
-            }
-            
-            // Парсим данные
-            this.orders = JSON.parse(savedData);
-            console.log(`📊 Загружено ${this.orders.length} заказов`);
-            
-            if (this.orders.length === 0) {
-                container.innerHTML = '<div class="empty-message">У вас пока нет заказов.</div>';
-                return;
-            }
-            
-            // Сортируем по дате (новые сначала)
-            this.orders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-            
-            // Отображаем
-            this.displayOrders();
-            
-        } catch (error) {
-            console.error('❌ Ошибка загрузки заказов:', error);
-            container.innerHTML = '<div class="error-message">Ошибка загрузки истории заказов</div>';
+        // Парсим данные
+        this.orders = JSON.parse(savedData);
+        console.log(`📊 Успешно загружено ${this.orders.length} заказов`);
+        
+        if (this.orders.length === 0) {
+            container.innerHTML = '<div class="empty-message">У вас пока нет заказов.</div>';
+            return;
+        }
+        
+        // Выводим подробную информацию о каждом заказе
+        console.log('📋 Детали загруженных заказов:');
+        this.orders.forEach((order, index) => {
+            console.log(`Заказ #${index + 1}:`, {
+                id: order.id,
+                date: order.created_at,
+                name: order.full_name,
+                dishes: order.dishes?.length || 0,
+                total: order.total_price
+            });
+        });
+        
+        // Сортируем по дате (новые сначала)
+        this.orders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        
+        // Отображаем
+        this.displayOrders();
+        
+    } catch (error) {
+        console.error('❌ Ошибка загрузки заказов:', error);
+        container.innerHTML = '<div class="error-message">Ошибка загрузки истории заказов: ' + error.message + '</div>';
         }
     }
     
