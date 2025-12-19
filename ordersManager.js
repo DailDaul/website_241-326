@@ -479,10 +479,11 @@ getDishesArray() {
             phone: phone,
             delivery_address: address,
             delivery_type: deliveryTime === 'scheduled' ? 'scheduled' : 'asap',
-            delivery_time: scheduledTime || null,
+            delivery_time: scheduledTime || 'Как можно скорее',
             comment: '',
             total_price: totalPrice,
-            dishes: dishes
+            dishes: dishes, // Массив блюд {name, price}
+            status: 'pending' // Добавляем статус для фильтрации
         };
         
         console.log('📄 Новый заказ для сохранения:', newOrder);
@@ -510,11 +511,12 @@ getDishesArray() {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(existingOrders));
             console.log('✅ Заказ сохранен! Всего заказов:', existingOrders.length);
             
-            // Дополнительная проверка
+            // Дополнительная проверка - сразу считываем обратно
             const verify = localStorage.getItem(STORAGE_KEY);
             if (verify) {
                 const parsed = JSON.parse(verify);
-                console.log('🔍 Проверка: сохранено заказов:', parsed.length);
+                console.log('🔍 Проверка сохранения:', parsed.length, 'заказов сохранено');
+                console.log('Последний сохраненный заказ:', parsed[0]);
             }
         } catch (error) {
             console.error('❌ Ошибка сохранения в localStorage:', error);
