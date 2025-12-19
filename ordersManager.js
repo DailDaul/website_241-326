@@ -387,6 +387,19 @@ getDishesArray() {
     }
     
     async submitOrder() {
+    console.log('🔥 НАЧАЛО ОФОРМЛЕНИЯ ЗАКАЗА');
+    console.log('📍 URL страницы:', window.location.href);
+    console.log('📦 Текущий заказ:', this.selectedDishes);
+    
+    // Проверяем наличие выбранных блюд
+    const hasDishes = Object.values(this.selectedDishes).some(dish => dish !== null);
+    console.log('✅ Есть ли выбранные блюда?', hasDishes);
+    
+    if (!hasDishes) {
+        showNotification('Ошибка: не выбраны блюда для заказа');
+        return;
+    }
+        
     try {
         console.log('=== ОФОРМЛЕНИЕ ЗАКАЗА ===');
         
