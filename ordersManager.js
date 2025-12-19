@@ -536,48 +536,58 @@ class OrdersManager {
         }
     }
     
-    // Метод для сохранения заказа в историю
-    saveOrderToHistory(orderData) {
+    // Метод для сохранения заказа в историю - ЗАМЕНИТЕ НА ЭТОТ
+saveOrderToHistory(orderData) {
+    try {
+        const STORAGE_KEY = 'foodConstruct_orders';
+        
+        // Получаем существующие заказы
+        let existingOrders = [];
         try {
-            const STORAGE_KEY = 'foodConstruct_orders';
-            
-            // Получаем существующие заказы
-            let existingOrders = [];
-            try {
-                const savedOrders = localStorage.getItem(STORAGE_KEY);
-                existingOrders = savedOrders ? JSON.parse(savedOrders) : [];
-            } catch (e) {
-                console.error('Ошибка при чтении истории заказов:', e);
-                existingOrders = [];
+            const savedOrders = localStorage.getItem(STORAGE_KEY);
+            if (savedOrders) {
+                existingOrders = JSON.parse(savedOrders);
+                console.log(`Найдено ${existingOrders.length} существующих заказов`);
             }
-            
-            // Создаем новый заказ
-            const newOrder = {
-                id: existingOrders.length > 0 ? Math.max(...existingOrders.map(o => o.id)) + 1 : 1,
-                created_at: new Date().toISOString(),
-                full_name: orderData.name,
-                email: orderData.email,
-                phone: orderData.phone,
-                delivery_address: orderData.address,
-                delivery_type: orderData.delivery_time === 'scheduled' ? 'scheduled' : 'asap',
-                delivery_time: orderData.scheduled_time || null,
-                comment: orderData.comment || '',
-                total_price: orderData.total_price,
-                dishes: orderData.dishes
-            };
-            
-            // Добавляем новый заказ в начало массива
-            existingOrders.unshift(newOrder);
-            
-            // Сохраняем обратно в localStorage
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(existingOrders));
-            
-            console.log('Заказ сохранен в историю:', newOrder);
-            return true;
-            
-        } catch (error) {
-            console.error('Ошибка при сохранении заказа в историю:', error);
-            return false;
+        } catch (e) {
+            console.error('Ошибка при чтении истории заказов:', e);
+            existingOrders = [];
+        }
+        
+        // Создаем новый заказ с гарантированными данными
+        const newOrder = {
+            id: existingOrders.length > 0 ? Math.max(...existingOrders.map(o => o.id || 0)) + 1 : 1,
+            created_at: new Date().toISOString(),
+            full_name: orderData.name || 'Гость',
+            email: orderData.email || '',
+            phone: orderData.phone || '',
+            delivery_address: orderData.address || '',
+            delivery_type: orderData.delivery_time === 'scheduled' ? 'scheduled' : 'asap',
+            delivery_time: orderData.scheduled_time || null,
+            comment: orderData.comment || '',
+            total_price: orderData.total_price || 0,
+            dishes: orderData.dishes || []
+        };
+        
+        // Проверяем данные перед сохранением
+        console.log('Новый заказ для сохранения:', newOrder);
+        
+        // Добавляем новый заказ в начало массива
+        existingOrders.unshift(newOrder);
+        
+        // Сохраняем обратно в localStorage
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(existingOrders));
+        
+        // Дополнительная проверка
+        const verify = localStorage.getItem(STORAGE_KEY);
+        const parsed = JSON.parse(verify);
+        console.log(`Проверка: сохранено ${parsed.length} заказов, последний:`, parsed[0]);
+        
+        return true;
+        
+    } catch (error) {
+        console.error('❌ Критическая ошибка при сохранении заказа в историю:', error);
+        return false;
         }
     }
     
