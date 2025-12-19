@@ -1,4 +1,3 @@
-// history.js
 class OrderHistory {
     constructor() {
         this.STORAGE_KEY = 'foodConstruct_orders';
@@ -59,19 +58,60 @@ class OrderHistory {
     }
     
     migrateOldOrders() {
-        // Пробуем получить заказ из старого формата (из orderStorage.js)
         try {
             const oldOrderKey = 'foodConstruct_order';
             const savedOrder = localStorage.getItem(oldOrderKey);
             
             if (savedOrder) {
                 const parsedOrder = JSON.parse(savedOrder);
-                const dishes = this.getDishesFromOrderData(parsedOrder);
+                const dishes = [];
+                let totalPrice = 0;
+                
+                // Извлекаем блюда с правильными именами
+                if (parsedOrder.soup && parsedOrder.soup.name) {
+                    dishes.push({
+                        name: parsedOrder.soup.name,
+                        price: parsedOrder.soup.price
+                    });
+                    totalPrice += Number(parsedOrder.soup.price);
+                }
+                
+                if (parsedOrder.main && parsedOrder.main.name) {
+                    dishes.push({
+                        name: parsedOrder.main.name,
+                        price: parsedOrder.main.price
+                    });
+                    totalPrice += Number(parsedOrder.main.price);
+                }
+                
+                if (parsedOrder.starter && parsedOrder.starter.name) {
+                    dishes.push({
+                        name: parsedOrder.starter.name,
+                        price: parsedOrder.starter.price
+                    });
+                    totalPrice += Number(parsedOrder.starter.price);
+                }
+                
+                if (parsedOrder.drink && parsedOrder.drink.name) {
+                    dishes.push({
+                        name: parsedOrder.drink.name,
+                        price: parsedOrder.drink.price
+                    });
+                    totalPrice += Number(parsedOrder.drink.price);
+                }
+                
+                if (parsedOrder.dessert && parsedOrder.dessert.name) {
+                    dishes.push({
+                        name: parsedOrder.dessert.name,
+                        price: parsedOrder.dessert.price
+                    });
+                    totalPrice += Number(parsedOrder.dessert.price);
+                }
                 
                 if (dishes.length > 0) {
                     // Создаем новый заказ из старого формата
                     const newOrder = {
-                        id: Date.now(),
+                        id: 1,
                         created_at: new Date().toISOString(),
                         full_name: localStorage.getItem('foodConstruct_user_name') || 'Гость',
                         email: localStorage.getItem('foodConstruct_user_email') || '',
@@ -80,97 +120,16 @@ class OrderHistory {
                         delivery_type: 'asap',
                         delivery_time: null,
                         comment: '',
-                        total_price: dishes.reduce((sum, dish) => sum + (dish.price || 0), 0),
+                        total_price: totalPrice,
                         dishes: dishes
                     };
                     
                     this.saveOrdersToStorage([newOrder]);
-                    console.log('Мигрирован старый заказ в историю');
+                    console.log('Мигрирован старый заказ в историю:', newOrder);
                 }
             }
         } catch (error) {
             console.error('Ошибка при миграции старых заказов:', error);
-        }
-    }
-    
-    getDishesFromOrderData(orderData) {
-        const dishes = [];
-        
-        // Получаем все блюда из заказа
-        if (orderData.soup) {
-            dishes.push({
-                name: orderData.soup.name || 'Суп',
-                price: orderData.soup.price || 0
-            });
-        }
-        
-        if (orderData.main) {
-            dishes.push({
-                name: orderData.main.name || 'Главное блюдо',
-                price: orderData.main.price || 0
-            });
-        }
-        
-        if (orderData.starter) {
-            dishes.push({
-                name: orderData.starter.name || 'Салат',
-                price: orderData.starter.price || 0
-            });
-        }
-        
-        if (orderData.drink) {
-            dishes.push({
-                name: orderData.drink.name || 'Напиток',
-                price: orderData.drink.price || 0
-            });
-        }
-        
-        if (orderData.dessert) {
-            dishes.push({
-                name: orderData.dessert.name || 'Десерт',
-                price: orderData.dessert.price || 0
-            });
-        }
-        
-        return dishes;
-    }
-    
-    // Метод для добавления нового заказа (будет вызываться из orders.html)
-    static addNewOrder(orderData) {
-        try {
-            const history = new OrderHistory();
-            const orders = history.getOrdersFromStorage();
-            
-            // Создаем ID для нового заказа
-            const newId = orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1;
-            
-            // Создаем новый заказ
-            const newOrder = {
-                id: newId,
-                created_at: new Date().toISOString(),
-                full_name: orderData.name,
-                email: orderData.email,
-                phone: orderData.phone,
-                delivery_address: orderData.address,
-                delivery_type: orderData.delivery_time,
-                delivery_time: orderData.scheduled_time || null,
-                comment: orderData.comment || '',
-                total_price: orderData.total_price,
-                dishes: orderData.dishes || []
-            };
-            
-            // Добавляем в начало массива
-            orders.unshift(newOrder);
-            
-            // Сохраняем
-            history.saveOrdersToStorage(orders);
-            
-            console.log('Новый заказ добавлен в историю:', newOrder);
-            return true;
-            
-        } catch (error) {
-            console.error('Ошибка при добавлении нового заказа:', error);
-            return false;
         }
     }
     
@@ -215,12 +174,17 @@ class OrderHistory {
             ? this.formatTime(order.delivery_time)
             : 'Как можно скорее (с 7:00 до 23:00)';
         
+        // Проверяем и исправляем стоимость если она 0
+        const displayPrice = order.total_price && order.total_price > 0 
+            ? order.total_price 
+            : this.calculateOrderPrice(order.dishes);
+        
         return `
             <tr>
                 <td class="order-number">${number}</td>
                 <td class="order-date">${formattedDate}</td>
                 <td class="order-composition" title="${dishesText}">${dishesText}</td>
-                <td class="order-price">${order.total_price}Р</td>
+                <td class="order-price">${displayPrice}Р</td>
                 <td class="order-time">${deliveryTime}</td>
                 <td class="order-actions">
                     <button class="action-btn view-btn" data-id="${order.id}" title="Подробнее">
@@ -235,6 +199,19 @@ class OrderHistory {
                 </td>
             </tr>
         `;
+    }
+    
+    // Метод для расчета стоимости заказа на основе блюд
+    calculateOrderPrice(dishes) {
+        if (!dishes || !Array.isArray(dishes)) return 0;
+        
+        let total = 0;
+        dishes.forEach(dish => {
+            if (dish && dish.price) {
+                total += Number(dish.price);
+            }
+        });
+        return total;
     }
     
     formatDate(dateString) {
@@ -340,6 +317,11 @@ class OrderHistory {
             </li>
         `).join('');
         
+        // Рассчитываем стоимость если она не сохранена
+        const orderPrice = order.total_price && order.total_price > 0 
+            ? order.total_price 
+            : this.calculateOrderPrice(order.dishes);
+        
         const content = `
             <div class="order-info-section">
                 <h3>Дата оформления</h3>
@@ -389,7 +371,7 @@ class OrderHistory {
             </div>
             
             <div class="order-total-price">
-                Стоимость: ${order.total_price}Р
+                Стоимость: ${orderPrice}Р
             </div>
         `;
         
@@ -653,7 +635,49 @@ class OrderHistory {
     
     showErrorMessage(message) {
         const container = document.getElementById('orders-container');
-        container.innerHTML = `<div class="error-message">${message}</div>`;
+        if (container) {
+            container.innerHTML = `<div class="error-message">${message}</div>`;
+        }
+    }
+    
+    // Статический метод для добавления нового заказа (используется в ordersManager.js)
+    static addNewOrder(orderData) {
+        try {
+            // Создаем временный экземпляр для доступа к методам
+            const history = new OrderHistory();
+            const orders = history.getOrdersFromStorage();
+            
+            // Создаем ID для нового заказа
+            const newId = orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1;
+            
+            // Создаем новый заказ
+            const newOrder = {
+                id: newId,
+                created_at: new Date().toISOString(),
+                full_name: orderData.name,
+                email: orderData.email,
+                phone: orderData.phone,
+                delivery_address: orderData.address,
+                delivery_type: orderData.delivery_time === 'scheduled' ? 'scheduled' : 'asap',
+                delivery_time: orderData.scheduled_time || null,
+                comment: orderData.comment || '',
+                total_price: orderData.total_price,
+                dishes: orderData.dishes || []
+            };
+            
+            // Добавляем в начало массива
+            orders.unshift(newOrder);
+            
+            // Сохраняем
+            history.saveOrdersToStorage(orders);
+            
+            console.log('Новый заказ добавлен в историю через статический метод:', newOrder);
+            return true;
+            
+        } catch (error) {
+            console.error('Ошибка при добавлении нового заказа через статический метод:', error);
+            return false;
+        }
     }
 }
 
