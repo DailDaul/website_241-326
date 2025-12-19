@@ -318,30 +318,20 @@ function setupOrderValidation() {
     
     //функция обработки заказа
     function processOrderForm() {
-    console.log('=== ОБРАБОТКА ЗАКАЗА ===');
-    
-    // Проверяем заполнение полей формы
-    const name = document.getElementById('name')?.value.trim();
-    const email = document.getElementById('email')?.value.trim();
-    const phone = document.getElementById('phone')?.value.trim();
-    const address = document.getElementById('address')?.value.trim();
-    const deliveryTime = document.querySelector('input[name="delivery_time"]:checked')?.value;
-    const scheduledTime = document.getElementById('scheduled-time')?.value;
-    
-    if (!name || !email || !phone || !address) {
-        showNotification('Заполните все поля формы: имя, email, телефон и адрес');
-        return;
-    }
-    
-    // СОХРАНЯЕМ ДАННЫЕ ПОЛЬЗОВАТЕЛЯ ДЛЯ ИСТОРИИ (добавить этот блок)
-    try {
-        localStorage.setItem('foodConstruct_user_name', name);
-        localStorage.setItem('foodConstruct_user_email', email);
-        localStorage.setItem('foodConstruct_user_phone', phone);
-        localStorage.setItem('foodConstruct_user_address', address);
-    } catch (error) {
-        console.error('Ошибка при сохранении данных пользователя:', error);
-    }
+        console.log('=== ОБРАБОТКА ЗАКАЗА ===');
+        
+        //проверяем заполнение полей формы
+        const name = document.getElementById('name')?.value.trim();
+        const email = document.getElementById('email')?.value.trim();
+        const phone = document.getElementById('phone')?.value.trim();
+        const address = document.getElementById('address')?.value.trim();
+        const deliveryTime = document.querySelector('input[name="delivery_time"]:checked')?.value;
+        const scheduledTime = document.getElementById('scheduled-time')?.value;
+        
+        if (!name || !email || !phone || !address) {
+            showNotification('Заполните все поля формы: имя, email, телефон и адрес');
+            return;
+        }
         
         //если выбрано "К указанному времени", проверяем заполнение времени
         if (deliveryTime === 'scheduled' && !scheduledTime) {
@@ -354,7 +344,7 @@ function setupOrderValidation() {
             const hours = time.getHours();
             const minutes = time.getMinutes();
     
-        // Проверяем, что время в пределах 7:00 - 23:00
+        //проверяем, что время в пределах 7:00 - 23:00
         if (hours < 7 || hours > 23 || (hours === 23 && minutes > 0)) {
             showNotification('Время доставки должно быть с 7:00 до 23:00');
             return;
@@ -408,7 +398,7 @@ function setupOrderValidation() {
     }
 }
 
-// Функция для настройки переключения времени доставки
+//функция для настройки переключения времени доставки
 function setupTimeDeliveryToggle() {
     const asapRadio = document.getElementById('delivery-asap');
     const scheduledRadio = document.getElementById('delivery-scheduled');
@@ -419,10 +409,10 @@ function setupTimeDeliveryToggle() {
         return;
     }
     
-    // Изначально скрываем панель выбора времени
+    //изначально скрываем панель выбора времени
     timePanel.style.display = 'none';
     
-    // Функция для обновления видимости панели времени
+    //функция для обновления видимости панели времени
     function updateTimePanelVisibility() {
         if (scheduledRadio.checked) {
             timePanel.style.display = 'block';
@@ -432,11 +422,11 @@ function setupTimeDeliveryToggle() {
         }
     }
     
-    // Вешаем обработчики на радио-кнопки
+    //вешаем обработчики на радио-кнопки
     asapRadio.addEventListener('change', updateTimePanelVisibility);
     scheduledRadio.addEventListener('change', updateTimePanelVisibility);
     
-    // Инициализируем видимость
+    //инициализируем видимость
     updateTimePanelVisibility();
     
     console.log('Настроено переключение времени доставки');
