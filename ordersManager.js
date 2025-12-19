@@ -13,21 +13,22 @@ class OrdersManager {
     
     async init() {
         try {
-            //загружаем блюда с API
-            if (typeof loadDishes === 'undefined') {
-                throw new Error('Функция loadDishes не найдена');
+            // Проверяем, что storageManager загружен
+            if (typeof saveOrderToStorage === 'undefined') {
+                console.error('storageManager.js не загружен!');
+                throw new Error('storageManager.js не загружен');
             }
             
-            //загружаем сохраненный заказ
+            // Загружаем сохраненный заказ
             await this.loadSavedOrder();
             
-            //отображаем выбранные блюда
+            // Отображаем выбранные блюда
             this.displayOrderItems();
             
-            //настраиваем обработчики событий
+            // Настраиваем обработчики событий
             this.setupEventListeners();
             
-            //настраиваем валидацию формы
+            // Настраиваем валидацию формы
             this.setupFormValidation();
             
         } catch (error) {
@@ -38,16 +39,16 @@ class OrdersManager {
     
     async loadSavedOrder() {
         try {
-            //загружаем ключи из localStorage
+            // Загружаем ключи из localStorage
             const savedOrderKeys = loadOrderFromStorage();
             
-            //загружаем все блюда с API
+            // Загружаем все блюда с API
             const dishes = await loadDishes();
             if (!dishes || !Array.isArray(dishes)) {
                 throw new Error('Не удалось загрузить блюда с API');
             }
             
-            //восстанавливаем полные данные блюд
+            // Восстанавливаем полные данные блюд
             Object.keys(savedOrderKeys).forEach(category => {
                 const dishKeyword = savedOrderKeys[category];
                 if (dishKeyword) {
@@ -60,7 +61,7 @@ class OrdersManager {
             
             console.log('Загружен заказ из localStorage:', this.selectedDishes);
             
-            //обновляем отображение заказа в форме
+            // Обновляем отображение заказа в форме
             this.updateOrderFormDisplay();
             
         } catch (error) {
@@ -75,10 +76,10 @@ class OrdersManager {
         
         if (!container) return;
         
-        //очищаем контейнер
+        // Очищаем контейнер
         container.innerHTML = '';
         
-        //проверяем, есть ли выбранные блюда
+        // Проверяем, есть ли выбранные блюда
         const hasSelectedDishes = Object.values(this.selectedDishes).some(dish => dish !== null);
         
         if (!hasSelectedDishes) {
@@ -88,12 +89,12 @@ class OrdersManager {
             return;
         }
         
-        //скрываем сообщение о пустом заказе
+        // Скрываем сообщение о пустом заказе
         if (emptyMessage) {
             emptyMessage.style.display = 'none';
         }
         
-        //отображаем выбранные блюда
+        // Отображаем выбранные блюда
         Object.values(this.selectedDishes).forEach(dish => {
             if (dish) {
                 const dishCard = this.createOrderItemCard(dish);
@@ -122,7 +123,7 @@ class OrdersManager {
     }
     
     setupEventListeners() {
-        //обработчик для кнопок "Удалить"
+        // Обработчик для кнопок "Удалить"
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('remove-btn')) {
                 const dishItem = e.target.closest('.dish-item');
@@ -134,7 +135,7 @@ class OrdersManager {
             }
         });
         
-        //обработчик для кнопки "Очистить заказ"
+        // Обработчик для кнопки "Очистить заказ"
         const clearOrderBtn = document.getElementById('clear-order-btn');
         if (clearOrderBtn) {
             clearOrderBtn.addEventListener('click', () => {
@@ -144,31 +145,28 @@ class OrdersManager {
     }
     
     removeDishFromOrder(dishKeyword, category) {
-        //находим блюдо в массиве dishes
+        // Находим блюдо в массиве dishes
         const dish = dishes.find(d => d.keyword === dishKeyword);
         
-        //удаляем блюдо из текущего заказа
+        // Удаляем блюдо из текущего заказа
         this.selectedDishes[category] = null;
         
-        //удаляем из localStorage
+        // Удаляем из localStorage
         removeDishFromStorage(category);
         
-        //обновляем отображение
+        // Обновляем отображение
         this.displayOrderItems();
         this.updateOrderFormDisplay();
         
-        //показываем небольшое уведомление (опционально)
+        // Показываем небольшое уведомление
         if (dish) {
-            //можно использовать консоль для отладки
             console.log(`Блюдо "${dish.name}" удалено из заказа`);
-            
-            //или показать маленькое тостовое уведомление
             this.showToastNotification(`Блюдо "${dish.name}" удалено из заказа`);
         }
     }
     
     clearOrder() {
-        //очищаем текущий заказ
+        // Очищаем текущий заказ
         this.selectedDishes = {
             soup: null,
             main: null,
@@ -177,14 +175,14 @@ class OrdersManager {
             dessert: null
         };
         
-        //очищаем localStorage
+        // Очищаем localStorage
         clearOrderFromStorage();
         
-        //обновляем отображение
+        // Обновляем отображение
         this.displayOrderItems();
         this.updateOrderFormDisplay();
         
-        //показываем уведомление
+        // Показываем уведомление
         showNotification('Заказ успешно очищен', true);
     }
     
@@ -211,7 +209,7 @@ class OrdersManager {
         let hasSelectedDishes = false;
         let totalPrice = 0;
         
-        //обновляем отображение для каждой категории
+        // Обновляем отображение для каждой категории
         Object.keys(this.selectedDishes).forEach(category => {
             const dish = this.selectedDishes[category];
             const orderBlock = orderBlocks[category];
@@ -241,17 +239,17 @@ class OrdersManager {
             }
         });
         
-        //управляем отображением сообщения "Ничего не выбрано"
+        // Управляем отображением сообщения "Ничего не выбрано"
         if (emptyMessage) {
             emptyMessage.style.display = hasSelectedDishes ? 'none' : 'block';
         }
         
-        //обновляем общую стоимость
+        // Обновляем общую стоимость
         if (totalPriceElement) {
             totalPriceElement.textContent = totalPrice;
         }
         
-        //заполняем скрытые поля формы
+        // Заполняем скрытые поля формы
         this.updateFormHiddenFields();
     }
     
@@ -267,21 +265,29 @@ class OrdersManager {
     }
     
     updateFormHiddenFields() {
-        //заполняем скрытые поля формы
-        document.getElementById('order-soup').value = this.selectedDishes.soup ? this.selectedDishes.soup.name : '';
-        document.getElementById('order-main').value = this.selectedDishes.main ? this.selectedDishes.main.name : '';
-        document.getElementById('order-starter').value = this.selectedDishes.starter ? this.selectedDishes.starter.name : '';
-        document.getElementById('order-drink').value = this.selectedDishes.drink ? this.selectedDishes.drink.name : '';
-        document.getElementById('order-dessert').value = this.selectedDishes.dessert ? this.selectedDishes.dessert.name : '';
+        // Заполняем скрытые поля формы
+        const soupField = document.getElementById('order-soup');
+        const mainField = document.getElementById('order-main');
+        const starterField = document.getElementById('order-starter');
+        const drinkField = document.getElementById('order-drink');
+        const dessertField = document.getElementById('order-dessert');
+        const totalField = document.getElementById('order-total-price');
         
-        //рассчитываем и заполняем общую стоимость
+        if (soupField) soupField.value = this.selectedDishes.soup ? this.selectedDishes.soup.name : '';
+        if (mainField) mainField.value = this.selectedDishes.main ? this.selectedDishes.main.name : '';
+        if (starterField) starterField.value = this.selectedDishes.starter ? this.selectedDishes.starter.name : '';
+        if (drinkField) drinkField.value = this.selectedDishes.drink ? this.selectedDishes.drink.name : '';
+        if (dessertField) dessertField.value = this.selectedDishes.dessert ? this.selectedDishes.dessert.name : '';
+        
+        // Рассчитываем и заполняем общую стоимость
         let totalPrice = 0;
         Object.values(this.selectedDishes).forEach(dish => {
             if (dish && dish.price) {
                 totalPrice += dish.price;
             }
         });
-        document.getElementById('order-total-price').value = totalPrice;
+        
+        if (totalField) totalField.value = totalPrice;
     }
     
     setupFormValidation() {
@@ -291,50 +297,60 @@ class OrdersManager {
         
         orderForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            //проверяем заполнение полей формы
+            await this.processOrderForm();
+        });
+    }
+    
+    async processOrderForm() {
+        try {
+            // Получаем данные формы
             const name = document.getElementById('name')?.value.trim();
             const email = document.getElementById('email')?.value.trim();
             const phone = document.getElementById('phone')?.value.trim();
             const address = document.getElementById('address')?.value.trim();
             const comment = document.getElementById('comment')?.value.trim() || '';
             
+            // Проверяем заполнение обязательных полей
             if (!name || !email || !phone || !address) {
                 showNotification('Заполните все поля формы: имя, email, телефон и адрес', false);
                 return;
             }
             
-            //проверяем валидность email
+            // Проверяем валидность email
             const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!emailPattern.test(email)) {
                 showNotification('Введите корректный email адрес', false);
                 return;
             }
             
-            //проверяем валидность телефона
+            // Проверяем валидность телефона
             const phonePattern = /^[\+]?[0-9\s\-\(\)]{7,20}$/;
             if (!phonePattern.test(phone)) {
                 showNotification('Введите корректный номер телефона', false);
                 return;
             }
             
-            //проверяем, что выбрано хотя бы одно блюдо
+            // Проверяем, что выбрано хотя бы одно блюдо
             const hasSelectedDishes = Object.values(this.selectedDishes).some(dish => dish !== null);
             if (!hasSelectedDishes) {
                 showNotification('Выберите блюда для заказа', false);
                 return;
             }
             
-            //проверяем валидность состава заказа
+            // Проверяем валидность состава заказа
             const validation = validateOrder(this.selectedDishes);
             if (!validation.isValid) {
                 showNotification(validation.message, false);
                 return;
             }
             
-            //отправляем заказ
+            // Обрабатываем заказ
             await this.submitOrder(name, email, phone, address, comment);
-        });
+            
+        } catch (error) {
+            console.error('Ошибка при обработке формы:', error);
+            showNotification('Произошла ошибка. Пожалуйста, попробуйте еще раз.', false);
+        }
     }
     
     async submitOrder(name, email, phone, address, comment) {
@@ -353,7 +369,7 @@ class OrdersManager {
                 }
             });
             
-            // Проверяем время доставки
+            // Определяем тип и время доставки
             const deliveryTime = document.querySelector('input[name="delivery_time"]:checked')?.value;
             const scheduledTime = document.getElementById('scheduled-time')?.value;
             
@@ -393,13 +409,13 @@ class OrdersManager {
                 total_price: totalPrice
             };
             
-            console.log('Сохранение заказа:', orderData);
+            console.log('Сохранение заказа в историю:', orderData);
             
             // Сохраняем заказ в историю
             const saved = saveOrderToHistory(orderData);
             
             if (saved) {
-                // Очищаем localStorage текущего заказа
+                // Очищаем текущий заказ из localStorage
                 clearOrderFromStorage();
                 
                 // Показываем сообщение об успехе
@@ -485,47 +501,7 @@ class OrdersManager {
     }
 }
 
-// Глобальная функция для сохранения заказа в историю
-function saveOrderToHistory(orderData) {
-    try {
-        // Создаем объект заказа для истории
-        const order = {
-            id: Date.now().toString(),
-            full_name: orderData.name,
-            email: orderData.email,
-            phone: orderData.phone,
-            delivery_address: orderData.address,
-            delivery_type: orderData.delivery_type,
-            delivery_time: orderData.delivery_time,
-            comment: orderData.comment || '',
-            dishes: orderData.dishes || [],
-            dishNames: orderData.dishes.map(d => d.name).join(', '),
-            total_price: orderData.total_price || 0,
-            created_at: new Date().toISOString()
-        };
-        
-        // Сохраняем в localStorage
-        const storageKey = 'foodConstruct_order_history';
-        const savedOrders = localStorage.getItem(storageKey);
-        let orders = [];
-        
-        if (savedOrders) {
-            orders = JSON.parse(savedOrders);
-        }
-        
-        orders.push(order);
-        localStorage.setItem(storageKey, JSON.stringify(orders));
-        
-        console.log('Заказ сохранен в историю:', order);
-        return true;
-        
-    } catch (error) {
-        console.error('Ошибка при сохранении заказа в историю:', error);
-        return false;
-    }
-}
-
-//инициализируем менеджер заказов
+// Инициализация менеджера заказов
 let ordersManager;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -535,5 +511,4 @@ document.addEventListener('DOMContentLoaded', () => {
 // Экспорт для использования в других файлах
 if (typeof window !== 'undefined') {
     window.ordersManager = ordersManager;
-    window.saveOrderToHistory = saveOrderToHistory;
 }
