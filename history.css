@@ -1,0 +1,526 @@
+.history-section {
+    padding: 20px 0;
+}
+
+.history-section h2 {
+    font-size: 32px;
+    margin-bottom: 30px;
+    text-align: center;
+    color: #333;
+}
+
+.filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 10px 20px;
+    border: 2px solid #ff6b00;
+    background: white;
+    color: #ff6b00;
+    border-radius: 25px;
+    cursor: pointer;
+    font-family: 'Oswald', sans-serif;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.filter-btn:hover {
+    background: #fff0e6;
+}
+
+.filter-btn.active {
+    background: #ff6b00;
+    color: white;
+}
+
+.orders-container {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    filter: drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.1));
+    margin-top: 20px;
+}
+
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.orders-table th {
+    background-color: #f8f8f8;
+    padding: 15px;
+    text-align: left;
+    font-weight: 500;
+    color: #333;
+    border-bottom: 2px solid #ff6b00;
+    font-size: 18px;
+}
+
+.orders-table td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    font-size: 16px;
+    color: #666;
+}
+
+.orders-table tr:last-child td {
+    border-bottom: none;
+}
+
+.orders-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.order-number {
+    font-weight: 500;
+    color: #333;
+}
+
+.order-date {
+    color: #666;
+    white-space: nowrap;
+}
+
+.order-composition {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.order-price {
+    font-weight: 500;
+    color: #ff6b00;
+    white-space: nowrap;
+}
+
+.order-time {
+    white-space: nowrap;
+}
+
+.order-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px;
+    border-radius: 5px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+}
+
+.view-btn {
+    color: #4CAF50;
+}
+
+.view-btn:hover {
+    background-color: rgba(76, 175, 80, 0.1);
+}
+
+.edit-btn {
+    color: #2196F3;
+}
+
+.edit-btn:hover {
+    background-color: rgba(33, 150, 243, 0.1);
+}
+
+.delete-btn {
+    color: #f44336;
+}
+
+.delete-btn:hover {
+    background-color: rgba(244, 67, 54, 0.1);
+}
+
+.loading-message,
+.error-message,
+.empty-message {
+    text-align: center;
+    padding: 40px;
+    font-size: 18px;
+    color: #666;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+.error-message {
+    color: #ff6b00;
+    border: 2px solid #ff6b00;
+}
+
+.empty-message {
+    color: #888;
+    border: 2px dashed #ddd;
+}
+
+/* Модальные окна */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 700px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.3s;
+    line-height: 1;
+}
+
+.close-modal:hover {
+    color: #ff6b00;
+}
+
+.modal h2 {
+    font-size: 24px;
+    margin-bottom: 25px;
+    color: #333;
+    border-bottom: 2px solid #ff6b00;
+    padding-bottom: 10px;
+}
+
+.modal-text {
+    margin-bottom: 25px;
+}
+
+.modal-text p {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #666;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.modal-btn {
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+    min-width: 100px;
+}
+
+.ok-btn {
+    background-color: #ff6b00;
+    color: white;
+}
+
+.ok-btn:hover {
+    background-color: #e55a00;
+}
+
+.save-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.save-btn:hover {
+    background-color: #3d8b40;
+}
+
+.delete-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #d32f2f;
+}
+
+.cancel-btn {
+    background-color: #f1eee9;
+    color: #333;
+}
+
+.cancel-btn:hover {
+    background-color: #ddd;
+}
+
+/* Стили для формы редактирования */
+#edit-order-form .form-group {
+    margin-bottom: 20px;
+}
+
+#edit-order-form label {
+    display: block;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+#edit-order-form input[type="text"],
+#edit-order-form input[type="email"],
+#edit-order-form input[type="tel"],
+#edit-order-form textarea,
+#edit-order-form select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: 'Oswald', sans-serif;
+    transition: border-color 0.3s;
+    background-color: #f9f9f9;
+}
+
+#edit-order-form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+#edit-order-form input:focus,
+#edit-order-form textarea:focus,
+#edit-order-form select:focus {
+    outline: none;
+    border-color: #ff6b00;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
+}
+
+.radio-group {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.radio-option input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #ff6b00;
+}
+
+.radio-option label {
+    margin-bottom: 0;
+    cursor: pointer;
+    font-weight: 400;
+}
+
+.time-selection {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.time-selection label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.time-selection input[type="time"] {
+    width: 200px;
+}
+
+/* Стили для отображения информации о заказе */
+.order-info-section {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.order-info-section h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.info-item {
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.info-label {
+    font-weight: 500;
+    color: #333;
+    min-width: 150px;
+    margin-right: 10px;
+}
+
+.info-value {
+    color: #666;
+    flex: 1;
+}
+
+.dishes-list {
+    list-style: none;
+    padding: 0;
+}
+
+.dishes-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.dishes-list li:last-child {
+    border-bottom: none;
+}
+
+.dish-name {
+    color: #333;
+}
+
+.dish-price {
+    color: #ff6b00;
+    font-weight: 500;
+}
+
+.order-total-price {
+    font-size: 20px;
+    font-weight: 600;
+    color: #ff6b00;
+    text-align: right;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #ff6b00;
+}
+
+/* Адаптивность */
+@media (max-width: 992px) {
+    .orders-table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    .modal-content {
+        margin: 10% auto;
+        width: 95%;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .orders-table th,
+    .orders-table td {
+        padding: 10px;
+        font-size: 14px;
+    }
+    
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+    
+    .modal-content {
+        margin: 15% auto;
+        width: 95%;
+        padding: 15px;
+    }
+    
+    .modal h2 {
+        font-size: 20px;
+    }
+    
+    .modal-btn {
+        padding: 10px 20px;
+        min-width: 80px;
+    }
+}
+
+@media (max-width: 576px) {
+    .filters {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .filter-btn {
+        width: 200px;
+    }
+    
+    .order-actions {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .action-btn {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .modal-buttons {
+        flex-direction: column;
+    }
+    
+    .modal-btn {
+        width: 100%;
+    }
+}
