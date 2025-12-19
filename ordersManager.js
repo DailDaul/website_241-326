@@ -373,6 +373,72 @@ document.body.appendChild(testButton);
             showNotification('Произошла ошибка. Пожалуйста, попробуйте еще раз.', false);
         }
     }
+
+    async testSaveOrder() {
+    console.log('🧪 === ЗАПУСК ТЕСТОВОГО СОХРАНЕНИЯ ===');
+    
+    // 1. Создаем тестовые данные заказа
+    const testOrderData = {
+        name: 'Тестовый Клиент',
+        email: 'test@example.com',
+        phone: '+79991234567',
+        address: 'Москва, ул. Тестовая, 1',
+        comment: 'Это тестовый заказ',
+        delivery_type: 'asap',
+        delivery_time: null,
+        dishes: [
+            { name: 'Лазанья', price: 385 },
+            { name: 'Апельсиновый сок', price: 150 }
+        ],
+        total_price: 535
+    };
+    
+    console.log('📦 Тестовые данные заказа:', testOrderData);
+    
+    // 2. Проверяем, доступна ли функция сохранения
+    if (typeof saveOrderToHistory === 'undefined') {
+        console.error('❌ ОШИБКА: Функция saveOrderToHistory не найдена!');
+        alert('❌ ОШИБКА: Функция saveOrderToHistory не найдена! Проверьте загрузку storageManager.js');
+        return;
+    }
+    
+    console.log('✅ Функция saveOrderToHistory доступна');
+    
+    // 3. Пробуем сохранить заказ
+    try {
+        const saved = saveOrderToHistory(testOrderData);
+        console.log('📝 Результат сохранения:', saved ? 'УСПЕХ' : 'ПРОВАЛ');
+        
+        if (saved) {
+            // 4. Проверяем, что сохранилось в localStorage
+            setTimeout(() => {
+                console.log('🔍 Проверяем содержимое localStorage...');
+                
+                // Проверяем все ключи
+                console.log('🔑 Все ключи в localStorage:', Object.keys(localStorage));
+                
+                // Специально проверяем наш ключ
+                const historyKey = 'foodConstruct_order_history';
+                const savedData = localStorage.getItem(historyKey);
+                
+                if (savedData) {
+                    console.log('✅ Ключ найден!');
+                    const parsedData = JSON.parse(savedData);
+                    console.log(`📊 В истории ${parsedData.length} заказов:`, parsedData);
+                    alert(`✅ Тестовый заказ сохранен! В истории теперь ${parsedData.length} заказов. Посмотрите консоль.`);
+                } else {
+                    console.error('❌ Ключ "foodConstruct_order_history" не найден в localStorage!');
+                    alert('❌ Заказ не сохранился. Ключ не найден в localStorage.');
+                }
+            }, 500);
+        } else {
+            alert('❌ Произошла ошибка при сохранении заказа (saveOrderToHistory вернула false)');
+        }
+    } catch (error) {
+        console.error('💥 КРИТИЧЕСКАЯ ОШИБКА при сохранении:', error);
+        alert('💥 КРИТИЧЕСКАЯ ОШИБКА: ' + error.message);
+    }
+}
     
     async submitOrder(name, email, phone, address, comment) {
         try {
