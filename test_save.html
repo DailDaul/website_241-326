@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Тест сохранения заказа</title>
+    <script>
+        function testSave() {
+            const testOrder = {
+                id: 1,
+                created_at: new Date().toISOString(),
+                full_name: 'Тест Тестов',
+                email: 'test@test.com',
+                phone: '+79991234567',
+                delivery_address: 'Тестовый адрес',
+                delivery_type: 'asap',
+                delivery_time: null,
+                comment: 'Тестовый заказ',
+                total_price: 500,
+                dishes: [
+                    { name: 'Гаспачо', price: 365 },
+                    { name: 'Апельсиновый сок', price: 135 }
+                ]
+            };
+            
+            // Получаем существующие заказы
+            let orders = [];
+            const saved = localStorage.getItem('foodConstruct_orders');
+            if (saved) {
+                orders = JSON.parse(saved);
+            }
+            
+            // Добавляем новый заказ
+            orders.unshift(testOrder);
+            
+            // Сохраняем
+            localStorage.setItem('foodConstruct_orders', JSON.stringify(orders));
+            
+            console.log('Тестовый заказ сохранен:', testOrder);
+            console.log('Всего заказов:', orders.length);
+            alert('Тестовый заказ сохранен! Перейдите на страницу "Заказы"');
+        }
+        
+        function clearAll() {
+            localStorage.removeItem('foodConstruct_orders');
+            alert('Все заказы удалены!');
+        }
+        
+        function checkStorage() {
+            const saved = localStorage.getItem('foodConstruct_orders');
+            if (saved) {
+                const orders = JSON.parse(saved);
+                console.log('Текущие заказы:', orders);
+                alert(`Найдено ${orders.length} заказов`);
+            } else {
+                alert('Заказы не найдены');
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Тест сохранения заказов</h1>
+    <button onclick="testSave()">Сохранить тестовый заказ</button>
+    <button onclick="checkStorage()">Проверить localStorage</button>
+    <button onclick="clearAll()">Очистить все заказы</button>
+    <br><br>
+    <a href="history.html">Перейти к истории заказов</a>
+</body>
+</html>
