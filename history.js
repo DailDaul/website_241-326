@@ -681,6 +681,19 @@ class OrderHistory {
     }
 }
 
+// В начале метода init() добавьте:
+async init() {
+    console.log('=== ИНИЦИАЛИЗАЦИЯ ИСТОРИИ ЗАКАЗОВ ===');
+    
+    // Проверяем localStorage
+    const testKey = 'foodConstruct_orders';
+    const testData = localStorage.getItem(testKey);
+    console.log('Проверка localStorage ключа', testKey, ':', testData);
+    
+    this.setupEventListeners();
+    await this.loadOrders();
+}
+
 // Инициализация
 let orderHistory;
 
