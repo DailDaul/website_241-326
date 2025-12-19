@@ -370,34 +370,32 @@ class OrdersManager {
             body: JSON.stringify(orderData)
         });
         
-        if (!response.ok) {
-            throw new Error(`Ошибка сервера: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        console.log('Ответ сервера:', result);
-        
-        //очищаем localStorage после успешной отправки
-        clearOrderFromStorage();
-        
-        //показываем сообщение об успехе
-        showNotification('Заказ успешно оформлен! Мы свяжемся с вами для подтверждения.', true);
-        
-        //очищаем форму
-        document.getElementById('order-form').reset();
-        
-        //очищаем текущий заказ
-        this.selectedDishes = {
-            soup: null,
-            main: null,
-            starter: null,
-            drink: null,
-            dessert: null
-        };
-        
-        //обновляем отображение
+        if (response.ok) {
+    const result = await response.json();
+    console.log('Ответ сервера:', result);
+    
+    // Очищаем localStorage после успешной отправки
+    clearOrderFromStorage();
+    
+    // Показываем сообщение об успехе
+    showNotification('Заказ успешно оформлен! Вы можете просмотреть его в истории заказов.', true);
+    
+    // Очищаем форму
+    document.getElementById('order-form').reset();
+    
+    // Очищаем текущий заказ
+    this.selectedDishes = {
+        soup: null,
+        main: null,
+        starter: null,
+        drink: null,
+        dessert: null
+    };
+    
+        // Обновляем отображение
         this.displayOrderItems();
         this.updateOrderFormDisplay();
+    }
         
         } catch (error) {
         console.error('Ошибка при отправке заказа:', error);
