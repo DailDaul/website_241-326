@@ -1,7 +1,7 @@
 // history.js
 class OrderHistory {
     constructor() {
-        this.API_URL = 'https://edu.std-900.ist.mospolytech.ru/labs/api';
+        this.STORAGE_KEY = 'foodConstruct_orders';
         this.currentOrderId = null;
         this.orders = [];
         
@@ -18,16 +18,14 @@ class OrderHistory {
             const container = document.getElementById('orders-container');
             container.innerHTML = '<div class="loading-message">Загрузка истории заказов...</div>';
             
-            // Пробуем загрузить с API
-            const response = await fetch(`${this.API_URL}/orders`);
+            // Загружаем заказы из localStorage
+            this.orders = this.getOrdersFromStorage();
             
-            if (!response.ok) {
-                // Если ошибка 401 или другая, используем демо-данные
-                console.log(`Ошибка ${response.status}. Используем демо-данные.`);
-                return this.loadDemoOrders();
+            // Если нет заказов, пытаемся загрузить старые данные
+            if (!this.orders || this.orders.length === 0) {
+                this.migrateOldOrders();
+                this.orders = this.getOrdersFromStorage();
             }
-            
-            this.orders = await response.json();
             
             // Сортируем по убыванию даты
             this.orders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
@@ -36,88 +34,144 @@ class OrderHistory {
             
         } catch (error) {
             console.error('Ошибка при загрузке заказов:', error);
-            // Используем демо-данные при ошибке
-            await this.loadDemoOrders();
+            this.showErrorMessage('Не удалось загрузить историю заказов.');
         }
     }
     
-    // Функция для загрузки демо-заказов
-    async loadDemoOrders() {
-        console.log('Используем демо-данные заказов');
-        
-        // Демо-данные заказов (как в задании)
-        this.orders = [
-            {
-                id: 1,
-                created_at: '2024-11-25T13:24:00',
-                full_name: 'Иванов Иван Иванович',
-                email: 'ivanov@example.com',
-                phone: '+74952230523',
-                delivery_address: 'г. Москва, ул. Большая Семёновская, 38',
-                delivery_type: 'scheduled',
-                delivery_time: '17:00',
-                comment: '',
-                total_price: 1015,
-                dishes: [
-                    { name: 'Гаспачо', price: 365 },
-                    { name: 'Жареная картошка с грибами', price: 150 },
-                    { name: 'Корейский салат с овощами и яйцом', price: 280 },
-                    { name: 'Апельсиновый сок', price: 120 },
-                    { name: 'Пахлава', price: 100 }
-                ]
-            },
-            {
-                id: 2,
-                created_at: '2024-11-24T10:11:00',
-                full_name: 'Петров Петр Петрович',
-                email: 'petrov@example.com',
-                phone: '+74951234567',
-                delivery_address: 'г. Москва, ул. Прянишникова, 2А',
-                delivery_type: 'asap',
-                delivery_time: null,
-                comment: 'Позвонить за 15 минут',
-                total_price: 600,
-                dishes: [
-                    { name: 'Жареная картошка с грибами', price: 150 },
-                    { name: 'Корейский салат с овощами и яйцом', price: 280 },
-                    { name: 'Апельсиновый сок', price: 120 },
-                    { name: 'Салат Цезарь', price: 50 }
-                ]
-            },
-            {
-                id: 3,
-                created_at: '2024-11-23T20:01:00',
-                full_name: 'Сидоров Алексей Владимирович',
-                email: 'sidorov@example.com',
-                phone: '+74957654321',
-                delivery_address: 'г. Москва, пр-т Вернадского, 78',
-                delivery_type: 'scheduled',
-                delivery_time: '21:00',
-                comment: 'Позвонить от поста охраны',
-                total_price: 490,
-                dishes: [
-                    { name: 'Жареная картошка с грибами', price: 150 },
-                    { name: 'Зелёный чай', price: 100 },
-                    { name: 'Чизкейк', price: 240 }
-                ]
+    getOrdersFromStorage() {
+        try {
+            const savedOrders = localStorage.getItem(this.STORAGE_KEY);
+            return savedOrders ? JSON.parse(savedOrders) : [];
+        } catch (error) {
+            console.error('Ошибка при чтении заказов из localStorage:', error);
+            return [];
+        }
+    }
+    
+    saveOrdersToStorage(orders) {
+        try {
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(orders));
+            return true;
+        } catch (error) {
+            console.error('Ошибка при сохранении заказов в localStorage:', error);
+            return false;
+        }
+    }
+    
+    migrateOldOrders() {
+        // Пробуем получить заказ из старого формата (из orderStorage.js)
+        try {
+            const oldOrderKey = 'foodConstruct_order';
+            const savedOrder = localStorage.getItem(oldOrderKey);
+            
+            if (savedOrder) {
+                const parsedOrder = JSON.parse(savedOrder);
+                const dishes = this.getDishesFromOrderData(parsedOrder);
+                
+                if (dishes.length > 0) {
+                    // Создаем новый заказ из старого формата
+                    const newOrder = {
+                        id: Date.now(),
+                        created_at: new Date().toISOString(),
+                        full_name: localStorage.getItem('foodConstruct_user_name') || 'Гость',
+                        email: localStorage.getItem('foodConstruct_user_email') || '',
+                        phone: localStorage.getItem('foodConstruct_user_phone') || '',
+                        delivery_address: localStorage.getItem('foodConstruct_user_address') || '',
+                        delivery_type: 'asap',
+                        delivery_time: null,
+                        comment: '',
+                        total_price: dishes.reduce((sum, dish) => sum + (dish.price || 0), 0),
+                        dishes: dishes
+                    };
+                    
+                    this.saveOrdersToStorage([newOrder]);
+                    console.log('Мигрирован старый заказ в историю');
+                }
             }
-        ];
+        } catch (error) {
+            console.error('Ошибка при миграции старых заказов:', error);
+        }
+    }
+    
+    getDishesFromOrderData(orderData) {
+        const dishes = [];
         
-        // Сортируем по убыванию даты
-        this.orders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        // Получаем все блюда из заказа
+        if (orderData.soup) {
+            dishes.push({
+                name: orderData.soup.name || 'Суп',
+                price: orderData.soup.price || 0
+            });
+        }
         
-        this.displayOrders();
+        if (orderData.main) {
+            dishes.push({
+                name: orderData.main.name || 'Главное блюдо',
+                price: orderData.main.price || 0
+            });
+        }
         
-        // Показываем информационное сообщение
-        const container = document.getElementById('orders-container');
-        const infoDiv = document.createElement('div');
-        infoDiv.className = 'demo-notice';
-        infoDiv.innerHTML = `
-            <div style="background: #e3f2fd; padding: 10px; border-radius: 5px; margin: 10px 0; border-left: 4px solid #2196F3;">
-                <p style="margin: 0; color: #1565c0;"><strong>Внимание:</strong> Используются демо-данные для отображения.</p>
-            </div>
-        `;
-        container.parentNode.insertBefore(infoDiv, container);
+        if (orderData.starter) {
+            dishes.push({
+                name: orderData.starter.name || 'Салат',
+                price: orderData.starter.price || 0
+            });
+        }
+        
+        if (orderData.drink) {
+            dishes.push({
+                name: orderData.drink.name || 'Напиток',
+                price: orderData.drink.price || 0
+            });
+        }
+        
+        if (orderData.dessert) {
+            dishes.push({
+                name: orderData.dessert.name || 'Десерт',
+                price: orderData.dessert.price || 0
+            });
+        }
+        
+        return dishes;
+    }
+    
+    // Метод для добавления нового заказа (будет вызываться из orders.html)
+    static addNewOrder(orderData) {
+        try {
+            const history = new OrderHistory();
+            const orders = history.getOrdersFromStorage();
+            
+            // Создаем ID для нового заказа
+            const newId = orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1;
+            
+            // Создаем новый заказ
+            const newOrder = {
+                id: newId,
+                created_at: new Date().toISOString(),
+                full_name: orderData.name,
+                email: orderData.email,
+                phone: orderData.phone,
+                delivery_address: orderData.address,
+                delivery_type: orderData.delivery_time,
+                delivery_time: orderData.scheduled_time || null,
+                comment: orderData.comment || '',
+                total_price: orderData.total_price,
+                dishes: orderData.dishes || []
+            };
+            
+            // Добавляем в начало массива
+            orders.unshift(newOrder);
+            
+            // Сохраняем
+            history.saveOrdersToStorage(orders);
+            
+            console.log('Новый заказ добавлен в историю:', newOrder);
+            return true;
+            
+        } catch (error) {
+            console.error('Ошибка при добавлении нового заказа:', error);
+            return false;
+        }
     }
     
     displayOrders() {
@@ -266,8 +320,11 @@ class OrderHistory {
         rows.forEach(row => {
             if (filter === 'all') {
                 row.style.display = '';
-            } else {
-                // В демо-версии просто показываем все
+            } else if (filter === 'delivered') {
+                // Здесь можно добавить логику для фильтрации доставленных
+                row.style.display = '';
+            } else if (filter === 'pending') {
+                // Здесь можно добавить логику для фильтрации активных
                 row.style.display = '';
             }
         });
@@ -444,23 +501,27 @@ class OrderHistory {
                 comment: formData.get('comment') || ''
             };
             
-            // В демо-режиме симулируем успешное обновление
-            console.log('Обновление заказа (демо):', orderData);
-            
-            // Обновляем данные в массиве
+            // Находим заказ и обновляем его
             const orderIndex = this.orders.findIndex(o => o.id == this.currentOrderId);
             if (orderIndex !== -1) {
+                // Сохраняем старые данные, которые не меняются
+                const oldOrder = this.orders[orderIndex];
                 this.orders[orderIndex] = {
-                    ...this.orders[orderIndex],
+                    ...oldOrder,
                     ...orderData
                 };
                 
+                // Сохраняем в localStorage
+                this.saveOrdersToStorage(this.orders);
+                
                 // Показываем уведомление об успехе
-                this.showNotification('Заказ успешно изменён (демо-режим)', true);
+                this.showNotification('Заказ успешно изменён', true);
                 this.closeAllModals();
                 
                 // Обновляем отображение
                 this.displayOrders();
+            } else {
+                throw new Error('Заказ не найден');
             }
             
         } catch (error) {
@@ -471,19 +532,23 @@ class OrderHistory {
     
     async deleteOrder() {
         try {
-            console.log('Удаление заказа (демо) ID:', this.currentOrderId);
-            
-            // Удаляем заказ из массива
+            // Находим заказ
             const orderIndex = this.orders.findIndex(o => o.id == this.currentOrderId);
             if (orderIndex !== -1) {
+                // Удаляем заказ из массива
                 this.orders.splice(orderIndex, 1);
                 
+                // Сохраняем в localStorage
+                this.saveOrdersToStorage(this.orders);
+                
                 // Показываем уведомление об успехе
-                this.showNotification('Заказ успешно удалён (демо-режим)', true);
+                this.showNotification('Заказ успешно удалён', true);
                 this.closeAllModals();
                 
                 // Обновляем отображение
                 this.displayOrders();
+            } else {
+                throw new Error('Заказ не найден');
             }
             
         } catch (error) {
@@ -584,6 +649,11 @@ class OrderHistory {
                 }
             }, 3000);
         }
+    }
+    
+    showErrorMessage(message) {
+        const container = document.getElementById('orders-container');
+        container.innerHTML = `<div class="error-message">${message}</div>`;
     }
 }
 
