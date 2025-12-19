@@ -338,10 +338,25 @@ class OrdersManager {
     
     async submitOrder() {
     try {
-        //подготавливаем данные для отправки
+        // Подготавливаем данные для отправки
         const formData = new FormData(document.getElementById('order-form'));
         
-        //добавляем информацию о блюдах
+        // Собираем информацию о блюдах из текущего заказа
+        const orderDishes = this.getOrderData();
+        
+        const dishesList = [];
+        let totalPrice = 0;
+        
+        Object.values(orderDishes).forEach(dish => {
+            if (dish) {
+                dishesList.push({
+                    name: dish.name,
+                    price: dish.price
+                });
+                totalPrice += dish.price;
+            }
+        });
+        
         const orderData = {
             name: formData.get('name'),
             email: formData.get('email'),
@@ -349,55 +364,44 @@ class OrdersManager {
             address: formData.get('address'),
             delivery_time: formData.get('delivery_time'),
             scheduled_time: formData.get('scheduled_time') || null,
-            dishes: {
-                soup: formData.get('soup'),
-                main: formData.get('main'),
-                starter: formData.get('starter'),
-                drink: formData.get('drink'),
-                dessert: formData.get('dessert')
-            },
-            total_price: parseInt(formData.get('total_price')) || 0
+            comment: formData.get('comment') || '',
+            dishes: dishesList,
+            total_price: totalPrice
         };
         
         console.log('Отправка заказа:', orderData);
         
-        //отправляем запрос на сервер
-        const response = await fetch('https://edu.std-900.ist.mospolytech.ru/labs/api/order', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(orderData)
-        });
+        // Сохраняем заказ в историю
+        const saved = saveOrderToHistory(orderData);
         
-        if (response.ok) {
-    const result = await response.json();
-    console.log('Ответ сервера:', result);
-    
-    // Очищаем localStorage после успешной отправки
-    clearOrderFromStorage();
-    
-    // Показываем сообщение об успехе
-    showNotification('Заказ успешно оформлен! Вы можете просмотреть его в истории заказов.', true);
-    
-    // Очищаем форму
-    document.getElementById('order-form').reset();
-    
-    // Очищаем текущий заказ
-    this.selectedDishes = {
-        soup: null,
-        main: null,
-        starter: null,
-        drink: null,
-        dessert: null
-    };
-    
-        // Обновляем отображение
-        this.displayOrderItems();
-        this.updateOrderFormDisplay();
-    }
+        if (saved) {
+            // Очищаем localStorage текущего заказа
+            clearOrderFromStorage();
+            
+            // Показываем сообщение об успехе
+            showNotification('Заказ успешно оформлен! Вы можете просмотреть его в истории заказов.', true);
+            
+            // Очищаем форму
+            document.getElementById('order-form').reset();
+            
+            // Очищаем текущий заказ
+            this.selectedDishes = {
+                soup: null,
+                main: null,
+                starter: null,
+                drink: null,
+                dessert: null
+            };
+            
+            // Обновляем отображение
+            this.displayOrderItems();
+            this.updateOrderFormDisplay();
+            
+        } else {
+            showNotification('Ошибка при сохранении заказа в историю', false);
+        }
         
-        } catch (error) {
+    } catch (error) {
         console.error('Ошибка при отправке заказа:', error);
         showNotification('Ошибка при оформлении заказа. Пожалуйста, попробуйте еще раз.', false);
         }
@@ -416,6 +420,70 @@ class OrdersManager {
     
     getOrderData() {
     return this.selectedDishes;
+    }
+}
+
+// Глобальная функция для сохранения заказа в историю
+function saveOrderToHistory(orderData) {
+    try {
+        // Создаем объект заказа
+        const order = {
+            id: Date.now().toString(),
+            full_name: orderData.name,
+            email: orderData.email,
+            phone: orderData.phone,
+            delivery_address: orderData.address,
+            delivery_type: orderData.delivery_time === 'asap' ? 'asap' : 'scheduled',
+            delivery_time: orderData.delivery_time === 'asap' ? null : orderData.scheduled_time,
+            comment: orderData.comment || '',
+            dishes: orderData.dishes || [],
+            dishNames: '', // Будем заполнять ниже
+            total_price: orderData.total_price || 0,
+            created_at: new Date().toISOString()
+        };
+        
+        // Получаем менеджер заказов для получения данных о блюдах
+        const manager = getOrderManager();
+        const orderDishes = manager ? manager.getOrderData() : {};
+        
+        // Формируем список блюд и стоимость
+        const dishesList = [];
+        let totalPrice = 0;
+        
+        if (orderDishes) {
+            Object.values(orderDishes).forEach(dish => {
+                if (dish) {
+                    dishesList.push({
+                        name: dish.name,
+                        price: dish.price
+                    });
+                    totalPrice += dish.price;
+                }
+            });
+        }
+        
+        order.dishes = dishesList;
+        order.dishNames = dishesList.map(d => d.name).join(', ');
+        order.total_price = totalPrice;
+        
+        // Сохраняем в localStorage
+        const storageKey = 'foodConstruct_order_history';
+        const savedOrders = localStorage.getItem(storageKey);
+        let orders = [];
+        
+        if (savedOrders) {
+            orders = JSON.parse(savedOrders);
+        }
+        
+        orders.push(order);
+        localStorage.setItem(storageKey, JSON.stringify(orders));
+        
+        console.log('Заказ сохранен в историю:', order);
+        return true;
+        
+    } catch (error) {
+        console.error('Ошибка при сохранении заказа в историю:', error);
+        return false;
     }
 }
 
