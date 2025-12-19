@@ -387,130 +387,155 @@ getDishesArray() {
     }
     
     async submitOrder() {
-        try {
-            console.log('=== НАЧАЛО ОФОРМЛЕНИЯ ЗАКАЗА ===');
-            console.log('Текущий выбранный заказ для сохранения:', this.selectedDishes);
-            
-            // Проверяем заполнение полей формы
-            const name = document.getElementById('name')?.value.trim();
-            const email = document.getElementById('email')?.value.trim();
-            const phone = document.getElementById('phone')?.value.trim();
-            const address = document.getElementById('address')?.value.trim();
-            const deliveryTime = document.querySelector('input[name="delivery_time"]:checked')?.value;
-            const scheduledTime = document.getElementById('scheduled-time')?.value;
-            const comment = '';
-            
-            if (!name || !email || !phone || !address) {
-                showNotification('Заполните все поля формы: имя, email, телефон и адрес');
-                return;
-            }
-            
-            // Если выбрано "К указанному времени", проверяем заполнение времени
-            if (deliveryTime === 'scheduled' && !scheduledTime) {
-                showNotification('Укажите время доставки');
-                return;
-            }
-            
-            // Собираем данные заказа
-        const totalPrice = this.calculateTotalPrice();
-        const dishes = this.getDishesArray();
+    try {
+        console.log('=== ОФОРМЛЕНИЕ ЗАКАЗА ===');
         
-        console.log('Рассчитанная стоимость:', totalPrice);
-        console.log('Массив блюд:', dishes);
+        // Проверяем заполнение полей формы
+        const name = document.getElementById('name')?.value.trim();
+        const email = document.getElementById('email')?.value.trim();
+        const phone = document.getElementById('phone')?.value.trim();
+        const address = document.getElementById('address')?.value.trim();
+        const deliveryTime = document.querySelector('input[name="delivery_time"]:checked')?.value;
+        const scheduledTime = document.getElementById('scheduled-time')?.value;
         
-        if (dishes.length === 0) {
-            showNotification('Ошибка: не удалось получить данные блюд');
+        if (!name || !email || !phone || !address) {
+            showNotification('Заполните все поля формы: имя, email, телефон и адрес');
             return;
         }
         
-        if (totalPrice === 0) {
-            console.warn('Внимание: стоимость заказа равна 0!');
-            // Пересчитываем на основе массива блюд
-            const recalculatedPrice = dishes.reduce((sum, dish) => sum + (Number(dish.price) || 0), 0);
-            console.log('Пересчитанная стоимость из блюд:', recalculatedPrice);
+        // Если выбрано "К указанному времени", проверяем заполнение времени
+        if (deliveryTime === 'scheduled' && !scheduledTime) {
+            showNotification('Укажите время доставки');
+            return;
         }
         
-        const orderData = {
-            name: name,
-            email: email,
-            phone: phone,
-            address: address,
-            delivery_time: deliveryTime,
-            scheduled_time: scheduledTime || null,
-            comment: comment,
-            total_price: totalPrice,
-            dishes: dishes
-        };
+        // Проверяем валидность заказа
+        const validation = validateOrder(this.selectedDishes);
+        if (!validation.isValid) {
+            showNotification(validation.message, false);
+            return;
+        }
         
-        console.log('Данные для сохранения:', orderData);
+        // Рассчитываем стоимость
+        const totalPrice = this.calculateTotalPrice();
+        console.log('Стоимость заказа:', totalPrice);
         
-        // 1. СОХРАНЯЕМ ДАННЫЕ ПОЛЬЗОВАТЕЛЯ
+        // Получаем массив блюд
+        const dishes = this.getDishesArray();
+        console.log('Блюда в заказе:', dishes);
+        
+        // Сохраняем данные пользователя
         try {
             localStorage.setItem('foodConstruct_user_name', name);
             localStorage.setItem('foodConstruct_user_email', email);
             localStorage.setItem('foodConstruct_user_phone', phone);
             localStorage.setItem('foodConstruct_user_address', address);
-            console.log('✅ Данные пользователя сохранены в localStorage');
-        } catch (storageError) {
-            console.error('❌ Ошибка при сохранении данных пользователя:', storageError);
+        } catch (error) {
+            console.error('Ошибка сохранения данных пользователя:', error);
         }
         
-        // 2. СОХРАНЯЕМ ЗАКАЗ В ИСТОРИЮ
-        console.log('Сохранение заказа в историю...');
-        const saveResult = this.saveOrderToHistory(orderData);
+        // СОХРАНЯЕМ ЗАКАЗ В ИСТОРИЮ
+        this.saveOrderToHistory(name, email, phone, address, deliveryTime, scheduledTime, totalPrice, dishes);
         
-        if (saveResult) {
-            console.log('✅ Заказ успешно сохранен в историю');
-            
-            // Проверяем что сохранилось
-            const savedOrders = localStorage.getItem('foodConstruct_orders');
-            console.log('Проверка сохраненных данных:', savedOrders);
-            } else {
-                console.error('❌ Ошибка при сохранении заказа в историю');
-                showNotification('Ошибка при сохранении заказа. Попробуйте еще раз.');
-                return;
-                }
-            
-            // 3. ОЧИЩАЕМ ТЕКУЩИЙ ЗАКАЗ
-            clearOrderFromStorage();
-            
-            // 4. ПОКАЗЫВАЕМ УВЕДОМЛЕНИЕ ОБ УСПЕХЕ
-            const dishesList = orderData.dishes.map(dish => `• ${dish.name} (${dish.price}Р)`).join('<br>');
-            const deliveryTypeText = deliveryTime === 'scheduled' 
-                ? `К ${scheduledTime}` 
-                : 'Как можно скорее (с 7:00 до 23:00)';
-            
-            const successMessage = `
-                <strong>Заказ успешно оформлен!</strong><br><br>
-                <strong>Номер заказа:</strong> #${Date.now().toString().slice(-6)}<br><br>
-                <strong>Доставка:</strong><br>
-                • ${name}<br>
-                • ${address}<br>
-                • ${deliveryTypeText}<br><br>
-                <strong>Состав заказа:</strong><br>
-                ${dishesList}<br><br>
-                <strong>Итого:</strong> ${orderData.total_price}Р<br><br>
-                <small>Заказ сохранен в истории заказов.</small>
-            `;
-            
-            showNotification(successMessage, true);
-            
-            // 5. ОЧИЩАЕМ ФОРМУ И ТЕКУЩИЙ ЗАКАЗ
-            document.getElementById('order-form').reset();
-            this.clearCurrentOrder();
-            
-            // 6. ОБНОВЛЯЕМ ОТОБРАЖЕНИЕ
-            this.displayOrderItems();
-            this.updateOrderFormDisplay();
-            
-            // 7. ПЕРЕХОДИМ НА СТРАНИЦУ ИСТОРИИ (опционально)
-            setTimeout(() => {
-                window.location.href = 'history.html';
-            }, 3000);
-            
-        } catch (error) {
-            console.error('Ошибка при оформлении заказа:', error);
-            showNotification('Ошибка при оформлении заказа. Пожалуйста, попробуйте еще раз.', false);
+        // Очищаем текущий заказ
+        clearOrderFromStorage();
+        
+        // Показываем успешное сообщение
+        const dishesList = dishes.map(dish => `${dish.name} - ${dish.price}Р`).join(', ');
+        const deliveryText = deliveryTime === 'scheduled' 
+            ? `К ${scheduledTime}` 
+            : 'Как можно скорее (с 7:00 до 23:00)';
+        
+        const successMessage = `
+            <strong>Заказ успешно оформлен!</strong><br><br>
+            <strong>Детали заказа:</strong><br>
+            • Имя: ${name}<br>
+            • Адрес: ${address}<br>
+            • Время доставки: ${deliveryText}<br>
+            • Состав: ${dishesList}<br>
+            • Итого: ${totalPrice}Р<br><br>
+            <small>Заказ сохранен в истории заказов.</small>
+        `;
+        
+        showNotification(successMessage, true);
+        
+        // Очищаем форму
+        document.getElementById('order-form').reset();
+        
+        // Очищаем текущий заказ
+        this.selectedDishes = {
+            soup: null,
+            main: null,
+            starter: null,
+            drink: null,
+            dessert: null
+        };
+        
+        // Обновляем отображение
+        this.displayOrderItems();
+        this.updateOrderFormDisplay();
+        
+        // Переходим на страницу истории через 3 секунды
+        setTimeout(() => {
+            window.location.href = 'history.html';
+        }, 3000);
+        
+    } catch (error) {
+        console.error('Ошибка при оформлении заказа:', error);
+        showNotification('Ошибка при оформлении заказа. Пожалуйста, попробуйте еще раз.', false);
+    }
+}
+
+// Метод для сохранения заказа в историю
+saveOrderToHistory(name, email, phone, address, deliveryTime, scheduledTime, totalPrice, dishes) {
+    try {
+        const STORAGE_KEY = 'foodConstruct_orders';
+        
+        // Получаем существующие заказы
+        let existingOrders = [];
+        const savedData = localStorage.getItem(STORAGE_KEY);
+        if (savedData) {
+            try {
+                existingOrders = JSON.parse(savedData);
+            } catch (e) {
+                console.error('Ошибка парсинга существующих заказов:', e);
+                existingOrders = [];
+            }
+        }
+        
+        // Создаем новый ID
+        const newId = existingOrders.length > 0 ? Math.max(...existingOrders.map(o => o.id || 0)) + 1 : 1;
+        
+        // Создаем новый заказ
+        const newOrder = {
+            id: newId,
+            created_at: new Date().toISOString(),
+            full_name: name,
+            email: email,
+            phone: phone,
+            delivery_address: address,
+            delivery_type: deliveryTime === 'scheduled' ? 'scheduled' : 'asap',
+            delivery_time: scheduledTime || null,
+            comment: '',
+            total_price: totalPrice,
+            dishes: dishes
+        };
+        
+        console.log('Создаем новый заказ для истории:', newOrder);
+        
+        // Добавляем в начало массива
+        existingOrders.unshift(newOrder);
+        
+        // Сохраняем
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(existingOrders));
+        
+        console.log('Заказ сохранен в историю. Всего заказов:', existingOrders.length);
+        
+        return true;
+        
+    } catch (error) {
+        console.error('Критическая ошибка при сохранении заказа в историю:', error);
+        return false;
         }
     }
     
