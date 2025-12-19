@@ -134,6 +134,27 @@ class OrdersManager {
                 }
             }
         });
+
+        // Добавляем тестовую кнопку на страницу
+const testButton = document.createElement('button');
+testButton.textContent = '🧪 Тест: Сохранить заказ';
+testButton.style.cssText = `
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: 'Oswald', sans-serif;
+    cursor: pointer;
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+`;
+testButton.addEventListener('click', () => this.testSaveOrder());
+document.body.appendChild(testButton);
         
         // Обработчик для кнопки "Очистить заказ"
         const clearOrderBtn = document.getElementById('clear-order-btn');
