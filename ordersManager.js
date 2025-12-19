@@ -304,47 +304,25 @@ class OrdersManager {
         return totalPrice;
     }
     
-    // Метод для получения массива блюд
-    getDishesArray() {
-        const dishes = [];
-        
-        if (this.selectedDishes.soup && this.selectedDishes.soup.name) {
+    // Метод для получения массива блюд - ЗАМЕНИТЕ НА ЭТОТ
+getDishesArray() {
+    const dishes = [];
+    
+    // Простой перебор всех категорий
+    const categories = ['soup', 'main', 'starter', 'drink', 'dessert'];
+    
+    categories.forEach(category => {
+        const dish = this.selectedDishes[category];
+        if (dish && dish.name && dish.price !== undefined) {
             dishes.push({
-                name: this.selectedDishes.soup.name,
-                price: this.selectedDishes.soup.price
+                name: dish.name,
+                price: Number(dish.price) || 0
             });
         }
-        
-        if (this.selectedDishes.main && this.selectedDishes.main.name) {
-            dishes.push({
-                name: this.selectedDishes.main.name,
-                price: this.selectedDishes.main.price
-            });
-        }
-        
-        if (this.selectedDishes.starter && this.selectedDishes.starter.name) {
-            dishes.push({
-                name: this.selectedDishes.starter.name,
-                price: this.selectedDishes.starter.price
-            });
-        }
-        
-        if (this.selectedDishes.drink && this.selectedDishes.drink.name) {
-            dishes.push({
-                name: this.selectedDishes.drink.name,
-                price: this.selectedDishes.drink.price
-            });
-        }
-        
-        if (this.selectedDishes.dessert && this.selectedDishes.dessert.name) {
-            dishes.push({
-                name: this.selectedDishes.dessert.name,
-                price: this.selectedDishes.dessert.price
-            });
-        }
-        
-        console.log('Массив блюд для истории:', dishes);
-        return dishes;
+    });
+    
+    console.log('Собранные блюда:', dishes);
+    return dishes;
     }
     
     // Метод для очистки текущего заказа
@@ -537,7 +515,7 @@ class OrdersManager {
     }
     
     // Метод для сохранения заказа в историю - ЗАМЕНИТЕ НА ЭТОТ
-saveOrderToHistory(orderData) {
+    saveOrderToHistory(orderData) {
     try {
         const STORAGE_KEY = 'foodConstruct_orders';
         
