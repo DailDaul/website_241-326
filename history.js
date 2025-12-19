@@ -1,4 +1,5 @@
-console.log('📜 history.js загружен');
+console.log('=== ИНИЦИАЛИЗАЦИЯ ИСТОРИИ ЗАКАЗОВ ===');
+console.log('Текущий URL:', window.location.href);
 
 class OrderHistory {
     constructor() {
@@ -327,23 +328,30 @@ class OrderHistory {
     }
 }
 
-// Инициализация
-let orderHistory;
+function initializeHistory() {
+    console.log('🔄 Инициализация истории заказов...');
+    
+    // Проверяем, на правильной ли мы странице
+    if (!window.location.pathname.includes('history.html')) {
+        console.log('Не страница истории, пропускаем инициализацию');
+        return;
+    }
+    
+    // Создаем экземпляр
+    window.orderHistory = new OrderHistory();
+    
+    // Ждем немного перед инициализацией
+    setTimeout(() => {
+        console.log('🚀 Запуск инициализации истории...');
+        window.orderHistory.init();
+    }, 100);
+}
 
-// Ждем полной загрузки DOM
+// Запускаем когда DOM готов
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('📄 DOM полностью загружен, инициализируем историю');
-        orderHistory = new OrderHistory();
-        orderHistory.init();
-        window.orderHistory = orderHistory; // Делаем доступным глобально
-    });
+    document.addEventListener('DOMContentLoaded', initializeHistory);
 } else {
-    // DOM уже загружен
-    console.log('📄 DOM уже загружен, инициализируем историю');
-    orderHistory = new OrderHistory();
-    orderHistory.init();
-    window.orderHistory = orderHistory;
+    initializeHistory();
 }
 
 console.log('✅ history.js выполнен');
