@@ -441,6 +441,9 @@ document.body.appendChild(testButton);
 }
     
     async submitOrder(name, email, phone, address, comment) {
+       console.log('🚀 === НАЧАЛО submitOrder ===');
+       console.log('Данные формы:', { name, email, phone, address, comment });
+       console.log('Выбранные блюда:', this.selectedDishes);
         try {
             // Собираем информацию о блюдах
             const dishesList = [];
