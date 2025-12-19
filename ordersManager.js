@@ -410,6 +410,7 @@ class OrdersManager {
     
     async submitOrder() {
         try {
+            console.log('=== НАЧАЛО ОФОРМЛЕНИЯ ЗАКАЗА ===');
             console.log('Текущий выбранный заказ для сохранения:', this.selectedDishes);
             
             // Проверяем заполнение полей формы
@@ -433,41 +434,64 @@ class OrdersManager {
             }
             
             // Собираем данные заказа
-            const totalPrice = this.calculateTotalPrice();
-            const dishes = this.getDishesArray();
+        const totalPrice = this.calculateTotalPrice();
+        const dishes = this.getDishesArray();
+        
+        console.log('Рассчитанная стоимость:', totalPrice);
+        console.log('Массив блюд:', dishes);
+        
+        if (dishes.length === 0) {
+            showNotification('Ошибка: не удалось получить данные блюд');
+            return;
+        }
+        
+        if (totalPrice === 0) {
+            console.warn('Внимание: стоимость заказа равна 0!');
+            // Пересчитываем на основе массива блюд
+            const recalculatedPrice = dishes.reduce((sum, dish) => sum + (Number(dish.price) || 0), 0);
+            console.log('Пересчитанная стоимость из блюд:', recalculatedPrice);
+        }
+        
+        const orderData = {
+            name: name,
+            email: email,
+            phone: phone,
+            address: address,
+            delivery_time: deliveryTime,
+            scheduled_time: scheduledTime || null,
+            comment: comment,
+            total_price: totalPrice,
+            dishes: dishes
+        };
+        
+        console.log('Данные для сохранения:', orderData);
+        
+        // 1. СОХРАНЯЕМ ДАННЫЕ ПОЛЬЗОВАТЕЛЯ
+        try {
+            localStorage.setItem('foodConstruct_user_name', name);
+            localStorage.setItem('foodConstruct_user_email', email);
+            localStorage.setItem('foodConstruct_user_phone', phone);
+            localStorage.setItem('foodConstruct_user_address', address);
+            console.log('✅ Данные пользователя сохранены в localStorage');
+        } catch (storageError) {
+            console.error('❌ Ошибка при сохранении данных пользователя:', storageError);
+        }
+        
+        // 2. СОХРАНЯЕМ ЗАКАЗ В ИСТОРИЮ
+        console.log('Сохранение заказа в историю...');
+        const saveResult = this.saveOrderToHistory(orderData);
+        
+        if (saveResult) {
+            console.log('✅ Заказ успешно сохранен в историю');
             
-            const orderData = {
-                name: name,
-                email: email,
-                phone: phone,
-                address: address,
-                delivery_time: deliveryTime,
-                scheduled_time: scheduledTime || null,
-                comment: comment,
-                total_price: totalPrice,
-                dishes: dishes
-            };
-            
-            console.log('Собранные данные заказа:', {
-                name: orderData.name,
-                total_price: orderData.total_price,
-                dishes_count: orderData.dishes.length,
-                dishes: orderData.dishes
-            });
-            
-            // 1. СОХРАНЯЕМ ДАННЫЕ ПОЛЬЗОВАТЕЛЯ ДЛЯ БУДУЩИХ ЗАКАЗОВ
-            try {
-                localStorage.setItem('foodConstruct_user_name', name);
-                localStorage.setItem('foodConstruct_user_email', email);
-                localStorage.setItem('foodConstruct_user_phone', phone);
-                localStorage.setItem('foodConstruct_user_address', address);
-                console.log('Данные пользователя сохранены');
-            } catch (storageError) {
-                console.error('Ошибка при сохранении данных пользователя:', storageError);
-            }
-            
-            // 2. СОХРАНЯЕМ ЗАКАЗ В ИСТОРИЮ
-            this.saveOrderToHistory(orderData);
+            // Проверяем что сохранилось
+            const savedOrders = localStorage.getItem('foodConstruct_orders');
+            console.log('Проверка сохраненных данных:', savedOrders);
+            } else {
+                console.error('❌ Ошибка при сохранении заказа в историю');
+                showNotification('Ошибка при сохранении заказа. Попробуйте еще раз.');
+                return;
+                }
             
             // 3. ОЧИЩАЕМ ТЕКУЩИЙ ЗАКАЗ
             clearOrderFromStorage();
