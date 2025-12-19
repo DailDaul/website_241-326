@@ -655,3 +655,8 @@ let historyManager;
 document.addEventListener('DOMContentLoaded', () => {
     historyManager = new HistoryManager();
 });
+
+// Экспорт для тестирования
+if (typeof window !== 'undefined') {
+    window.historyManager = historyManager;
+}
