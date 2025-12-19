@@ -318,20 +318,30 @@ function setupOrderValidation() {
     
     //функция обработки заказа
     function processOrderForm() {
-        console.log('=== ОБРАБОТКА ЗАКАЗА ===');
-        
-        //проверяем заполнение полей формы
-        const name = document.getElementById('name')?.value.trim();
-        const email = document.getElementById('email')?.value.trim();
-        const phone = document.getElementById('phone')?.value.trim();
-        const address = document.getElementById('address')?.value.trim();
-        const deliveryTime = document.querySelector('input[name="delivery_time"]:checked')?.value;
-        const scheduledTime = document.getElementById('scheduled-time')?.value;
-        
-        if (!name || !email || !phone || !address) {
-            showNotification('Заполните все поля формы: имя, email, телефон и адрес');
-            return;
-        }
+    console.log('=== ОБРАБОТКА ЗАКАЗА ===');
+    
+    // Проверяем заполнение полей формы
+    const name = document.getElementById('name')?.value.trim();
+    const email = document.getElementById('email')?.value.trim();
+    const phone = document.getElementById('phone')?.value.trim();
+    const address = document.getElementById('address')?.value.trim();
+    const deliveryTime = document.querySelector('input[name="delivery_time"]:checked')?.value;
+    const scheduledTime = document.getElementById('scheduled-time')?.value;
+    
+    if (!name || !email || !phone || !address) {
+        showNotification('Заполните все поля формы: имя, email, телефон и адрес');
+        return;
+    }
+    
+    // СОХРАНЯЕМ ДАННЫЕ ПОЛЬЗОВАТЕЛЯ ДЛЯ ИСТОРИИ (добавить этот блок)
+    try {
+        localStorage.setItem('foodConstruct_user_name', name);
+        localStorage.setItem('foodConstruct_user_email', email);
+        localStorage.setItem('foodConstruct_user_phone', phone);
+        localStorage.setItem('foodConstruct_user_address', address);
+    } catch (error) {
+        console.error('Ошибка при сохранении данных пользователя:', error);
+    }
         
         //если выбрано "К указанному времени", проверяем заполнение времени
         if (deliveryTime === 'scheduled' && !scheduledTime) {
