@@ -368,52 +368,54 @@ function setupOrderValidation() {
             //показываем уведомление об ошибке
             showNotification(validation.message, false);
         } else {
-    //если заказ валиден, показываем успешное сообщение
-    console.log('Order is valid!');
-    
-    //собираем данные для отображения
-    const selectedItems = [];
-    if (orderData.soup) selectedItems.push(orderData.soup.name);
-    if (orderData.main) selectedItems.push(orderData.main.name);
-    if (orderData.starter) selectedItems.push(orderData.starter.name);
-    if (orderData.drink) selectedItems.push(orderData.drink.name);
-    if (orderData.dessert) selectedItems.push(orderData.dessert.name);
-    
-    const totalPrice = selectedItems.reduce((sum, item) => {
-        const dish = Object.values(orderData).find(d => d && d.name === item);
-        return sum + (dish ? dish.price : 0);
-    }, 0);
-    
-    const successMessage = `
-        Ваш заказ успешно оформлен!<br><br>
-        <strong>Вы заказали:</strong><br>
-        ${selectedItems.map(item => `• ${item}`).join('<br>')}<br><br>
-        <strong>Общая стоимость:</strong> ${totalPrice}Р<br><br>
-        <small>В демо-версии форма не отправляется на сервер.</small>
-    `;
-    
-    //показываем уведомление об успехе
-    showNotification(successMessage, true);
-    
-    // +++ ДОБАВЛЯЕМ СОХРАНЕНИЕ ЗАКАЗА В ИСТОРИЮ +++
-    saveOrderToHistory({
-        name: name,
-        email: email,
-        phone: phone,
-        address: address,
-        deliveryTime: deliveryTime === 'scheduled' ? scheduledTime : 'asap',
-        dishes: orderData,
-        totalPrice: totalPrice,
-        comment: document.getElementById('comment')?.value || '',
-        date: new Date().toISOString()
-    });
-    
-    //очищаем текущий заказ после оформления
-    const manager = getOrderManager();
-    if (manager && typeof manager.clearOrder === 'function') {
-        manager.clearOrder();
+            //если заказ валиден, показываем успешное сообщение
+            console.log('Order is valid!');
+            
+            //собираем данные для отображения
+            const selectedItems = [];
+            if (orderData.soup) selectedItems.push(orderData.soup.name);
+            if (orderData.main) selectedItems.push(orderData.main.name);
+            if (orderData.starter) selectedItems.push(orderData.starter.name);
+            if (orderData.drink) selectedItems.push(orderData.drink.name);
+            if (orderData.dessert) selectedItems.push(orderData.dessert.name);
+            
+            const totalPrice = selectedItems.reduce((sum, item) => {
+                const dish = Object.values(orderData).find(d => d && d.name === item);
+                return sum + (dish ? dish.price : 0);
+            }, 0);
+            
+            const successMessage = `
+                Ваш заказ успешно оформлен!<br><br>
+                <strong>Вы заказали:</strong><br>
+                ${selectedItems.map(item => `• ${item}`).join('<br>')}<br><br>
+                <strong>Общая стоимость:</strong> ${totalPrice}Р<br><br>
+                <small>В демо-версии форма не отправляется на сервер.</small>
+            `;
+            
+            //показываем уведомление об успехе
+            showNotification(successMessage, true);
+            
+            // +++ ДОБАВЛЯЕМ СОХРАНЕНИЕ ЗАКАЗА В ИСТОРИЮ +++
+            saveOrderToHistory({
+                name: name,
+                email: email,
+                phone: phone,
+                address: address,
+                deliveryTime: deliveryTime === 'scheduled' ? scheduledTime : 'asap',
+                dishes: orderData,
+                totalPrice: totalPrice,
+                comment: document.getElementById('comment')?.value || '',
+                date: new Date().toISOString()
+            });
+            
+            //очищаем текущий заказ после оформления
+            const manager = getOrderManager();
+            if (manager && typeof manager.clearOrder === 'function') {
+                manager.clearOrder();
+            }
         }
     }
+}
 
 // Функция для настройки переключения времени доставки
 function setupTimeDeliveryToggle() {
@@ -486,7 +488,13 @@ function initializeValidation() {
     tryInitialize();
 }
 
-//функция для сохранения заказа в историю
+//запускаем инициализацию
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded, starting validation initialization...');
+    setTimeout(initializeValidation, 500);
+});
+
+// +++ Функция для сохранения заказа в историю +++
 function saveOrderToHistory(orderData) {
     try {
         // Получаем текущую историю заказов
@@ -527,7 +535,7 @@ function saveOrderToHistory(orderData) {
     }
 }
 
-//функция для загрузки истории заказов
+// +++ Функция для загрузки истории заказов +++
 function loadOrderHistory() {
     try {
         const history = JSON.parse(localStorage.getItem('foodConstruct_order_history') || '[]');
@@ -539,11 +547,123 @@ function loadOrderHistory() {
     }
 }
 
-//запускаем инициализацию
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded, starting validation initialization...');
-    setTimeout(initializeValidation, 500);
-});
+// +++ Функция для создания уведомления (если showNotification не определена) +++
+if (typeof window.showNotification === 'undefined') {
+    window.showNotification = function(message, isSuccess = false) {
+        console.log('Showing notification:', message);
+        
+        //удаляем предыдущие уведомления
+        const oldNotification = document.querySelector('.notification-overlay');
+        if (oldNotification) {
+            oldNotification.remove();
+        }
+        
+        //создаем уведомление
+        const overlay = document.createElement('div');
+        overlay.className = 'notification-overlay';
+        
+        //добавляем стили для гарантии работы
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
+        `;
+        
+        const title = isSuccess ? 'Успешно!' : 'Внимание';
+        
+        overlay.innerHTML = `
+            <div class="notification" style="
+                background: white;
+                border-radius: 15px;
+                padding: 40px;
+                max-width: 500px;
+                width: 90%;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                animation: slideIn 0.3s ease;
+                text-align: center;
+            ">
+                <div class="notification-content">
+                    <h3 style="
+                        font-size: 24px;
+                        color: #333;
+                        margin-bottom: 20px;
+                        border-bottom: 2px solid #ff6b00;
+                        padding-bottom: 10px;
+                        display: inline-block;
+                    ">${title}</h3>
+                    <p style="
+                        font-size: 18px;
+                        color: #666;
+                        margin-bottom: 30px;
+                        line-height: 1.5;
+                    ">${message}</p>
+                    <button class="notification-btn" style="
+                        background-color: #ff6b00;
+                        color: white;
+                        border: none;
+                        padding: 12px 40px;
+                        border-radius: 10px;
+                        font-family: 'Oswald', sans-serif;
+                        font-size: 16px;
+                        font-weight: 500;
+                        cursor: pointer;
+                        transition: all 0.3s;
+                        min-width: 120px;
+                        border: 2px solid #ff6b00;
+                    ">Окей</button>
+                </div>
+            </div>
+            <style>
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @keyframes slideIn {
+                    from {
+                        transform: translateY(-50px);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateY(0);
+                        opacity: 1;
+                    }
+                }
+                .notification-btn:hover {
+                    background-color: white !important;
+                    color: #ff6b00 !important;
+                    transform: translateY(-2px);
+                    box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);
+                }
+            </style>
+        `;
+        
+        document.body.appendChild(overlay);
+        
+        //обработчик для кнопки
+        const okButton = overlay.querySelector('.notification-btn');
+        okButton.addEventListener('click', () => {
+            console.log('Notification closed');
+            overlay.remove();
+        });
+        
+        //закрытие по клику вне уведомления
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                overlay.remove();
+            }
+        });
+        
+        return overlay;
+    };
+}
 
 //экспортируем функции для тестирования
 if (typeof window !== 'undefined') {
@@ -551,4 +671,6 @@ if (typeof window !== 'undefined') {
     window.showNotification = showNotification;
     window.getOrderManager = getOrderManager;
     window.getCurrentOrderData = getCurrentOrderData;
+    window.saveOrderToHistory = saveOrderToHistory;
+    window.loadOrderHistory = loadOrderHistory;
 }
