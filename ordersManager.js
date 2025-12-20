@@ -178,14 +178,16 @@ class OrdersManager {
         };
         
         //очищаем localStorage
-        clearOrderFromStorage();
+        if (typeof clearOrderFromStorage !== 'undefined') {
+            clearOrderFromStorage();
+        }
         
         //обновляем отображение
         this.displayOrderItems();
         this.updateOrderFormDisplay();
         
         //показываем уведомление
-        showNotification('Заказ успешно очищен', true);
+        this.showNotification('Заказ успешно очищен', true);
     }
     
     updateOrderFormDisplay() {
@@ -285,123 +287,127 @@ class OrdersManager {
     }
     
     setupFormValidation() {
-    const orderForm = document.getElementById('order-form');
-    
-    if (!orderForm) return;
-    
-    orderForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+        const orderForm = document.getElementById('order-form');
         
-        //проверяем заполнение полей формы
-        const name = document.getElementById('name')?.value.trim();
-        const email = document.getElementById('email')?.value.trim();
-        const phone = document.getElementById('phone')?.value.trim();
-        const address = document.getElementById('address')?.value.trim();
+        if (!orderForm) return;
         
-        if (!name || !email || !phone || !address) {
-            showNotification('Заполните все поля формы: имя, email, телефон и адрес', false);
-            return;
-        }
-        
-        //проверяем валидность email
-        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailPattern.test(email)) {
-            showNotification('Введите корректный email адрес', false);
-            return;
-        }
-        
-        //проверяем валидность телефона
-        const phonePattern = /^[\+]?[0-9\s\-\(\)]{7,20}$/;
-        if (!phonePattern.test(phone)) {
-            showNotification('Введите корректный номер телефона', false);
-            return;
-        }
-        
-        //проверяем, что выбрано хотя бы одно блюдо
-        const hasSelectedDishes = Object.values(this.selectedDishes).some(dish => dish !== null);
-        if (!hasSelectedDishes) {
-            showNotification('Выберите блюда для заказа', false);
-            return;
-        }
-        
-        //проверяем валидность состава заказа
-        const validation = validateOrder(this.selectedDishes);
-        if (!validation.isValid) {
-            showNotification(validation.message, false);
-            return;
-        }
-        
-        //отправляем заказ на сервер
-        await this.submitOrder();
+        orderForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            //проверяем заполнение полей формы
+            const name = document.getElementById('name')?.value.trim();
+            const email = document.getElementById('email')?.value.trim();
+            const phone = document.getElementById('phone')?.value.trim();
+            const address = document.getElementById('address')?.value.trim();
+            
+            if (!name || !email || !phone || !address) {
+                this.showNotification('Заполните все поля формы: имя, email, телефон и адрес', false);
+                return;
+            }
+            
+            //проверяем валидность email
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(email)) {
+                this.showNotification('Введите корректный email адрес', false);
+                return;
+            }
+            
+            //проверяем валидность телефона
+            const phonePattern = /^[\+]?[0-9\s\-\(\)]{7,20}$/;
+            if (!phonePattern.test(phone)) {
+                this.showNotification('Введите корректный номер телефона', false);
+                return;
+            }
+            
+            //проверяем, что выбрано хотя бы одно блюдо
+            const hasSelectedDishes = Object.values(this.selectedDishes).some(dish => dish !== null);
+            if (!hasSelectedDishes) {
+                this.showNotification('Выберите блюда для заказа', false);
+                return;
+            }
+            
+            //проверяем валидность состава заказа
+            if (typeof validateOrder !== 'undefined') {
+                const validation = validateOrder(this.selectedDishes);
+                if (!validation.isValid) {
+                    this.showNotification(validation.message, false);
+                    return;
+                }
+            }
+            
+            //отправляем заказ (в демо-режиме сохраняем в историю)
+            await this.submitOrder();
         });
     }
     
     async submitOrder() {
-    try {
-        //подготавливаем данные для отправки
-        const formData = new FormData(document.getElementById('order-form'));
-        
-        //добавляем информацию о блюдах
-        const orderData = {
-            name: formData.get('name'),
-            email: formData.get('email'),
-            phone: formData.get('phone'),
-            address: formData.get('address'),
-            delivery_time: formData.get('delivery_time'),
-            scheduled_time: formData.get('scheduled_time') || null,
-            dishes: {
-                soup: formData.get('soup'),
-                main: formData.get('main'),
-                starter: formData.get('starter'),
-                drink: formData.get('drink'),
-                dessert: formData.get('dessert')
-            },
-            total_price: parseInt(formData.get('total_price')) || 0
-        };
-        
-        console.log('Отправка заказа:', orderData);
-        
-        //отправляем запрос на сервер
-        const response = await fetch('https://edu.std-900.ist.mospolytech.ru/labs/api/order', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(orderData)
-        });
-        
-        if (!response.ok) {
-            throw new Error(`Ошибка сервера: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        console.log('Ответ сервера:', result);
-        
-        //очищаем localStorage после успешной отправки
-        clearOrderFromStorage();
-        
-        //показываем сообщение об успехе
-        showNotification('Заказ успешно оформлен! Мы свяжемся с вами для подтверждения.', true);
-        
-        //очищаем форму
-        document.getElementById('order-form').reset();
-        
-        //очищаем текущий заказ
-        this.selectedDishes = {
-            soup: null,
-            main: null,
-            starter: null,
-            drink: null,
-            dessert: null
-        };
-        
-        //обновляем отображение
-        this.displayOrderItems();
-        this.updateOrderFormDisplay();
-        
+        try {
+            //собираем данные формы
+            const name = document.getElementById('name')?.value.trim();
+            const email = document.getElementById('email')?.value.trim();
+            const phone = document.getElementById('phone')?.value.trim();
+            const address = document.getElementById('address')?.value.trim();
+            const deliveryTime = document.querySelector('input[name="delivery_time"]:checked')?.value;
+            const scheduledTime = document.getElementById('scheduled-time')?.value;
+            const comment = document.getElementById('comment')?.value || '';
+            
+            //рассчитываем общую стоимость
+            let totalPrice = 0;
+            Object.values(this.selectedDishes).forEach(dish => {
+                if (dish && dish.price) {
+                    totalPrice += dish.price;
+                }
+            });
+            
+            //собираем данные заказа
+            const orderData = {
+                name: name,
+                email: email,
+                phone: phone,
+                address: address,
+                deliveryTime: deliveryTime === 'scheduled' ? scheduledTime : 'asap',
+                dishes: this.selectedDishes,
+                totalPrice: totalPrice,
+                comment: comment,
+                date: new Date().toISOString()
+            };
+            
+            console.log('Оформление заказа:', orderData);
+            
+            //сохраняем заказ в историю
+            if (typeof saveOrderToHistory !== 'undefined') {
+                saveOrderToHistory(orderData);
+            } else {
+                console.error('Функция saveOrderToHistory не найдена');
+            }
+            
+            //очищаем localStorage после успешной отправки
+            if (typeof clearOrderFromStorage !== 'undefined') {
+                clearOrderFromStorage();
+            }
+            
+            //показываем сообщение об успехе
+            this.showNotification('Заказ успешно оформлен!', true);
+            
+            //очищаем форму
+            document.getElementById('order-form').reset();
+            
+            //очищаем текущий заказ
+            this.selectedDishes = {
+                soup: null,
+                main: null,
+                starter: null,
+                drink: null,
+                dessert: null
+            };
+            
+            //обновляем отображение
+            this.displayOrderItems();
+            this.updateOrderFormDisplay();
+            
         } catch (error) {
-        console.error('Ошибка при отправке заказа:', error);
-        showNotification('Ошибка при оформлении заказа. Пожалуйста, попробуйте еще раз.', false);
+            console.error('Ошибка при оформлении заказа:', error);
+            this.showNotification('Ошибка при оформлении заказа. Пожалуйста, попробуйте еще раз.', false);
         }
     }
     
@@ -417,7 +423,67 @@ class OrdersManager {
     }
     
     getOrderData() {
-    return this.selectedDishes;
+        return this.selectedDishes;
+    }
+    
+    // Метод для показа уведомлений
+    showNotification(message, isSuccess) {
+        if (typeof window.showNotification !== 'undefined') {
+            window.showNotification(message, isSuccess);
+        } else if (typeof showNotification !== 'undefined') {
+            showNotification(message, isSuccess);
+        } else {
+            console.log(`${isSuccess ? 'Успех:' : 'Ошибка:'} ${message}`);
+            alert(message);
+        }
+    }
+    
+    // Вспомогательный метод для тостовых уведомлений
+    showToastNotification(message) {
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #333;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            animation: slideInUp 0.3s ease;
+        `;
+        
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.animation = 'slideOutDown 0.3s ease';
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 300);
+        }, 3000);
+        
+        // Добавляем стили для анимации
+        if (!document.querySelector('#toast-styles')) {
+            const style = document.createElement('style');
+            style.id = 'toast-styles';
+            style.textContent = `
+                @keyframes slideInUp {
+                    from { transform: translateY(100%); opacity: 0; }
+                    to { transform: translateY(0); opacity: 1; }
+                }
+                @keyframes slideOutDown {
+                    from { transform: translateY(0); opacity: 1; }
+                    to { transform: translateY(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
     }
 }
 
