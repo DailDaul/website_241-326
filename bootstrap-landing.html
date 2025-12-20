@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Construct - Доставка бизнес-ланчей в Москве</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <style>
+        :root {
+            --primary-color: #ff6b00;
+            --primary-dark: #e55a00;
+            --secondary-color: #333333;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --gray-color: #6c757d;
+        }
+        
+        body {
+            font-family: 'Oswald', sans-serif;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .bg-primary-custom {
+            background-color: var(--primary-color) !important;
+        }
+        
+        .text-primary-custom {
+            color: var(--primary-color) !important;
+        }
+        
+        .btn-primary-custom {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+            padding: 12px 30px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary-custom:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+        }
+        
+        .btn-outline-primary-custom {
+            background-color: transparent;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 500;
+            padding: 12px 30px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-primary-custom:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+        }
+        
+        .section-padding {
+            padding: 80px 0;
+        }
+        
+        .section-title {
+            position: relative;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary-color);
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('images/main.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            padding: 120px 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        
+        .hero-content .lead {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(255, 107, 0, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        
+        .feature-icon i {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            height: 100%;
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #ff8c42 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-section:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(100px, -100px);
+        }
+        
+        .cta-section:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50px, 50px);
+        }
+        
+        .cta-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Форм контактных данных */
+        .contact-form .form-control {
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-form .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(255, 107, 0, 0.25);
+        }
+        
+        .contact-info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .contact-info-icon {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 107, 0, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        
+        .contact-info-icon i {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 60px 0 30px;
+        }
+        
+        .footer a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer a:hover {
+            color: var(--primary-color);
+        }
+        
+        .footer-links h5 {
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .social-icons a:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+        
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-content .lead {
+                font-size: 1.2rem;
+            }
+            
+            .section-padding {
+                padding: 60px 0;
+            }
+            
+            .feature-card {
+                margin-bottom: 30px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            
+            .hero-section {
+                padding: 80px 0;
+                min-height: auto;
+            }
+        }
+        
+        /* Навигация */
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color) !important;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+        
+        .navbar-nav .nav-link.active {
+            color: var(--primary-color) !important;
+        }
+        
+        .stats-section {
+            background-color: var(--light-color);
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 30px 15px;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .stat-text {
+            font-size: 1.1rem;
+            color: var(--gray-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Популярные блюда */
+        .dish-card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            background: white;
+        }
+        
+        .dish-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .dish-img {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+        
+        .dish-content {
+            padding: 20px;
+        }
+        
+        .dish-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .dish-rating {
+            color: #ffc107;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="bootstrap-landing.html">
+                <i class="bi bi-egg-fried me-2"></i>Food Construct
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home">Главная</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Преимущества</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#dishes">Популярные блюда</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Контакты</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a class="btn btn-primary-custom" href="lunch.html">Собрать ланч</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Краткая сводка -->
+    <section id="home" class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <h1 class="display-4 fw-bold">Бизнес-ланчи с доставкой в Москве</h1>
+                        <p class="lead">Привозим горячие вкусные обеды к назначенному времени. Соберите свой идеальный ланч из 5 комбо-вариантов!</p>
+                        <div class="mt-4">
+                            <a href="lunch.html" class="btn btn-primary-custom btn-lg me-3">
+                                <i class="bi bi-basket me-2"></i>Собрать ланч
+                            </a>
+                            <a href="#features" class="btn btn-outline-primary-custom btn-lg">
+                                <i class="bi bi-arrow-down me-2"></i>Узнать больше
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="position-relative">
+                        <img src="images/main.png" alt="Вкусный бизнес-ланч" class="img-fluid rounded-3 shadow-lg" style="max-height: 500px;">
+                        <div class="position-absolute top-0 start-0 bg-primary-custom text-white px-3 py-2 rounded-end" style="transform: translateY(-50%);">
+                            <span class="fw-bold">От 530₽</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Статистика -->
+    <section class="stats-section section-padding">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-3 col-6 mb-4 mb-md-0">
+                    <div class="stat-item">
+                        <div class="stat-number">5+</div>
+                        <div class="stat-text">Лет работы</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-4 mb-md-0">
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-text">Клиентов в день</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number">30+</div>
+                        <div class="stat-text">Видов блюд</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-text">Гарантия качества</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- О нас -->
+    <section id="features" class="section-padding bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="section-title">Почему выбирают нас</h2>
+                    <p class="lead">Мы делаем ваш обеденный перерыв по-настоящему вкусным и удобным</p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-clock"></i>
+                        </div>
+                        <h4 class="text-center mb-3">Точность до минуты</h4>
+                        <p class="text-center">Привозим обед точно к назначенному времени. Никаких опозданий — мы ценим ваше время.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <h4 class="text-center mb-3">Надежная упаковка</h4>
+                        <p class="text-center">Бесплатные контейнеры, которые сохраняют температуру и свежесть блюд при доставке.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-sun"></i>
+                        </div>
+                        <h4 class="text-center mb-3">Доставка весь день</h4>
+                        <p class="text-center">Работаем с 7:00 до 23:00. Заказывайте ланчи на обед, ужин или перекус в любое время.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-egg-fried"></i>
+                        </div>
+                        <h4 class="text-center mb-3">Свежие ингредиенты</h4>
+                        <p class="text-center">Готовим только из свежих продуктов. Ежедневная доставка от проверенных поставщиков.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-palette"></i>
+                        </div>
+                        <h4 class="text-center mb-3">5 комбо-вариантов</h4>
+                        <p class="text-center">Соберите свой идеальный ланч из супов, главных блюд, салатов, напитков и десертов.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-headset"></i>
+                        </div>
+                        <h4 class="text-center mb-3">Поддержка 24/7</h4>
+                        <p class="text-center">Наша служба поддержки всегда на связи. Поможем с выбором и ответим на вопросы.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Попуярные позиции -->
+    <section id="dishes" class="section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="section-title">Популярные блюда</h2>
+                    <p class="lead">Топ-5 самых заказываемых позиций на этой неделе</p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="dish-card">
+                        <img src="images/lasagna.jpg" alt="Лазанья" class="dish-img">
+                        <div class="dish-content">
+                            <h4>Лазанья</h4>
+                            <div class="dish-rating">
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-half"></i>
+                                <span class="ms-2">185 заказов</span>
+                            </div>
+                            <p class="text-muted">Традиционная итальянская лазанья с мясным соусом бешамель</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="dish-price">385₽</div>
+                                <button class="btn btn-primary-custom btn-sm">
+                                    <i class="bi bi-cart-plus me-1"></i>В заказ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="dish-card">
+                        <img src="images/tom-yam.jpg" alt="Том Ям" class="dish-img">
+                        <div class="dish-content">
+                            <h4>Том Ям с креветками</h4>
+                            <div class="dish-rating">
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star"></i>
+                                <span class="ms-2">161 заказ</span>
+                            </div>
+                            <p class="text-muted">Острый тайский суп с креветками, грибами и лемонграссом</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="dish-price">365₽</div>
+                                <button class="btn btn-primary-custom btn-sm">
+                                    <i class="bi bi-cart-plus me-1"></i>В заказ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="dish-card">
+                        <img src="images/norwegian-soup.jpg" alt="Норвежский суп" class="dish-img">
+                        <div class="dish-content">
+                            <h4>Норвежский суп</h4>
+                            <div class="dish-rating">
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <span class="ms-2">144 заказа</span>
+                            </div>
+                            <p class="text-muted">Сливочный суп с лососем и картофелем по норвежскому рецепту</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="dish-price">270₽</div>
+                                <button class="btn btn-primary-custom btn-sm">
+                                    <i class="bi bi-cart-plus me-1"></i>В заказ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <a href="lunch.html" class="btn btn-primary-custom btn-lg">
+                        <i class="bi bi-arrow-right me-2"></i>Посмотреть всё меню
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- А-ля рекламная секция -->
+    <section class="cta-section section-padding">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <div class="cta-content">
+                        <h2 class="text-white mb-4">Соберите свой идеальный ланч прямо сейчас!</h2>
+                        <p class="text-white mb-5 lead">5 комбо-вариантов, более 30 блюд на выбор. Бесплатная доставка при заказе от 1000₽</p>
+                        <div class="d-flex flex-wrap justify-content-center gap-3">
+                            <a href="lunch.html" class="btn btn-light btn-lg text-primary-custom fw-bold">
+                                <i class="bi bi-basket me-2"></i>Собрать ланч
+                            </a>
+                            <a href="#contact" class="btn btn-outline-light btn-lg">
+                                <i class="bi bi-telephone me-2"></i>Заказать по телефону
+                            </a>
+                        </div>
+                        <div class="mt-4 text-white">
+                            <small><i class="bi bi-lightning-charge me-1"></i>Доставка в течение 60 минут</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция контактов -->
+    <section id="contact" class="section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="section-title">Свяжитесь с нами</h2>
+                    <p class="lead">Есть вопросы? Мы с радостью на них ответим!</p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <h3 class="mb-4">Отправьте сообщение</h3>
+                    <form class="contact-form" id="contactForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <input type="text" class="form-control" placeholder="Ваше имя" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <input type="email" class="form-control" placeholder="Ваш email" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" placeholder="Тема сообщения" required>
+                        </div>
+                        <div class="mb-3">
+                            <textarea class="form-control" rows="5" placeholder="Ваше сообщение" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary-custom">
+                            <i class="bi bi-send me-2"></i>Отправить сообщение
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="col-lg-5 offset-lg-1">
+                    <h3 class="mb-4">Контактная информация</h3>
+                    
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon">
+                            <i class="bi bi-geo-alt"></i>
+                        </div>
+                        <div>
+                            <h5>Адрес</h5>
+                            <p class="mb-0">Москва, ул. Примерная, д. 1</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon">
+                            <i class="bi bi-telephone"></i>
+                        </div>
+                        <div>
+                            <h5>Телефон</h5>
+                            <p class="mb-0">
+                                <a href="tel:+70000000000" class="text-decoration-none text-dark">+7 (000) 000-00-00</a>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon">
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                        <div>
+                            <h5>Email</h5>
+                            <p class="mb-0">
+                                <a href="mailto:info@foodconstruct.ru" class="text-decoration-none text-dark">info@foodconstruct.ru</a>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon">
+                            <i class="bi bi-clock"></i>
+                        </div>
+                        <div>
+                            <h5>Часы работы</h5>
+                            <p class="mb-0">Пн-Пт: 7:00 - 23:00</p>
+                            <p class="mb-0">Сб-Вс: 8:00 - 22:00</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h5 class="mb-3">Мы в социальных сетях</h5>
+                        <div class="social-icons">
+                            <a href="#" class="text-white"><i class="bi bi-instagram"></i></a>
+                            <a href="#" class="text-white"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="text-white"><i class="bi bi-telegram"></i></a>
+                            <a href="#" class="text-white"><i class="bi bi-whatsapp"></i></a>
+                            <a href="#" class="text-white"><i class="bi bi-vk"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h4 class="mb-3">
+                        <i class="bi bi-egg-fried me-2"></i>Food Construct
+                    </h4>
+                    <p>Доставка вкусных и полезных бизнес-ланчей в Москве. Работаем с 2018 года.</p>
+                    <div class="social-icons mt-3">
+                        <a href="#"><i class="bi bi-instagram"></i></a>
+                        <a href="#"><i class="bi bi-facebook"></i></a>
+                        <a href="#"><i class="bi bi-telegram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-2 col-md-4 mb-4 mb-lg-0">
+                    <div class="footer-links">
+                        <h5>Меню</h5>
+                        <ul>
+                            <li><a href="bootstrap-landing.html">Главная</a></li>
+                            <li><a href="lunch.html">Собрать ланч</a></li>
+                            <li><a href="orders.html">Оформить заказ</a></li>
+                            <li><a href="history.html">История заказов</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-4 mb-4 mb-lg-0">
+                    <div class="footer-links">
+                        <h5>Комбо-ланчи</h5>
+                        <ul>
+                            <li><a href="lunch.html#combo1">Комбо 1 (от 895₽)</a></li>
+                            <li><a href="lunch.html#combo2">Комбо 2 (от 815₽)</a></li>
+                            <li><a href="lunch.html#combo3">Комбо 3 (от 650₽)</a></li>
+                            <li><a href="lunch.html#combo4">Комбо 4 (от 680₽)</a></li>
+                            <li><a href="lunch.html#combo5">Комбо 5 (от 530₽)</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-4">
+                    <div class="footer-links">
+                        <h5>Контакты</h5>
+                        <ul>
+                            <li><i class="bi bi-geo-alt me-2"></i>Москва, ул. Примерная, д. 1</li>
+                            <li><i class="bi bi-telephone me-2"></i>+7 (000) 000-00-00</li>
+                            <li><i class="bi bi-envelope me-2"></i>info@foodconstruct.ru</li>
+                            <li><i class="bi bi-clock me-2"></i>7:00 - 23:00 ежедневно</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="my-5" style="border-color: rgba(255, 255, 255, 0.1);">
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">© 2024 Food Construct. Все права защищены.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">
+                        <a href="#" class="me-3">Политика конфиденциальности</a>
+                        <a href="#">Условия использования</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- JavaScript -->
+    <script>
+        //плавная прокрутка ссылок
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        //обработчик отправки форм
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            //получаем форму
+            const name = this.querySelector('input[type="text"]').value;
+            const email = this.querySelector('input[type="email"]').value;
+            
+            //показываем сообщение об упехе
+            alert(`Спасибо, ${name}! Ваше сообщение отправлено. Мы свяжемся с вами по email: ${email}`);
+            
+            //перезагружаем форму
+            this.reset();
+        });
+        
+        //получаем активный класс
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionHeight = section.clientHeight;
+                if(scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if(link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+        
+        //анимация инициализации
+        function animateStats() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            
+            statNumbers.forEach(stat => {
+                const target = parseInt(stat.textContent.replace('+', ''));
+                const duration = 2000; // 2 секунды
+                const step = target / (duration / 16); // 60fps
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += step;
+                    if(current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    stat.textContent = Math.floor(current) + (stat.textContent.includes('+') ? '+' : '');
+                }, 16);
+            });
+        }
+        
+        //звпускается анимация при отображении раздела
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    animateStats();
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        const statsSection = document.querySelector('.stats-section');
+        if(statsSection) {
+            observer.observe(statsSection);
+        }
+        
+        document.querySelectorAll('.btn-primary-custom.btn-sm').forEach(button => {
+            button.addEventListener('click', function() {
+                const dishName = this.closest('.dish-card').querySelector('h4').textContent;
+                const dishPrice = this.closest('.dish-card').querySelector('.dish-price').textContent;
+                
+                alert(`Блюдо "${dishName}" добавлено в заказ! Перейдите на страницу "Собрать ланч" для оформления.`);
+                
+                //анимация кнопок
+                this.innerHTML = '<i class="bi bi-check me-1"></i>Добавлено';
+                this.classList.remove('btn-primary-custom');
+                this.classList.add('btn-success');
+                
+                setTimeout(() => {
+                    this.innerHTML = '<i class="bi bi-cart-plus me-1"></i>В заказ';
+                    this.classList.remove('btn-success');
+                    this.classList.add('btn-primary-custom');
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>
