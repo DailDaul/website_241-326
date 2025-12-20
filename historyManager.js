@@ -1,3 +1,76 @@
+// Проверяем, определена ли функция showNotification
+if (typeof window.showNotification === 'undefined') {
+    window.showNotification = function(message, isSuccess = false) {
+        console.log('Showing notification:', message);
+        
+        // Простая реализация уведомления
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: ${isSuccess ? '#4caf50' : '#f44336'};
+            color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
+            z-index: 10001;
+            font-family: 'Oswald', sans-serif;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            animation: slideInRight 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 300px;
+            max-width: 500px;
+        `;
+        
+        notification.innerHTML = `
+            <span>${message}</span>
+            <button style="
+                background: none;
+                border: none;
+                color: white;
+                font-size: 20px;
+                cursor: pointer;
+                margin-left: 15px;
+                padding: 0 5px;
+            " onclick="this.parentElement.remove()">×</button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Автоматическое скрытие через 5 секунд
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 300);
+            }
+        }, 5000);
+        
+        // Добавляем стили для анимации
+        if (!document.querySelector('#notification-styles')) {
+            const style = document.createElement('style');
+            style.id = 'notification-styles';
+            style.textContent = `
+                @keyframes slideInRight {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOutRight {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    };
+}
+
 class HistoryManager {
     constructor() {
         this.orders = [];
@@ -523,75 +596,13 @@ class HistoryManager {
     }
 
     showNotification(message, isSuccess) {
-        // Используем существующую функцию showNotification из orderValidator.js
-        if (typeof showNotification !== 'undefined') {
+        if (typeof window.showNotification !== 'undefined') {
+            window.showNotification(message, isSuccess);
+        } else if (typeof showNotification !== 'undefined') {
             showNotification(message, isSuccess);
         } else {
-            // Альтернативная реализация
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background-color: ${isSuccess ? '#4caf50' : '#f44336'};
-                color: white;
-                padding: 15px 25px;
-                border-radius: 5px;
-                z-index: 10001;
-                font-family: 'Oswald', sans-serif;
-                font-size: 16px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                animation: slideInRight 0.3s ease;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                min-width: 300px;
-                max-width: 500px;
-            `;
-            
-            notification.innerHTML = `
-                <span>${message}</span>
-                <button style="
-                    background: none;
-                    border: none;
-                    color: white;
-                    font-size: 20px;
-                    cursor: pointer;
-                    margin-left: 15px;
-                    padding: 0 5px;
-                " onclick="this.parentElement.remove()">×</button>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            // Автоматическое скрытие через 5 секунд
-            setTimeout(() => {
-                if (notification.parentElement) {
-                    notification.style.animation = 'slideOutRight 0.3s ease';
-                    setTimeout(() => {
-                        if (notification.parentElement) {
-                            notification.remove();
-                        }
-                    }, 300);
-                }
-            }, 5000);
-            
-            // Добавляем стили для анимации
-            if (!document.querySelector('#notification-styles')) {
-                const style = document.createElement('style');
-                style.id = 'notification-styles';
-                style.textContent = `
-                    @keyframes slideInRight {
-                        from { transform: translateX(100%); opacity: 0; }
-                        to { transform: translateX(0); opacity: 1; }
-                    }
-                    @keyframes slideOutRight {
-                        from { transform: translateX(0); opacity: 1; }
-                        to { transform: translateX(100%); opacity: 0; }
-                    }
-                `;
-                document.head.appendChild(style);
-            }
+            console.log(`${isSuccess ? 'Успех:' : 'Ошибка:'} ${message}`);
+            alert(message);
         }
     }
 }
@@ -606,58 +617,4 @@ document.addEventListener('DOMContentLoaded', () => {
 // Экспортируем для использования в других файлах
 if (typeof window !== 'undefined') {
     window.historyManager = historyManager;
-}
-
-// Экспортируем функции для сохранения/загрузки истории
-if (typeof window !== 'undefined') {
-    window.saveOrderToHistory = function(orderData) {
-        try {
-            // Получаем текущую историю заказов
-            const history = JSON.parse(localStorage.getItem('foodConstruct_order_history') || '[]');
-            
-            // Создаем новый заказ с ID
-            const newOrder = {
-                id: Date.now(), // Используем timestamp как ID
-                order_date: orderData.date || new Date().toISOString(),
-                full_name: orderData.name,
-                email: orderData.email,
-                phone: orderData.phone,
-                delivery_address: orderData.address,
-                delivery_type: orderData.deliveryTime === 'asap' ? 'asap' : 'scheduled',
-                delivery_time: orderData.deliveryTime === 'asap' ? null : orderData.deliveryTime,
-                total_price: orderData.totalPrice,
-                comment: orderData.comment || '',
-                // Сохраняем блюда
-                soup: orderData.dishes?.soup || null,
-                main: orderData.dishes?.main || null,
-                starter: orderData.dishes?.starter || null,
-                drink: orderData.dishes?.drink || null,
-                dessert: orderData.dishes?.dessert || null
-            };
-            
-            // Добавляем в начало массива (чтобы новые были первыми)
-            history.unshift(newOrder);
-            
-            // Сохраняем в localStorage (ограничим 50 последних заказов)
-            const limitedHistory = history.slice(0, 50);
-            localStorage.setItem('foodConstruct_order_history', JSON.stringify(limitedHistory));
-            
-            console.log('Заказ сохранен в историю:', newOrder);
-            return true;
-        } catch (error) {
-            console.error('Ошибка при сохранении заказа в историю:', error);
-            return false;
-        }
-    };
-
-    window.loadOrderHistory = function() {
-        try {
-            const history = JSON.parse(localStorage.getItem('foodConstruct_order_history') || '[]');
-            console.log('Загружена история заказов:', history.length, 'шт.');
-            return history;
-        } catch (error) {
-            console.error('Ошибка при загрузке истории заказов:', error);
-            return [];
-        }
-    };
 }
