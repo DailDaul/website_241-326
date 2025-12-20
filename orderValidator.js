@@ -368,35 +368,52 @@ function setupOrderValidation() {
             //показываем уведомление об ошибке
             showNotification(validation.message, false);
         } else {
-            //если заказ валиден, показываем успешное сообщение
-            console.log('Order is valid!');
-            
-            //собираем данные для отображения
-            const selectedItems = [];
-            if (orderData.soup) selectedItems.push(orderData.soup.name);
-            if (orderData.main) selectedItems.push(orderData.main.name);
-            if (orderData.starter) selectedItems.push(orderData.starter.name);
-            if (orderData.drink) selectedItems.push(orderData.drink.name);
-            if (orderData.dessert) selectedItems.push(orderData.dessert.name);
-            
-            const totalPrice = selectedItems.reduce((sum, item) => {
-                const dish = Object.values(orderData).find(d => d && d.name === item);
-                return sum + (dish ? dish.price : 0);
-            }, 0);
-            
-            const successMessage = `
-                Ваш заказ успешно оформлен!<br><br>
-                <strong>Вы заказали:</strong><br>
-                ${selectedItems.map(item => `• ${item}`).join('<br>')}<br><br>
-                <strong>Общая стоимость:</strong> ${totalPrice}Р<br><br>
-                <small>В демо-версии форма не отправляется на сервер.</small>
-            `;
-            
-            //показываем уведомление об успехе
-            showNotification(successMessage, true);
+    //если заказ валиден, показываем успешное сообщение
+    console.log('Order is valid!');
+    
+    //собираем данные для отображения
+    const selectedItems = [];
+    if (orderData.soup) selectedItems.push(orderData.soup.name);
+    if (orderData.main) selectedItems.push(orderData.main.name);
+    if (orderData.starter) selectedItems.push(orderData.starter.name);
+    if (orderData.drink) selectedItems.push(orderData.drink.name);
+    if (orderData.dessert) selectedItems.push(orderData.dessert.name);
+    
+    const totalPrice = selectedItems.reduce((sum, item) => {
+        const dish = Object.values(orderData).find(d => d && d.name === item);
+        return sum + (dish ? dish.price : 0);
+    }, 0);
+    
+    const successMessage = `
+        Ваш заказ успешно оформлен!<br><br>
+        <strong>Вы заказали:</strong><br>
+        ${selectedItems.map(item => `• ${item}`).join('<br>')}<br><br>
+        <strong>Общая стоимость:</strong> ${totalPrice}Р<br><br>
+        <small>В демо-версии форма не отправляется на сервер.</small>
+    `;
+    
+    //показываем уведомление об успехе
+    showNotification(successMessage, true);
+    
+    // +++ ДОБАВЛЯЕМ СОХРАНЕНИЕ ЗАКАЗА В ИСТОРИЮ +++
+    saveOrderToHistory({
+        name: name,
+        email: email,
+        phone: phone,
+        address: address,
+        deliveryTime: deliveryTime === 'scheduled' ? scheduledTime : 'asap',
+        dishes: orderData,
+        totalPrice: totalPrice,
+        comment: document.getElementById('comment')?.value || '',
+        date: new Date().toISOString()
+    });
+    
+    //очищаем текущий заказ после оформления
+    const manager = getOrderManager();
+    if (manager && typeof manager.clearOrder === 'function') {
+        manager.clearOrder();
         }
     }
-}
 
 // Функция для настройки переключения времени доставки
 function setupTimeDeliveryToggle() {
@@ -467,6 +484,59 @@ function initializeValidation() {
     };
     
     tryInitialize();
+}
+
+//функция для сохранения заказа в историю
+function saveOrderToHistory(orderData) {
+    try {
+        // Получаем текущую историю заказов
+        const history = JSON.parse(localStorage.getItem('foodConstruct_order_history') || '[]');
+        
+        // Создаем новый заказ с ID
+        const newOrder = {
+            id: Date.now(), // Используем timestamp как ID
+            order_date: orderData.date,
+            full_name: orderData.name,
+            email: orderData.email,
+            phone: orderData.phone,
+            delivery_address: orderData.address,
+            delivery_type: orderData.deliveryTime === 'asap' ? 'asap' : 'scheduled',
+            delivery_time: orderData.deliveryTime === 'asap' ? null : orderData.deliveryTime,
+            total_price: orderData.totalPrice,
+            comment: orderData.comment,
+            // Сохраняем блюда
+            soup: orderData.dishes.soup,
+            main: orderData.dishes.main,
+            starter: orderData.dishes.starter,
+            drink: orderData.dishes.drink,
+            dessert: orderData.dishes.dessert
+        };
+        
+        // Добавляем в начало массива (чтобы новые были первыми)
+        history.unshift(newOrder);
+        
+        // Сохраняем в localStorage (ограничим 50 последних заказов)
+        const limitedHistory = history.slice(0, 50);
+        localStorage.setItem('foodConstruct_order_history', JSON.stringify(limitedHistory));
+        
+        console.log('Заказ сохранен в историю:', newOrder);
+        return true;
+    } catch (error) {
+        console.error('Ошибка при сохранении заказа в историю:', error);
+        return false;
+    }
+}
+
+//функция для загрузки истории заказов
+function loadOrderHistory() {
+    try {
+        const history = JSON.parse(localStorage.getItem('foodConstruct_order_history') || '[]');
+        console.log('Загружена история заказов:', history.length, 'шт.');
+        return history;
+    } catch (error) {
+        console.error('Ошибка при загрузке истории заказов:', error);
+        return [];
+    }
 }
 
 //запускаем инициализацию
