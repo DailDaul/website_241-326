@@ -1,3 +1,5 @@
+// historyStorage.js - Утилиты для работы с историей заказов
+
 const HISTORY_STORAGE_KEY = 'foodConstruct_order_history';
 
 // Функция для сохранения заказа в историю
