@@ -40,7 +40,7 @@
         <div class="modal">
             <div class="modal-header">
                 <h3>Детали заказа</h3>
-                <button class="close-btn">&times;</button>
+                <button class="close-btn" title="Закрыть">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="order-details-grid">
@@ -87,7 +87,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" id="close-view-btn">Ок</button>
+                <button class="btn btn-primary" id="close-view-btn" title="Закрыть окно">Ок</button>
             </div>
         </div>
     </div>
@@ -97,7 +97,7 @@
         <div class="modal">
             <div class="modal-header">
                 <h3>Редактирование заказа</h3>
-                <button class="close-btn">&times;</button>
+                <button class="close-btn" title="Закрыть">&times;</button>
             </div>
             <form id="edit-order-form" class="edit-form">
                 <div class="modal-body">
@@ -105,45 +105,60 @@
                     <div class="order-details-grid">
                         <div class="form-group">
                             <label for="edit-order-name">Имя *</label>
-                            <input type="text" id="edit-order-name" name="full_name" required>
+                            <input type="text" id="edit-order-name" name="full_name" required
+                                   title="Введите ваше имя"
+                                   placeholder="Иван Иванов">
                         </div>
                         <div class="form-group">
                             <label for="edit-order-email">Email *</label>
-                            <input type="email" id="edit-order-email" name="email" required>
+                            <input type="email" id="edit-order-email" name="email" required
+                                   title="Введите ваш email"
+                                   placeholder="ivan@example.com">
                         </div>
                         <div class="form-group">
                             <label for="edit-order-phone">Телефон *</label>
-                            <input type="tel" id="edit-order-phone" name="phone" required>
+                            <input type="tel" id="edit-order-phone" name="phone" required
+                                   title="Введите ваш номер телефона"
+                                   placeholder="+7 (999) 123-45-67">
                         </div>
                         <div class="form-group">
                             <label for="edit-order-address">Адрес доставки *</label>
-                            <input type="text" id="edit-order-address" name="delivery_address" required>
+                            <input type="text" id="edit-order-address" name="delivery_address" required
+                                   title="Введите адрес доставки"
+                                   placeholder="ул. Примерная, д. 1, кв. 1">
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Время доставки *</label>
                         <div class="radio-group">
                             <div class="radio-option">
-                                <input type="radio" id="edit-delivery-asap" name="delivery_type" value="asap" checked>
+                                <input type="radio" id="edit-delivery-asap" name="delivery_type" value="asap" checked
+                                       title="Доставка как можно скорее">
                                 <label for="edit-delivery-asap">Как можно скорее (с 7:00 до 23:00)</label>
                             </div>
                             <div class="radio-option">
-                                <input type="radio" id="edit-delivery-scheduled" name="delivery_type" value="scheduled">
+                                <input type="radio" id="edit-delivery-scheduled" name="delivery_type" value="scheduled"
+                                       title="Доставка к указанному времени">
                                 <label for="edit-delivery-scheduled">К указанному времени</label>
                             </div>
                         </div>
                         <div class="time-input-container" id="edit-time-panel">
-                            <input type="time" id="edit-delivery-time" name="delivery_time" min="07:00" max="23:00">
+                            <input type="time" id="edit-delivery-time" name="delivery_time" 
+                                   min="07:00" max="23:00"
+                                   title="Выберите время доставки с 7:00 до 23:00"
+                                   placeholder="чч:мм">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="edit-order-comment">Комментарий к заказу</label>
-                        <textarea id="edit-order-comment" name="comment" rows="3" placeholder="Например: позвонить перед доставкой"></textarea>
+                        <textarea id="edit-order-comment" name="comment" rows="3" 
+                                  title="Введите комментарий к заказу"
+                                  placeholder="Например: позвонить перед доставкой"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="cancel-edit-btn">Отмена</button>
-                    <button type="submit" class="btn btn-primary" id="save-edit-btn">Сохранить</button>
+                    <button type="button" class="btn btn-secondary" id="cancel-edit-btn" title="Отменить редактирование">Отмена</button>
+                    <button type="submit" class="btn btn-primary" id="save-edit-btn" title="Сохранить изменения">Сохранить</button>
                 </div>
             </form>
         </div>
@@ -154,7 +169,7 @@
         <div class="modal">
             <div class="modal-header">
                 <h3>Удаление заказа</h3>
-                <button class="close-btn">&times;</button>
+                <button class="close-btn" title="Закрыть">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="delete-confirmation">
@@ -163,13 +178,12 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="cancel-delete-btn">Отмена</button>
-                <button type="button" class="btn btn-danger" id="confirm-delete-btn">Да, удалить</button>
+                <button type="button" class="btn btn-secondary" id="cancel-delete-btn" title="Отменить удаление">Отмена</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-btn" title="Подтвердить удаление">Да, удалить</button>
             </div>
         </div>
     </div>
 
-    <script src="orderStorage.js"></script>
     <script src="historyManager.js"></script>
 </body>
 </html>
