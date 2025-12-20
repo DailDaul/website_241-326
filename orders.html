@@ -93,59 +93,57 @@
                     <div class="client-block">
                         <h3>Ваши данные</h3>
                         
-                        <div class="form-group">
-                            <label for="name">Имя *</label>
-                            <input type="text" id="name" name="name" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email">Email *</label>
-                            <input type="email" id="email" name="email" 
-                                   required
-                                   title="Введите корректный email">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="phone">Телефон *</label>
-                            <input type="tel" id="phone" name="phone" 
-                                   required
-                                   pattern="[+0-9\s\-\(\)]{7,20}"
-                                   title="Введите корректный номер телефона">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="address">Адрес доставки *</label>
-                            <input type="text" id="address" name="address" required>
+                       <div class="form-group">
+                           <label for="name">Имя *</label>
+                           <input type="text" id="name" name="name" required
+                               title="Введите ваше имя"
+                               placeholder="Иван Иванов">
                         </div>
 
                         <div class="form-group">
-                            <label for="comment">Комментарий к заказу</label>
-                            <textarea id="comment" name="comment" rows="4" placeholder="Например: позвонить перед доставкой"></textarea>
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" 
+                                required
+                                title="Введите ваш email"
+                                placeholder="ivan@example.com"
+                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
                         </div>
-                        
+
                         <div class="form-group">
-                            <label>Время доставки *</label>
-                            
-                            <div class="radio-option">
-                                <input type="radio" id="delivery-asap" name="delivery_time" value="asap" checked>
-                                <label for="delivery-asap">Как можно скорее</label>
-                            </div>
-                            
-                            <div class="radio-option">
-                                <input type="radio" id="delivery-scheduled" name="delivery_time" value="scheduled">
-                                <label for="delivery-scheduled">К указанному времени</label>
-                            </div>
-                            
-                            <div class="time-selection-panel" id="time-panel">
-                                <div class="time-panel-header">
-                                    <span>Укажите время доставки</span>
-                                    <div class="time-hint">Доступное время доставки с 7:00 до 23:00</div>
-                                </div>
-                                <input type="time" id="scheduled-time" name="scheduled_time" 
-                                       min="07:00" max="23:00"
-                                       title="Выберите время с 7:00 до 23:00"
-                                       class="time-input">
-                            </div>
+                            <label for="phone">Телефон *</label>
+                            <input type="tel" id="phone" name="phone" 
+                                required
+                                pattern="[+0-9\s\-\(\)]{7,20}"
+                                title="Введите ваш номер телефона"
+                                placeholder="+7 (999) 123-45-67">
+                         </div>
+
+<div class="form-group">
+    <label for="address">Адрес доставки *</label>
+    <input type="text" id="address" name="address" required
+           title="Введите адрес доставки"
+           placeholder="ул. Примерная, д. 1, кв. 1">
+</div>
+
+<div class="form-group">
+    <label for="comment">Комментарий к заказу</label>
+    <textarea id="comment" name="comment" rows="4" 
+              title="Введите комментарий к заказу"
+              placeholder="Например: позвонить перед доставкой"></textarea>
+</div>
+
+<!-- В блоке времени доставки: -->
+<div class="time-selection-panel" id="time-panel">
+    <div class="time-panel-header">
+        <span>Укажите время доставки</span>
+        <div class="time-hint">Доступное время доставки с 7:00 до 23:00</div>
+    </div>
+    <input type="time" id="scheduled-time" name="scheduled_time" 
+           min="07:00" max="23:00"
+           title="Выберите время доставки с 7:00 до 23:00"
+           placeholder="чч:мм"
+           class="time-input">
+</div>
                         </div>
                         
                         <!-- Скрытые поля для данных заказа -->
