@@ -116,8 +116,31 @@ function removeDishFromStorage(category) {
     }
 }
 
-//экспортируем функции
+// Функция для сохранения токена авторизации
+function saveAuthToken(token) {
+    try {
+        localStorage.setItem('foodConstruct_auth_token', token);
+        return true;
+    } catch (error) {
+        console.error('Ошибка при сохранении токена:', error);
+        return false;
+    }
+}
+
+// Функция для получения токена авторизации
+function getAuthToken() {
+    try {
+        return localStorage.getItem('foodConstruct_auth_token');
+    } catch (error) {
+        console.error('Ошибка при получении токена:', error);
+        return null;
+    }
+}
+
+// Экспортируем новые функции
 if (typeof window !== 'undefined') {
+    window.saveAuthToken = saveAuthToken;
+    window.getAuthToken = getAuthToken;
     window.saveOrderToStorage = saveOrderToStorage;
     window.loadOrderFromStorage = loadOrderFromStorage;
     window.getFullOrderData = getFullOrderData;
