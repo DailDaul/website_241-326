@@ -399,15 +399,18 @@ class OrdersManager {
             this.displayOrderItems();
             this.updateOrderFormDisplay();
             
-            // Показываем УСПЕШНОЕ уведомление с правильным сообщением
+            //показываем УСПЕШНОЕ уведомление
+            const selectedDishes = Object.values(this.selectedDishes).filter(dish => dish !== null);
+            const dishesList = selectedDishes.map(dish => `• ${dish.name} - ${dish.price}Р`).join('<br>');
+
             const successMessage = `
-                Ваш заказ успешно оформлен!<br><br>
-                <strong>Вы заказали:</strong><br>
-                ${this.getDishesList()}<br><br>
+                <strong>Заказ успешно оформлен!</strong><br><br>
+                <strong>Состав заказа:</strong><br>
+                ${dishesList || 'Блюда не указаны'}<br><br>
                 <strong>Общая стоимость:</strong> ${totalPrice}Р<br><br>
-                <small>Заказ сохранен в истории.</small>
+                <small>Заказ сохранен в истории заказов.</small>
             `;
-            
+
             this.showNotification(successMessage, true);
             
             //очищаем форму
@@ -444,7 +447,7 @@ class OrdersManager {
         return this.selectedDishes;
     }
     
-    // Метод для показа уведомлений
+    //метод для показа уведомлений
     showNotification(message, isSuccess) {
         if (typeof window.showNotification !== 'undefined') {
             window.showNotification(message, isSuccess);
@@ -456,7 +459,7 @@ class OrdersManager {
         }
     }
     
-    // Вспомогательный метод для тостовых уведомлений
+    //вспомогательный метод для тостовых уведомлений
     showToastNotification(message) {
         const toast = document.createElement('div');
         toast.style.cssText = `
