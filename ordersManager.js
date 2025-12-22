@@ -144,26 +144,26 @@ class OrdersManager {
     }
     
     removeDishFromOrder(dishKeyword, category) {
-    //находим блюдо в массиве dishes
-    const dish = dishes.find(d => d.keyword === dishKeyword);
-    
-    //удаляем блюдо из текущего заказа
-    this.selectedDishes[category] = null;
-    
-    //удаляем из localStorage
-    removeDishFromStorage(category);
-    
-    //обновляем отображение
-    this.displayOrderItems();
-    this.updateOrderFormDisplay();
-    
-    //показываем небольшое уведомление (опционально)
-    if (dish) {
-        //можно использовать консоль для отладки
-        console.log(`Блюдо "${dish.name}" удалено из заказа`);
+        // Получаем доступ к глобальному массиву dishes из displayDishes.js
+        const globalDishes = window.dishes || [];
         
-        //или показать маленькое тостовое уведомление
-        this.showToastNotification(`Блюдо "${dish.name}" удалено из заказа`);
+        //находим блюдо в массиве dishes
+        const dish = globalDishes.find(d => d.keyword === dishKeyword);
+        
+        //удаляем блюдо из текущего заказа
+        this.selectedDishes[category] = null;
+        
+        //удаляем из localStorage
+        removeDishFromStorage(category);
+        
+        //обновляем отображение
+        this.displayOrderItems();
+        this.updateOrderFormDisplay();
+        
+        //показываем небольшое уведомление
+        if (dish) {
+            console.log(`Блюдо "${dish.name}" удалено из заказа`);
+            this.showToastNotification(`Блюдо "${dish.name}" удалено из заказа`);
         }
     }
     
@@ -335,7 +335,7 @@ class OrdersManager {
                 }
             }
             
-            //отправляем заказ (в демо-режиме сохраняем в историю)
+            //отправляем заказ
             await this.submitOrder();
         });
     }
@@ -386,12 +386,6 @@ class OrdersManager {
                 clearOrderFromStorage();
             }
             
-            //показываем сообщение об успехе
-            this.showNotification('Заказ успешно оформлен!', true);
-            
-            //очищаем форму
-            document.getElementById('order-form').reset();
-            
             //очищаем текущий заказ
             this.selectedDishes = {
                 soup: null,
@@ -405,10 +399,34 @@ class OrdersManager {
             this.displayOrderItems();
             this.updateOrderFormDisplay();
             
+            // Показываем УСПЕШНОЕ уведомление с правильным сообщением
+            const successMessage = `
+                Ваш заказ успешно оформлен!<br><br>
+                <strong>Вы заказали:</strong><br>
+                ${this.getDishesList()}<br><br>
+                <strong>Общая стоимость:</strong> ${totalPrice}Р<br><br>
+                <small>Заказ сохранен в истории.</small>
+            `;
+            
+            this.showNotification(successMessage, true);
+            
+            //очищаем форму
+            document.getElementById('order-form').reset();
+            
         } catch (error) {
             console.error('Ошибка при оформлении заказа:', error);
             this.showNotification('Ошибка при оформлении заказа. Пожалуйста, попробуйте еще раз.', false);
         }
+    }
+    
+    getDishesList() {
+        let dishesList = '';
+        Object.values(this.selectedDishes).forEach(dish => {
+            if (dish) {
+                dishesList += `• ${dish.name} - ${dish.price}Р<br>`;
+            }
+        });
+        return dishesList || 'Блюда не указаны';
     }
     
     showErrorMessage(message) {
