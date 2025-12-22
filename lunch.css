@@ -1105,37 +1105,3 @@ input:invalid {
     color: #999;
     font-style: italic;
 }
-
-/* Стили для кнопки удаления в карточке блюда на странице оформления */
-.order-summary-section .dish-item .remove-btn {
-    background-color: #ff4444;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-family: 'Oswald', sans-serif;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s;
-    margin-top: 10px;
-    width: 100%;
-}
-
-.order-summary-section .dish-item .remove-btn:hover {
-    background-color: #ff0000;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(255, 0, 0, 0.2);
-}
-
-.order-summary-section .dish-item .remove-btn:active {
-    transform: translateY(0);
-}
-
-/* Адаптивность для поля комментария */
-@media (max-width: 600px) {
-    .form-group textarea {
-        padding: 12px 14px;
-        font-size: 15px;
-        min-height: 100px;
-    }
-}
