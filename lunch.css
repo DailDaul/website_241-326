@@ -1079,3 +1079,63 @@ input:invalid {
         min-width: auto;
     }
 }
+
+/* Стили для поля комментария */
+.form-group textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: 'Oswald', sans-serif;
+    transition: border-color 0.3s;
+    background-color: #f9f9f9;
+    resize: vertical;
+    min-height: 120px;
+}
+
+.form-group textarea:focus {
+    outline: none;
+    border-color: #ff6b00;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
+}
+
+.form-group textarea::placeholder {
+    color: #999;
+    font-style: italic;
+}
+
+/* Стили для кнопки удаления в карточке блюда на странице оформления */
+.order-summary-section .dish-item .remove-btn {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.order-summary-section .dish-item .remove-btn:hover {
+    background-color: #ff0000;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 0, 0, 0.2);
+}
+
+.order-summary-section .dish-item .remove-btn:active {
+    transform: translateY(0);
+}
+
+/* Адаптивность для поля комментария */
+@media (max-width: 600px) {
+    .form-group textarea {
+        padding: 12px 14px;
+        font-size: 15px;
+        min-height: 100px;
+    }
+}
