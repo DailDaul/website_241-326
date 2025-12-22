@@ -187,7 +187,7 @@ class OrdersManager {
         this.updateOrderFormDisplay();
         
         //показываем уведомление
-        this.showNotification('Заказ успешно очищен', true);
+        this.showNotification('Ваш заказ успешно очищен', true);
     }
     
     updateOrderFormDisplay() {
