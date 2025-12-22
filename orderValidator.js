@@ -310,7 +310,7 @@ function setupOrderValidation() {
                 manager.displayOrderItems();
             }
             
-            showNotification('Заказ успешно очищен', true);
+            showNotification('Текущий заказ успешно очищен', true);
         } else {
             showNotification('Не удалось очистить заказ', false);
         }
